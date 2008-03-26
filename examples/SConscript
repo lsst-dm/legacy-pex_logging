@@ -1,0 +1,17 @@
+# -*- python -*-
+Import('env')
+
+env.Program("citizen", ["citizen.cc"], LIBS=env.libs["boost"] + ["mwi"])
+env.Program(["exceptions.cc"], LIBS=env.libs["boost"] + ["mwi"])
+env.Program("log", ["log.cc"], LIBS=env.libs["boost"] + ["mwi"])
+env.Program("trace", ["trace.cc"], LIBS=env.libs["boost"] + ["mwi"])
+
+#
+# Tests
+#
+import lsst.tests
+tests = lsst.tests.Control(env, verbose=True)
+
+if tests.runExamples:
+    tests.run("*.cc")
+    tests.run("*.py")

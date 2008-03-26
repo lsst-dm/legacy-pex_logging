@@ -1,0 +1,62 @@
+#include "lsst/mwi/logging/Log.h"
+#include "lsst/mwi/logging/ScreenLog.h"
+#include <iostream>
+#include <boost/shared_ptr.hpp>
+
+using lsst::mwi::logging::Log;
+using lsst::mwi::logging::ScreenLog;
+using lsst::mwi::logging::LogDestination;
+using lsst::mwi::logging::LogRec;
+using lsst::mwi::data::Citizen;
+using lsst::mwi::data::DataProperty;
+using boost::shared_ptr;
+using namespace std;
+
+void assure(bool mustBeTrue, const string& failureMsg) {
+    if (! mustBeTrue)
+        throw runtime_error(failureMsg);
+}
+
+int main() {
+
+    // test a simple message to the default log
+    Log dlog = Log::getDefaultLog();
+    dlog.log(Log::WARN, "this is a warning");
+
+    // now let's create our own root log
+    ScreenLog log(true);
+
+    // test creation of child log
+    Log *tlog = new Log(log, "test");
+    tlog->log(Log::INFO, "I like your hat");
+
+    // test threshold filtering
+    tlog->setThreshold(Log::WARN);
+    tlog->log(Log::INFO, "I like your gloves");  // shouldn't see this 
+
+    // test the persistance of threshold levels
+    delete tlog;
+    tlog = new Log(log, "test");
+    tlog->log(Log::INFO, "I like your shoes");   // shouldn't see this 
+    tlog->setThreshold(Log::DEBUG);
+    tlog->log(Log::INFO, "I said, I like your shoes");
+
+    // test descendent log and ancestor's control of threshold
+    Log tgclog(*tlog, "grand.child");       // name is now "test.grand.child"
+    tgclog.log(Log::INFO, "Let's play", DataProperty("STATUS", string("now")));
+    tlog->setThreshold(Log::FATAL);
+    tgclog.addPreambleProperty(DataProperty("RUNID", string("testRun")));
+    tgclog.log(Log::INFO, "You go first");
+
+    // test streaming
+    LogRec(tgclog, Log::FATAL) << "help: I've fallen" 
+                               << DataProperty("NODE", 5)
+                               << "& I can't get up"
+                               << LogRec::endr;
+
+    // test flushing on delete
+    LogRec(tgclog, Log::FATAL) << "never mind";
+
+
+    
+}
