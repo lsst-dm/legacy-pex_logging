@@ -50,7 +50,9 @@ int main() {
     lr1.addComment("This is a test");
     lr2.addComment("This is a test");
 
-    Assert(lr1.getDataCount() == 5, "Missing comment or preamble property");
+    cout << "data count: " << lr1.getDataCount() << endl;
+
+    Assert(lr1.getDataCount() == 6, "Missing comment or preamble property");
     Assert(lr2.getDataCount() == 0, "Comment or preamble property not ignored");
 
     LogFormatter *brief = new BriefFormatter();
@@ -60,8 +62,8 @@ int main() {
     cap.reset(new ostringstream());
     brief->write(cap.get(), lr1);
     msg = cap->str();
-    cout << msg;
-    Assert(msg == "tester: This is a test\n", "Brief formatting failed");
+    cout << "[" << msg << "]" << endl;
+    Assert(msg == "tester: This is a test\n\n", "Brief formatting failed");
     cout << "-------------" << endl;
 
     cap.reset(new ostringstream());

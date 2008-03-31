@@ -74,7 +74,7 @@ int main() {
     LogRecord lr3(1, 5, preamble);
     cout << "The third record starts with " << lr3.getDataCount() 
          << " records."  << endl;
-    assure(lr3.getDataCount()==4, "wrong initial count via preamble");
+    assure(lr3.getDataCount()==5, "wrong initial count via preamble");
     const LogRecord::DataListT& list = lr3.getData();
     cout << "Properties: ";
     for(LogRecord::DataIteratorT i=list.begin(); i != list.end(); i++) 
