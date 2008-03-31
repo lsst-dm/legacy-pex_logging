@@ -1,11 +1,11 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_LOGCLIENT_H
-#define LSST_MWI_LOGCLIENT_H
+#ifndef LSST_PEX_LOGCLIENT_H
+#define LSST_PEX_LOGCLIENT_H
 
-#include "lsst/mwi/logging/Log.h"
+#include "lsst/pex/logging/Log.h"
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 /**
@@ -75,4 +75,4 @@ protected:
 };
 
 
-}}} // end lsst::mwi::logging
+}}} // end lsst::pex::logging

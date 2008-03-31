@@ -1,13 +1,13 @@
-#include "lsst/mwi/logging/LogDestination.h"
-#include "lsst/mwi/logging/LogRecord.h"
+#include "lsst/pex/logging/LogDestination.h"
+#include "lsst/pex/logging/LogRecord.h"
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
-using lsst::mwi::logging::LogRecord;
-using lsst::mwi::logging::LogFormatter;
-using lsst::mwi::logging::LogDestination;
-using lsst::mwi::logging::BriefFormatter;
-using lsst::mwi::data::DataProperty;
+using lsst::pex::logging::LogRecord;
+using lsst::pex::logging::LogFormatter;
+using lsst::pex::logging::LogDestination;
+using lsst::pex::logging::BriefFormatter;
+using lsst::daf::base::DataProperty;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {

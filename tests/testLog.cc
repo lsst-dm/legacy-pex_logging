@@ -1,14 +1,14 @@
-#include "lsst/mwi/logging/Log.h"
-#include "lsst/mwi/logging/ScreenLog.h"
+#include "lsst/pex/logging/Log.h"
+#include "lsst/pex/logging/ScreenLog.h"
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
-using lsst::mwi::logging::Log;
-using lsst::mwi::logging::ScreenLog;
-using lsst::mwi::logging::LogDestination;
-using lsst::mwi::logging::LogRec;
-using lsst::mwi::data::Citizen;
-using lsst::mwi::data::DataProperty;
+using lsst::pex::logging::Log;
+using lsst::pex::logging::ScreenLog;
+using lsst::pex::logging::LogDestination;
+using lsst::pex::logging::LogRec;
+using lsst::daf::base::Citizen;
+using lsst::daf::base::DataProperty;
 using boost::shared_ptr;
 using namespace std;
 

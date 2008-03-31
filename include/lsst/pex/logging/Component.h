@@ -1,24 +1,24 @@
 // -*- lsst-c++ -*-
 /** \file
   *
-  * \ingroup mwi
+  * \ingroup pex
   *
   * \brief Create a component in the verbosity tree.
   *
   * \author Robert Lupton, Princeton University
   */
 
-#if !defined(LSST_MWI_UTILS_COMPONENT)            //!< multiple inclusion guard macro
-#define LSST_MWI_UTILS_COMPONENT 1
+#if !defined(LSST_PEX_UTILS_COMPONENT)            //!< multiple inclusion guard macro
+#define LSST_PEX_UTILS_COMPONENT 1
 
 #include <map>
 #include <boost/tokenizer.hpp>
 
-#include "lsst/mwi/utils/Utils.h"
+#include "lsst/pex/logging/Trace.h"
 
 namespace lsst {
-namespace mwi {
-namespace utils {
+namespace pex {
+namespace logging {
 
 
 /** \brief Create a component in the verbosity tree.
@@ -63,8 +63,8 @@ private:
                      int defaultVerbosity);
 };
 
-} // namespace utils
-} // namespace mwi
+} // namespace logging
+} // namespace pex
 } // namespace lsst
 #endif
 

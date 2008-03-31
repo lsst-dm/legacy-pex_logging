@@ -19,10 +19,10 @@
 
 #include "lsst/tr1/unordered_map.h"
 
-#include "lsst/mwi/utils/Trace.h"
-#include "lsst/mwi/utils/Component.h"
+#include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/Component.h"
 
-using namespace lsst::mwi::utils;
+using namespace lsst::pex::logging;
 
 namespace {
     //
@@ -52,7 +52,7 @@ class TraceImpl {
 public:
     TraceImpl();
 
-    friend class lsst::mwi::utils::Trace;
+    friend class lsst::pex::logging::Trace;
 
     static void reset();
     static void setVerbosity(const std::string &name);
@@ -179,8 +179,8 @@ void TraceImpl::setDestination(std::ostream &fp     //!< new output location
 
 /******************************************************************************/
 namespace lsst {
-namespace mwi {
-namespace utils {
+namespace pex {
+namespace logging {
 
 /** Generate the trace message.
   */
@@ -270,6 +270,6 @@ void Trace::setDestination(std::ostream &fp         //!< Output location
     TraceImpl::setDestination(fp);
 }
 
-} // namespace utils
-} // namespace mwi
+} // namespace logging
+} // namespace pex
 } // namespace lsst

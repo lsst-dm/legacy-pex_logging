@@ -1,12 +1,12 @@
 // -*- lsst-c++ -*-
 %define logging_DOCSTRING
 "
-Access to the logging classes from the mwi library
+Access to the logging classes from the pex library
 "
 %enddef
 
 %feature("autodoc", "1");
-%module(package="lsst.mwi", docstring=logging_DOCSTRING) logging
+%module(package="lsst.pex.logging", docstring=logging_DOCSTRING) logging
 
 %{
 #   include <fstream>
@@ -14,41 +14,41 @@ Access to the logging classes from the mwi library
 #   include <map>
 #   include <boost/shared_ptr.hpp>
 #   include <boost/any.hpp>
-#   include "lsst/mwi/utils/Demangle.h"
-#   include "lsst/mwi/utils/Trace.h"
-#   include "lsst/mwi/utils/Utils.h"
-#   include "lsst/mwi/utils/Component.h"
-#   include "lsst/mwi/logging/LogRecord.h"
-#   include "lsst/mwi/logging/ScreenLog.h"
-#   include "lsst/mwi/logging/DualLog.h"
+#   include "lsst/utils/Demangle.h"
+#   include "lsst/pex/logging/Trace.h"
+#   include "lsst/utils/Utils.h"
+#include "lsst/pex/logging/Component.h"
+#include "lsst/pex/logging/LogRecord.h"
+#include "lsst/pex/logging/ScreenLog.h"
+#include "lsst/pex/logging/DualLog.h"
 %}
 
 %inline %{
-namespace lsst { namespace mwi { namespace data { } } }
-namespace lsst { namespace mwi { namespace logging { } } }
-namespace lsst { namespace mwi { namespace utils { } } }
-namespace lsst { namespace mwi { namespace utils { namespace Component { } } } }
+namespace lsst { namespace utils { } } 
+namespace lsst { namespace daf { namespace base { } } }
+namespace lsst { namespace pex { namespace logging { } } }
+namespace lsst { namespace pex { namespace logging { namespace Component { } } } }
     
 using namespace lsst;
-using namespace lsst::mwi::data;
-using namespace lsst::mwi::logging;
-using namespace lsst::mwi::utils;
-using namespace lsst::mwi::utils::Component;
+using namespace lsst::utils;
+using namespace lsst::daf::base;
+using namespace lsst::pex::logging;
+using namespace lsst::pex::logging::Component;
 %}
 
 %init %{
 %}
 
-%include "p_lsstSwig.i"
-%import  "data.i"
+#define NO_SWIG_LSST_EXCEPTIONS
+%include "lsst/p_lsstSwig.i"
+#  %import  "data.i"
 
-%include "lsst/mwi/utils/Utils.h"  // needed for deprecated LSST_START_NAMESPACE
-%include "lsst/mwi/logging/Log.h"
-%include "lsst/mwi/logging/ScreenLog.h"
-%include "lsst/mwi/logging/DualLog.h"
+%include "lsst/pex/logging/Log.h"
+%include "lsst/pex/logging/ScreenLog.h"
+%include "lsst/pex/logging/DualLog.h"
 
 %pythoncode %{
-from lsst.mwi.data import DataProperty
+from lsst.daf.base import DataProperty
 
 Log._swiglog_str = Log.log
 
@@ -137,6 +137,11 @@ endr = LogRec.endr
 
 %}
 
+/******************************************************************************/// Trace
+%ignore Trace(const std::string&, const int, const std::string&, va_list ap);
+%include "lsst/pex/logging/Trace.h"
+
+/******************************************************************************/
 /******************************************************************************/
 // Local Variables: ***
 // eval: (setq indent-tabs-mode nil) ***

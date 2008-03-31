@@ -1,8 +1,8 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_LOGRECORD_H
-#define LSST_MWI_LOGRECORD_H
+#ifndef LSST_PEX_LOGRECORD_H
+#define LSST_PEX_LOGRECORD_H
 
-#include "lsst/mwi/data/DataProperty.h"
+#include "lsst/daf/base/DataProperty.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
@@ -11,14 +11,14 @@
 
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::list;
 using std::string;
 using boost::shared_ptr;
 using boost::format;
-using lsst::mwi::data::DataProperty;
+using lsst::daf::base::DataProperty;
 
 /**
  * @brief a container for constructing a single Log record
@@ -149,6 +149,6 @@ protected:
     DataListT _data;
 };
 
-}}} // end lsst::mwi::logging
+}}} // end lsst::pex::logging
 
-#endif // end LSST_MWI_LOGRECORD_H
+#endif // end LSST_PEX_LOGRECORD_H

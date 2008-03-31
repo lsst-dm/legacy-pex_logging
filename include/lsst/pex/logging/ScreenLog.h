@@ -1,16 +1,16 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_SCREENLOG_H
-#define LSST_MWI_SCREENLOG_H
+#ifndef LSST_PEX_SCREENLOG_H
+#define LSST_PEX_SCREENLOG_H
 
-#include "lsst/mwi/logging/Log.h"
+#include "lsst/pex/logging/Log.h"
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::vector;
 using boost::shared_ptr;
-using lsst::mwi::data::DataProperty;
+using lsst::daf::base::DataProperty;
 
 /**
  * @brief  a Log configured to send messages to the screen.  The 
@@ -100,6 +100,6 @@ private:
     BriefFormatter *_screenFrmtr;
 };
 
-}}}     // end lsst::mwi::logging
+}}}     // end lsst::pex::logging
 
-#endif  // end LSST_MWI_SCREENLOG_H
+#endif  // end LSST_PEX_SCREENLOG_H

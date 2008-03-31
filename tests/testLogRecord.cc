@@ -1,8 +1,8 @@
-#include "lsst/mwi/logging/LogRecord.h"
+#include "lsst/pex/logging/LogRecord.h"
 #include <iostream>
 
-using lsst::mwi::logging::LogRecord;
-using lsst::mwi::data::DataProperty;
+using lsst::pex::logging::LogRecord;
+using lsst::daf::base::DataProperty;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {

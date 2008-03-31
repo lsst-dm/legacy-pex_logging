@@ -6,10 +6,9 @@ Run with:
    python testLog
 """
 
-import lsst.mwi.tests as tests
-import lsst.mwi.utils as mwiu
-import lsst.mwi.logging as log
-from lsst.mwi.data import DataProperty
+import lsst.utils.tests as tests
+import lsst.pex.logging as log
+from lsst.daf.base import DataProperty
 
 if __name__ == "__main__":
 

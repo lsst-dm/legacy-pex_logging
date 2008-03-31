@@ -1,15 +1,15 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_LOGDESTINATION_H
-#define LSST_MWI_LOGDESTINATION_H
+#ifndef LSST_PEX_LOGDESTINATION_H
+#define LSST_PEX_LOGDESTINATION_H
 
-#include "lsst/mwi/logging/LogFormatter.h"
+#include "lsst/pex/logging/LogFormatter.h"
 
 #include <string>
 #include <ostream>
 #include <boost/shared_ptr.hpp>
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::ostream;
@@ -98,6 +98,6 @@ protected:
     boost::shared_ptr<LogFormatter> _frmtr;    // the formatter to use
 };
 
-}}}     // end lsst::mwi::logging
+}}}     // end lsst::pex::logging
 
-#endif  // LSST_MWI_LOGDESTINATION_H
+#endif  // LSST_PEX_LOGDESTINATION_H

@@ -5,17 +5,17 @@
   * \brief logExample.c demonstrates simple use of the Log facility.
   */
 
-#include "lsst/mwi/data/DataProperty.h"
-#include "lsst/mwi/logging/Log.h"
-#include "lsst/mwi/logging/DualLog.h"
+#include "lsst/daf/base/DataProperty.h"
+#include "lsst/pex/logging/Log.h"
+#include "lsst/pex/logging/DualLog.h"
 #include <fstream>
 
 using namespace std;
-using namespace lsst::mwi::logging;
+using namespace lsst::pex::logging;
 using namespace lsst;
-using lsst::mwi::data::DataProperty;
-using lsst::mwi::logging::Log;
-using lsst::mwi::logging::Rec;
+using lsst::daf::base::DataProperty;
+using lsst::pex::logging::Log;
+using lsst::pex::logging::Rec;
 
 /** \brief Demonstrate the Log class.   
   *

@@ -2,17 +2,17 @@
  * @brief  This will test some LogRecord basics and LogFormatter.
  */
 
-#include "lsst/mwi/logging/LogFormatter.h"
-#include "lsst/mwi/logging/LogRecord.h"
+#include "lsst/pex/logging/LogFormatter.h"
+#include "lsst/pex/logging/LogRecord.h"
 #include <iostream>
 #include <sstream>
 #include <boost/regex.hpp>
 
-using lsst::mwi::logging::LogRecord;
-using lsst::mwi::logging::LogFormatter;
-using lsst::mwi::logging::BriefFormatter;
-using lsst::mwi::logging::NetLoggerFormatter;
-using lsst::mwi::data::DataProperty;
+using lsst::pex::logging::LogRecord;
+using lsst::pex::logging::LogFormatter;
+using lsst::pex::logging::BriefFormatter;
+using lsst::pex::logging::NetLoggerFormatter;
+using lsst::daf::base::DataProperty;
 using namespace std;
 
 #define Assert(b, m) tattle(b, m, __LINE__)

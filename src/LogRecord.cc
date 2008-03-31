@@ -5,9 +5,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "lsst/mwi/logging/LogRecord.h"
-#include "lsst/mwi/data/DataProperty.h"
-#include "lsst/mwi/utils/Trace.h"
+#include "lsst/pex/logging/LogRecord.h"
+#include "lsst/daf/base/DataProperty.h"
+#include "lsst/pex/logging/Trace.h"
 
 #include <boost/shared_ptr.hpp>
 #include <stdexcept>
@@ -16,15 +16,15 @@ using std::string;
 
 // #define EXEC_TRACE  20
 // static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::mwi::utils::Trace( "mwi.logging.LogFormatter", level, s );
+//     lsst::pex::logging::Trace( "pex.logging.LogFormatter", level, s );
 // }
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::vector;
-using lsst::mwi::data::DataProperty;
+using lsst::daf::base::DataProperty;
 using boost::shared_ptr;
 
 /**
@@ -94,5 +94,5 @@ void LogRecord::setDate() {
         
 }
 
-}}} // end lsst::mwi::logging
+}}} // end lsst::pex::logging
 

@@ -2,9 +2,9 @@
 
 #define LSST_MAX_TRACE 5                // the maximum trace level that'll be compiled in
 
-#include "lsst/mwi/utils/Trace.h"
+#include "lsst/pex/logging/Trace.h"
 
-using namespace lsst::mwi::utils;
+using namespace lsst::pex::logging;
 
 namespace {
 void work() {

@@ -1,15 +1,15 @@
 // -*- lsst-c++ -*-
 /** \file    Trace.h
   *
-  * \ingroup mwi
+  * \ingroup pex
   *
   * \brief  Class providing basic run-time trace facilities.
   *
   * \author Robert Lupton, Princeton University
   */
 
-#if !defined(LSST_MWI_UTILS_TRACE_H)        //!< multiple inclusion guard macro
-#define LSST_MWI_UTILS_TRACE_H 1
+#if !defined(LSST_PEX_UTILS_TRACE_H)        //!< multiple inclusion guard macro
+#define LSST_PEX_UTILS_TRACE_H 1
 
 #include <iostream>
 #include <string>
@@ -17,11 +17,11 @@
 #include <cstdarg>
 #include <boost/format.hpp>
 
-#include "lsst/mwi/utils/Utils.h"
+#include "lsst/pex/logging/Trace.h"
 
 namespace lsst {
-namespace mwi {
-namespace utils {
+namespace pex {
+namespace logging {
 
 #if !defined(LSST_NO_TRACE)
 #  define LSST_NO_TRACE 0               //!< True => turn off all tracing
@@ -201,7 +201,7 @@ void TTrace(const std::string& name,      //!< Name of component
 }
        
 
-} // namespace utils
-} // namespace mwi
+} // namespace logging
+} // namespace pex
 } // namespace lsst
 #endif

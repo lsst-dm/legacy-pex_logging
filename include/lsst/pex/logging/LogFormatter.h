@@ -1,22 +1,22 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_LOGFORMATTER_H
-#define LSST_MWI_LOGFORMATTER_H
+#ifndef LSST_PEX_LOGFORMATTER_H
+#define LSST_PEX_LOGFORMATTER_H
 
 #include <string>
 #include <ostream>
 
-#include "lsst/mwi/data/DataProperty.h"
+#include "lsst/daf/base/DataProperty.h"
 #include "boost/any.hpp"
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 // forward declaration
 class LogRecord;
-class lsst::mwi::data::DataProperty;
+class lsst::daf::base::DataProperty;
 
-using lsst::mwi::data::DataProperty;
+using lsst::daf::base::DataProperty;
 using std::string;
 using std::ostream;
 
@@ -240,6 +240,6 @@ private:
     string _midfix;
 };
 
-}}}     // end lsst::mwi::logging
+}}}     // end lsst::pex::logging
 
-#endif  // end LSST_MWI_LOGFORMATTER_H
+#endif  // end LSST_PEX_LOGFORMATTER_H

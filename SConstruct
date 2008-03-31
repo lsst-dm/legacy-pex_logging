@@ -11,10 +11,12 @@ env = scons.makeEnv("mwi",
                      ["boost", "boost/regex.hpp", "boost_regex:C++"],
                      ["boost", "boost/serialization/serialization.hpp", "boost_serialization:C++"],
                      ["python", "Python.h"],
-                     ["jaula", "jaula/jaula_parse.h", "jaula:C++"],
-                     ["seal",  "SealBase/config.h", "lcg_SealBase lcg_SealKernel lcg_PluginManager:C++" ],
-                     ["coral", "RelationalAccess/ConnectionService.h", "lcg_CoralBase lcg_RelationalService:C++"],
-                     ["mysqlclient", "mysql/mysql.h", "mysqlclient_r:C"]
+                     ["utils", "lsst/utils/Utils.h", "utils:C++"],
+                     ["daf_base", "lsst/daf/base/DataProperty.h", "daf_base:C++"],
+                     #["jaula", "jaula/jaula_parse.h", "jaula:C++"],
+                     #["seal",  "SealBase/config.h", "lcg_SealBase lcg_SealKernel lcg_PluginManager:C++" ],
+                     #["coral", "RelationalAccess/ConnectionService.h", "lcg_CoralBase lcg_RelationalService:C++"],
+                     #["mysqlclient", "mysql/mysql.h", "mysqlclient_r:C"]
                     ])
 
 #
@@ -29,7 +31,7 @@ if not re.search(r"LSST_HAVE_TR1", str(env['CCFLAGS'])):
 #
 # Build/install things
 #
-for d in Split("examples include/lsst/mwi/exceptions lib tests python/lsst/mwi doc"):
+for d in Split("examples lib tests python/lsst/pex/logging doc"):
     SConscript(os.path.join(d, "SConscript"))
 
 env['IgnoreFiles'] = r"(~$|\.pyc$|^\.svn$|\.o$)"
@@ -52,6 +54,6 @@ if files:
 
 env.Declare()
 env.Help("""
-LSST FrameWork packages
+LSST Trace and Logging packages
 """)
 

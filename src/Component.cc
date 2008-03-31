@@ -12,10 +12,10 @@
 #include <map>
 #include <boost/tokenizer.hpp>
 
-#include "lsst/mwi/utils/Trace.h"
-#include "lsst/mwi/utils/Component.h"
+#include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/Component.h"
 
-using namespace lsst::mwi::utils;
+using namespace lsst::pex::logging;
 
 /*****************************************************************************/
 /** Initialize the component structure.

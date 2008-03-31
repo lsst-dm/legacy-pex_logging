@@ -5,9 +5,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "lsst/mwi/logging/LogDestination.h"
-#include "lsst/mwi/logging/LogRecord.h"
-#include "lsst/mwi/utils/Trace.h"
+#include "lsst/pex/logging/LogDestination.h"
+#include "lsst/pex/logging/LogRecord.h"
+#include "lsst/pex/logging/Trace.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
@@ -16,12 +16,12 @@ using namespace std;
 
 // #define EXEC_TRACE  20
 // static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::mwi::utils::Trace( "mwi.logging.LogDestination", level, s );
+//     lsst::pex::logging::Trace( "pex.logging.LogDestination", level, s );
 // }
 
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using boost::shared_ptr;
@@ -84,5 +84,5 @@ bool LogDestination::write(const LogRecord& rec) {
     return false;
 }
 
-}}} // end lsst::mwi::logging
+}}} // end lsst::pex::logging
 

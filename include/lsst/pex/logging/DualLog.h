@@ -1,18 +1,18 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_DUALLOG_H
-#define LSST_MWI_DUALLOG_H
+#ifndef LSST_PEX_DUALLOG_H
+#define LSST_PEX_DUALLOG_H
 
-#include "lsst/mwi/logging/ScreenLog.h"
+#include "lsst/pex/logging/ScreenLog.h"
 
 #include <fstream>
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::vector;
 using boost::shared_ptr;
-using lsst::mwi::data::DataProperty;
+using lsst::daf::base::DataProperty;
 using std::ofstream;
 
 /**
@@ -109,6 +109,6 @@ private:
     ofstream *fstrm;
 };
 
-}}}     // end lsst::mwi::logging
+}}}     // end lsst::pex::logging
 
-#endif  // end LSST_MWI_DUALLOG_H
+#endif  // end LSST_PEX_DUALLOG_H

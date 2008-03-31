@@ -1,25 +1,25 @@
 // -*- lsst-c++ -*-
-#ifndef LSST_MWI_LOG_H
-#define LSST_MWI_LOG_H
+#ifndef LSST_PEX_LOG_H
+#define LSST_PEX_LOG_H
 
-#include "lsst/mwi/logging/LogRecord.h"
-#include "lsst/mwi/logging/LogDestination.h"
-#include "lsst/mwi/data/DataProperty.h"
-#include "lsst/mwi/utils/Component.h"
+#include "lsst/daf/base/DataProperty.h"
+#include "lsst/pex/logging/LogRecord.h"
+#include "lsst/pex/logging/LogDestination.h"
+#include "lsst/pex/logging/Component.h"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
 namespace lsst {
-namespace mwi {
+namespace pex {
 namespace logging {
 
 using std::string;
 using std::list;
 using std::ostream;
 using boost::shared_ptr;
-using lsst::mwi::data::DataProperty;
-using lsst::mwi::utils::Component;
+using lsst::daf::base::DataProperty;
+using lsst::pex::logging::Component;
 
 /**
  * @brief a place to record messages and descriptions of the state of 
@@ -103,7 +103,7 @@ using lsst::mwi::utils::Component;
  * For more complex messages that might include named properties, it is usually
  * more convenient to use the streaming method:
  * 
- *     using lsst::mwi::logging::Rec;
+ *     using lsst::pex::logging::Rec;
  *     Rec(mylog, Log::DEBUG) << "Completed deconvolution"
  *                            << DataProperty("iterations", 541)
  *                            << DataProperty("rms", 0.0032)
@@ -588,6 +588,6 @@ public:
     }
 };
 
-}}}     // end lsst::mwi::logging
+}}}     // end lsst::pex::logging
 
-#endif  // end LSST_MWI_LOG_H
+#endif  // end LSST_PEX_LOG_H
