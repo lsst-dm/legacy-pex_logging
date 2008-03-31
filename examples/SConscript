@@ -11,4 +11,4 @@ import lsst.tests
 tests = lsst.tests.Control(env, verbose=True)
 
 if tests.runExamples:
-    tests.run("Trace.cc")
+    tests.run("*.cc")
