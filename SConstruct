@@ -5,7 +5,7 @@
 import glob, os.path, re, os
 import lsst.SConsUtils as scons
 
-env = scons.makeEnv("mwi",
+env = scons.makeEnv("pex_logging",
                     r"$HeadURL$",
                     [["boost", "boost/version.hpp", "boost_filesystem:C++"],
                      ["boost", "boost/regex.hpp", "boost_regex:C++"],
@@ -13,10 +13,6 @@ env = scons.makeEnv("mwi",
                      ["python", "Python.h"],
                      ["utils", "lsst/utils/Utils.h", "utils:C++"],
                      ["daf_base", "lsst/daf/base/DataProperty.h", "daf_base:C++"],
-                     #["jaula", "jaula/jaula_parse.h", "jaula:C++"],
-                     #["seal",  "SealBase/config.h", "lcg_SealBase lcg_SealKernel lcg_PluginManager:C++" ],
-                     #["coral", "RelationalAccess/ConnectionService.h", "lcg_CoralBase lcg_RelationalService:C++"],
-                     #["mysqlclient", "mysql/mysql.h", "mysqlclient_r:C"]
                     ])
 
 #
