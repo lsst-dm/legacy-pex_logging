@@ -6,7 +6,7 @@ Access to the logging classes from the pex library
 %enddef
 
 %feature("autodoc", "1");
-%module(package="lsst.pex.logging", docstring=logging_DOCSTRING) logging
+%module(package="lsst.pex", docstring=logging_DOCSTRING) logging
 
 %{
 #   include <fstream>
@@ -41,7 +41,7 @@ using namespace lsst::pex::logging::Component;
 
 #define NO_SWIG_LSST_EXCEPTIONS
 %include "lsst/p_lsstSwig.i"
-#  %import  "data.i"
+%import  "lsst/daf/base/DataProperty.i"
 
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
