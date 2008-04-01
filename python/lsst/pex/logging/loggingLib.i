@@ -6,7 +6,7 @@ Access to the logging classes from the pex library
 %enddef
 
 %feature("autodoc", "1");
-%module(package="lsst.pex", docstring=logging_DOCSTRING) logging
+%module(package="lsst.pex.logging", docstring=logging_DOCSTRING) loggingLib
 
 %{
 #   include <fstream>
@@ -42,6 +42,7 @@ using namespace lsst::pex::logging::Component;
 #define NO_SWIG_LSST_EXCEPTIONS
 %include "lsst/p_lsstSwig.i"
 %import  "lsst/daf/base/DataProperty.i"
+%import  "lsst/utils/Utils.h"
 
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
@@ -134,6 +135,28 @@ LogRec.__lshift__ = _LogRec_extended__lshift__
 
 # finally put an instance of endr at the module level for convenience
 endr = LogRec.endr
+
+def version(HeadURL = r"$HeadURL$"):
+    """Return a version given a HeadURL string.  If a different version's setup, return that too"""
+
+    version_svn = guessSvnVersion(HeadURL)
+
+    try:
+        import eups
+    except ImportError:
+        return version_svn
+    else:
+        try:
+            version_eups = eups.setup("fw")
+        except AttributeError:
+            return version_svn
+
+    if version_eups == version_svn:
+        return version_svn
+    else:
+        return "%s (setup: %s)" % (version_svn, version_eups)
+
+
 
 %}
 

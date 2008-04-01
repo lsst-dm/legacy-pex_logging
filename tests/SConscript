@@ -23,4 +23,4 @@ env.Append(SWIGFLAGS=" -Ipython")
 
 for target in tests.run("*.py"):
     env.Depends(target,
-               "../python/lsst/pex/_logging%s" % (env['LDMODULESUFFIX']))
+               "../python/lsst/pex/logging/_loggingLib%s" % (env['LDMODULESUFFIX']))
