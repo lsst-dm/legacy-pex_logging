@@ -41,6 +41,10 @@ using namespace lsst::pex::logging::Component;
 
 #define NO_SWIG_LSST_EXCEPTIONS
 %include "lsst/p_lsstSwig.i"
+SWIG_SHARED_PTR(Persistable, lsst::daf::base::Persistable)
+SWIG_SHARED_PTR_DERIVED(DataProperty, lsst::daf::base::Persistable, lsst::daf::base::DataProperty)
+%import  "lsst/daf/base/Citizen.h"
+%import  "lsst/daf/base/Persistable.h"
 %import  "lsst/daf/base/DataProperty.i"
 %import  "lsst/utils/Utils.h"
 
