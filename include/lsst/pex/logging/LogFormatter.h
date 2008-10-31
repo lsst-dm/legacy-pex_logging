@@ -14,7 +14,6 @@ namespace logging {
 
 // forward declaration
 class LogRecord;
-class lsst::daf::base::DataProperty;
 
 using lsst::daf::base::DataProperty;
 using std::string;

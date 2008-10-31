@@ -17,7 +17,6 @@ namespace logging {
 using std::list;
 using std::string;
 using boost::shared_ptr;
-using boost::format;
 using lsst::daf::base::DataProperty;
 
 /**

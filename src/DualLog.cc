@@ -32,10 +32,6 @@ using boost::shared_ptr;
  * create a Log that will write messages to a given file
  * @param filename      the name of the file to send messages to.  It will 
  *                        be opened in append mode.
- * @param node          the logical node number for this process.  This is 
- *                        used to identify the current parallel process 
- *                        within a parallel, multi-process application.  
- *                        The default is 0.  
  * @param filethresh    the verbosity threshold to set for the log file
  * @param screenthresh  the verbosity threshold to set for messages going
  *                        to the screen.

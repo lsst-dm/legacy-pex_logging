@@ -260,7 +260,7 @@ void Log::log(int verbosity, const string& message,
  * send a message to the log
  * @param verbosity    how loud the message should be
  * @param message      a simple bit of text to send in the message
- * @param properties   a list of properties to include in the message.
+ * @param prop         a list of properties to include in the message.
  */
 void Log::log(int verbosity, const string& message, const DataProperty& prop) {
 
