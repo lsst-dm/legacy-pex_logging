@@ -131,25 +131,13 @@ LogRec.__lshift__ = _LogRec_extended__lshift__
 # finally put an instance of endr at the module level for convenience
 endr = LogRec.endr
 
-def version(HeadURL = r"$HeadURL$"):
-    """Return a version given a HeadURL string.  If a different version's setup, return that too"""
-
-    version_svn = lsst.utils.guessSvnVersion(HeadURL)
-
-    try:
-        import eups
-    except ImportError:
-        return version_svn
-    else:
-        try:
-            version_eups = eups.Eups().findSetupVersion("pex_logging")[0]
-        except AttributeError:
-            return version_svn
-
-    if version_eups == version_svn:
-        return version_svn
-    else:
-        return "%s (setup: %s)" % (version_svn, version_eups)
+def version():
+    """
+    Return the version of this product (extracted from an internal HeadURL string).
+    If a different version is setup according to eups, include it in the return string.
+    """
+    HeadURL = r"$HeadURL$"
+    return lsst.utils.version(HeadURL)
 %}
 
 %ignore Trace(const std::string&, const int, const std::string&, va_list ap);
