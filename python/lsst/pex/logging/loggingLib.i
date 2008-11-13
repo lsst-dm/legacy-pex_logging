@@ -45,6 +45,8 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %include "lsst/pex/logging/DualLog.h"
 
 %pythoncode %{
+import lsst.utils
+
 Log._swiglog_str = Log.log
 
 def _Log_log(self, verb, *args):
@@ -132,7 +134,7 @@ endr = LogRec.endr
 def version(HeadURL = r"$HeadURL$"):
     """Return a version given a HeadURL string.  If a different version's setup, return that too"""
 
-    version_svn = guessSvnVersion(HeadURL)
+    version_svn = lsst.utils.guessSvnVersion(HeadURL)
 
     try:
         import eups
@@ -140,7 +142,7 @@ def version(HeadURL = r"$HeadURL$"):
         return version_svn
     else:
         try:
-            version_eups = eups.setup("fw")
+            version_eups = eups.Eups().findSetupVersion("pex_logging")[0]
         except AttributeError:
             return version_svn
 
