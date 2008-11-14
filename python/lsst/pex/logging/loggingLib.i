@@ -9,47 +9,43 @@ Access to the logging classes from the pex library
 %module(package="lsst.pex.logging", docstring=logging_DOCSTRING) loggingLib
 
 %{
-#   include <fstream>
-#   include <exception>
-#   include <map>
-#   include <boost/shared_ptr.hpp>
-#   include <boost/any.hpp>
-#   include "lsst/utils/Demangle.h"
-#   include "lsst/pex/logging/Trace.h"
-#   include "lsst/utils/Utils.h"
-#include "lsst/pex/logging/Component.h"
-#include "lsst/pex/logging/LogRecord.h"
+// #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
 %}
 
 %inline %{
-namespace lsst { namespace utils { } } 
-namespace lsst { namespace daf { namespace base { } } }
-namespace lsst { namespace pex { namespace logging { } } }
-namespace lsst { namespace pex { namespace logging { namespace Component { } } } }
-    
-using namespace lsst;
-using namespace lsst::utils;
-using namespace lsst::daf::base;
-using namespace lsst::pex::logging;
-using namespace lsst::pex::logging::Component;
+using std::list;
+using std::vector;
+using boost::shared_ptr;
 %}
 
-%init %{
-%}
-
+// Logging classes do not throw any of the standard LSST exceptions,
+// so disable the associated SWIG exception handling machinery.
 #define NO_SWIG_LSST_EXCEPTIONS
-%include "lsst/p_lsstSwig.i"
-%import  "lsst/daf/base/DataProperty.i"
-%import  "lsst/utils/Utils.h"
 
+%include "lsst/p_lsstSwig.i"
+
+%import  "lsst/daf/base/baseLib.i"      // for DataProperty
+
+// SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
+SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
+SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::BriefFormatter)
+SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
+SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
+
+%include "lsst/pex/logging/LogRecord.h"
+%include "lsst/pex/logging/LogFormatter.h"
+%include "lsst/pex/logging/LogDestination.h"
+
+%ignore lsst::pex::logging::LogFormatter::writeDPValue;
+%include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
 
 %pythoncode %{
-from lsst.daf.base import DataProperty
+import lsst.utils
 
 Log._swiglog_str = Log.log
 
@@ -59,12 +55,11 @@ def _Log_log(self, verb, *args):
     """
     rec = LogRec(self, verb)
     for prop in args:
-        if isinstance(prop,str) or isinstance(prop, DataProperty):
+        if isinstance(prop,str) or isinstance(prop, lsst.daf.base.DataProperty):
             rec << prop
 
     rec << endr    # sends result
     return self
-
 
 # add registration methods
 def _Log_registerLogRec(self, logrec):
@@ -136,36 +131,16 @@ LogRec.__lshift__ = _LogRec_extended__lshift__
 # finally put an instance of endr at the module level for convenience
 endr = LogRec.endr
 
-def version(HeadURL = r"$HeadURL$"):
-    """Return a version given a HeadURL string.  If a different version's setup, return that too"""
-
-    version_svn = guessSvnVersion(HeadURL)
-
-    try:
-        import eups
-    except ImportError:
-        return version_svn
-    else:
-        try:
-            version_eups = eups.setup("fw")
-        except AttributeError:
-            return version_svn
-
-    if version_eups == version_svn:
-        return version_svn
-    else:
-        return "%s (setup: %s)" % (version_svn, version_eups)
-
-
-
+def version():
+    """
+    Return the version of this product (extracted from an internal HeadURL string).
+    If a different version is setup according to eups, include it in the return string.
+    """
+    HeadURL = r"$HeadURL$"
+    return lsst.utils.version(HeadURL)
 %}
 
-/******************************************************************************/// Trace
 %ignore Trace(const std::string&, const int, const std::string&, va_list ap);
+
 %include "lsst/pex/logging/Trace.h"
 
-/******************************************************************************/
-/******************************************************************************/
-// Local Variables: ***
-// eval: (setq indent-tabs-mode nil) ***
-// End: ***

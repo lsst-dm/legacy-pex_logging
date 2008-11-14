@@ -13,7 +13,6 @@ namespace logging {
 using std::vector;
 using boost::shared_ptr;
 using lsst::daf::base::DataProperty;
-using std::ofstream;
 
 /**
  * @brief a Log that sends message to both the screen and a file. 
@@ -106,7 +105,7 @@ private:
     void setPreamble(int node);
 
     LogDestination *_file;
-    ofstream *fstrm;
+    std::ofstream *fstrm;
 };
 
 }}}     // end lsst::pex::logging

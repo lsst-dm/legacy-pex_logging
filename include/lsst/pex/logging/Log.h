@@ -19,7 +19,6 @@ using std::list;
 using std::ostream;
 using boost::shared_ptr;
 using lsst::daf::base::DataProperty;
-using lsst::pex::logging::Component;
 
 /**
  * @brief a place to record messages and descriptions of the state of 
@@ -324,7 +323,7 @@ public:
      * send a message to the log
      * @param verbosity    how loud the message should be
      * @param message      a simple bit of text to send in the message
-     * @param property     a property to include in the message.
+     * @param prop         a property to include in the message.
      */
     void log(int verbosity, const string& message, const DataProperty& prop);
 

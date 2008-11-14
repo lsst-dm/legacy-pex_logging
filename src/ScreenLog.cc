@@ -90,9 +90,9 @@ ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
  *                         ("LOG") giving the Log name.  
  */
 void ScreenLog::createDefaultLog(bool verbose, int threshold, 
-                                 const vector<shared_ptr<DataProperty> > *pream)
+                                 const vector<shared_ptr<DataProperty> > *preamble)
 {
-    Log::setDefaultLog(new ScreenLog(verbose, threshold, pream));
+    Log::setDefaultLog(new ScreenLog(verbose, threshold, preamble));
 }
 
 

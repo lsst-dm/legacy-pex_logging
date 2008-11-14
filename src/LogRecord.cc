@@ -12,8 +12,6 @@
 #include <boost/shared_ptr.hpp>
 #include <stdexcept>
 
-using std::string;
-
 // #define EXEC_TRACE  20
 // static void execTrace( string s, int level = EXEC_TRACE ){
 //     lsst::pex::logging::Trace( "pex.logging.LogFormatter", level, s );
@@ -23,9 +21,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::vector;
-using lsst::daf::base::DataProperty;
-using boost::shared_ptr;
+using boost::format;
 
 /**
  * Create a log record to be sent to a given log.  
