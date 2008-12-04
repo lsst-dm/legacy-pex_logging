@@ -3,13 +3,13 @@ Import('env')
 import os
 
 env.SharedLibrary('pex_logging', map(lambda str: "../src/" + str,
-                            ["Component.cc",
-                             "Trace.cc",
-                             "Log.cc",
-                             "LogRecord.cc",
-                             "LogFormatter.cc",
-                             "LogDestination.cc",
-                             "DualLog.cc",
-                             "ScreenLog.cc"
-                            ]), LIBS=env.getlibs("boost utils daf_base"))
+                            ["LogRecord.cc"
+#                             "Component.cc",
+#                             "Trace.cc",
+#                             "Log.cc",
+#                             "LogFormatter.cc",
+#                             "LogDestination.cc",
+#                             "DualLog.cc",
+#                             "ScreenLog.cc"
+                            ]), LIBS=env.getlibs("boost utils daf_base pex_exceptions"))
 

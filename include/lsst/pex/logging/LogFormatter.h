@@ -5,7 +5,8 @@
 #include <string>
 #include <ostream>
 
-#include "lsst/daf/base/DataProperty.h"
+#include "lsst/daf/base/PropertySet.h"
+#include "lsst/pex/logging/TypeInfoLess.h"
 #include "boost/any.hpp"
 
 namespace lsst {
@@ -15,7 +16,7 @@ namespace logging {
 // forward declaration
 class LogRecord;
 
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 using std::string;
 using std::ostream;
 
@@ -28,18 +29,20 @@ using std::ostream;
  * expect certain properties to be given specific names.  The following are 
  * standard names:
  *
- *   Name      type     meaning 
- *    LOG      string   the name of the Log producing the message
- *    COMMENT  string   a simple text message
- *    DATE     string   the timestamp when the message was recorded in ISO 
- *                         format
- *    HOST     string   the hostname of the machine
- *    IP       string   the IP address of the host
- *    PID      int      the process id of the application 
- *    NODE     int      a logical node id in a multi-process application
+ *   Name        type      meaning 
+ *    LOG        string    the name of the Log producing the message
+ *    COMMENT    string    a simple text message
+ *    TIMESTAMP  DateTime  the timestamp when the message was recorded
+ *    DATE       string    the value of TIMESTAMP in ISO format
+ *    HOST       string    the hostname of the machine
+ *    IP         string    the IP address of the host
+ *    PID        int       the process id of the application 
+ *    NODE       int       a logical node id in a multi-process application
  * 
  * Only LOG is guaranteed to appear.  There may be multiple COMMENT properties,
- * each with a complete thought.  
+ * each with a complete thought.  All other standard names should only have
+ * one value associated with it.  If there are multiple values, only the last
+ * one should be considered valid.  
  */
 class LogFormatter {
 public:
@@ -71,17 +74,6 @@ public:
      * @param rec    the record to write
      */
     virtual void write(ostream *strm, const LogRecord &rec) = 0;
-
-    /**
-     * a helper function for writing DataProperty values to a stream.  
-     * Currently this will only handle primitive values of types int, long,
-     * float, double, bool, and string.  
-     * @param strm   the stream to write to 
-     * @param value  the property value as a boost::any pointer.  
-     * @return bool  false if the DataProperty value was of an unrecognized 
-     *                 type.  
-     */
-    static bool writeDPValue(ostream& strm, const boost::any &value);
 
 };
 
@@ -145,19 +137,6 @@ public:
      */
     virtual void write(ostream *strm, const LogRecord& rec);
 
-    /**
-     * write out a data property to a stream
-     * @param strm   a pointer to the output stream.  The caller is 
-     *                 consider the owner of the stream.
-     * @param prop   a pointer to the data property to write.  The caller is 
-     *                 consider the owner of the property object.
-     * @param namePrefix  the name of the parent prefix to prepend to the name
-     *               of this data property.
-     */
-    void write(ostream *strm, const DataProperty *prop, 
-               const string& namePrefix=0);
-
-
 private:
     virtual void _write(ostream *strm, const LogRecord& rec);
 
@@ -180,15 +159,16 @@ public:
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
      */
-    explicit NetLoggerFormatter(const string& nameSep = defaultSep,
-                                const string& valueDelim = defaultValDelim);
+    explicit NetLoggerFormatter(const string& valueDelim = defaultValDelim);
 
     /**
      * create a copy
      */
     NetLoggerFormatter(const NetLoggerFormatter& that) 
-        : LogFormatter(that), _sep(that._sep), _midfix(that._midfix)
-    { }
+        : LogFormatter(that), _tplookup(), _midfix(that._midfix)
+    { 
+        loadTypeLookup();
+    }
 
     /**
      * delete the formatter
@@ -207,34 +187,19 @@ public:
     const string& getValueDelimiter() const { return _midfix; }
 
     /**
-     * return the string used to separate fields in a hierarchical 
-     * property name on the output stream.
-     */
-    const string& getNameSeparator() const { return _sep; }
-
-    /**
      * write out a log record to a stream
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
     virtual void write(ostream *strm, const LogRecord& rec);
 
-    /**
-     * write out a data property to a stream
-     * @param strm   a pointer to the output stream.  The caller is 
-     *                 consider the owner of the stream.
-     * @param prop   a pointer to the data property to write.  The caller is 
-     *                 consider the owner of the property object.
-     * @param namePrefix  the name of the parent prefix to prepend to the name
-     *               of this data property.
-     */
-    void write(ostream *strm, const DataProperty *prop, 
-               const string& namePrefix=0);
-
-    static const string defaultSep;
     static const string defaultValDelim;
 
 private:
+    typedef map<type_info, char, TypeInfoLess> TypeSymbolMap;
+    void loadTypeLookup();
+
+    TypeSymbolMap _tplookup;
     string _sep;
     string _midfix;
 };

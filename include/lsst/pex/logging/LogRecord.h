@@ -2,13 +2,17 @@
 #ifndef LSST_PEX_LOGRECORD_H
 #define LSST_PEX_LOGRECORD_H
 
-#include "lsst/daf/base/DataProperty.h"
+#include "lsst/daf/base/PropertySet.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
 #include <string>
 #include <sys/time.h>
 
+#define LSST_LP_COMMENT     "COMMENT"
+#define LSST_LP_TIMESTAMP   "TIMESTAMP"
+#define LSST_LP_DATE        "DATE"
+#define LSST_LP_LOG         "LOG"
 
 namespace lsst {
 namespace pex {
@@ -17,7 +21,39 @@ namespace logging {
 using std::list;
 using std::string;
 using boost::shared_ptr;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
+
+/**
+ * @brief a container for a named data property for a LogRecord
+ *
+ * This light-weight container is meant to facilitate adding an arbitrary 
+ * named data item to a LogRecord.  The value will be stored as a reference 
+ * to original item passed in; thus, this should be used only in the same
+ * scope as the arguments.
+ *
+ * This class is usually accessed by applications via RecData, a typedef
+ * defined in Log.h.  
+ */
+template <class T>
+class RecordProperty {
+public:
+    typedef T ValueType;
+
+    /**
+     * wrap a name and value.  The value will be stored as a reference to
+     * original item passed in; thus, this should be used only in the same
+     * scope as the arguments
+     */
+    RecordProperty(const string& pname, const T& value);
+
+    /**
+     * add the name-value pair to a PropertySet
+     */
+    void addTo(PropertySet& set) { set.add(*this); }
+
+    string name;
+    const T& value;
+};
 
 /**
  * @brief a container for constructing a single Log record
@@ -27,9 +63,6 @@ using lsst::daf::base::DataProperty;
  */
 class LogRecord {
 public:
-
-    typedef list<shared_ptr<DataProperty> > DataListT;
-    typedef DataListT::const_iterator DataIteratorT;
 
     /**
      * Create a log record to be sent to a given log.  The current time is 
@@ -54,7 +87,7 @@ public:
      *                     preamble of this message.  This should not include
      *                     the current time.  
      */
-    LogRecord(int threshold, int verbosity, const DataListT& preamble);
+    LogRecord(int threshold, int verbosity, const PropertySet& preamble);
 
     /**
      * create a copy of a record
@@ -79,48 +112,53 @@ public:
     }
 
     /**
-     * add a string comment to this message.  This will only happen if
-     * 
+     * add a string comment to this record.  The comment will get stored 
+     * in the data property under the key name, "COMMENT".  The comment will 
+     * only get added when willRecord() is returns true which is set when
+     * the record is constructed (usually by a Log object).  
      */
     void addComment(const string& comment) {
-        if (_send) 
-            _data.push_back(
-                shared_ptr<DataProperty>(new DataProperty("COMMENT", comment)));
+        if (_send) _data.add(LSST_LP_COMMENT, comment);
     }
 
     /**
-     * add a string comment to this message
+     * add a string comment to this record.  This version is provided 
+     * as a convenience and is equivalent to addComment(comment.str()).  
      */
     void addComment(const boost::format& comment) {
         if (_send) addComment(comment.str());
     }
 
     /**
-     * add a data property to this message
+     * attach a named item of data to this record.
      */
-    void addProperty(const DataProperty& prop) {
-        if (_send) 
-            _data.push_back(shared_ptr<DataProperty>(new DataProperty(prop)));
+    void addProperty(const RecordProperty& property) {
+        if (_send) property.addproperty.addTo(_data);
     }
 
     /**
-     * add a data property to this message
+     * return the read-only data properties that make up this log message.
      */
-    void addProperty(const shared_ptr<DataProperty> prop) {
-        if (_send) _data.push_back(prop);
-    }
+    const PropertySet& getData() const { return _data; }
 
     /**
-     * return the ordered list of data properties that make up this 
-     * log message.
+     * return the data properties that make up this log message.  
+     * This is a synonym for data().
      */
-    const DataListT& getData() const { return _data; }
+    PropertySet& getData() { return data(); }
 
     /**
-     * return the number of data properties currently contained in this 
-     * log record.
+     * return the data properties that make up this log message.  
+     * This is a synonym for getData().
      */
-    int getDataCount() const { return _data.size(); } 
+    PropertySet& data() { return _data; }
+
+    /**
+     * return the number of data property values currently contained in this 
+     * log record.  This function will sum the number values associated with 
+     * a name, summed over all available names (including subproperties).
+     */
+    size_t countDataItems() const;
 
     /**
      * return the verbosity level--a measure of "loudness"--associated with 
@@ -135,17 +173,44 @@ public:
      */
     bool willRecord() const { return _send; }
 
+    /**
+     * set the TIMESTAMP property to the current time.  The value is stored as 
+     * a lsst::daf::base::DateTime instance.  
+     * 
+     * This is called automatically in the constructor, but it can be reset 
+     * at any time.  If there is also a DATE property, it will be updated 
+     * as well (see setDate()). 
+     */  
+    void setTimestamp();
+
+    /**
+     * set the DATE property to the current value of the TIMESTAMP property.
+     * The value is a string representation of the TIMESTAMP property, 
+     * formatted for read-able display.
+     *
+     * Unlike setTimestamp(), this function is not called automatically within 
+     * the LogRecord constructor; thus, a user of this class must call it 
+     * explicitly to have this property.  
+     *
+     * This function is intended for use by a Log class that sets the value
+     * just before sending this record to the LogDestinations.
+     */
+    virtual void setFullDate();
+
 protected: 
     LogRecord() : _send(false), _vol(10), _data() { }
 
     /**
-     * set the current timestamp as the DATE property.
-     */  
-    void setDate();
+     * initialize this record with the DATE and LEVEL properties
+     */
+    void _init() {
+        _data.set("LEVEL", _vol);
+        setDate();
+    }
 
     bool _send;  // true if this record should be sent to the log
     int _vol;    // the verbosity volume of this message
-    DataListT _data;
+    PropertySet _data;
 };
 
 }}} // end lsst::pex::logging
