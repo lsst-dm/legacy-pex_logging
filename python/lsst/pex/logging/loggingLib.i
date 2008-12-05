@@ -12,7 +12,10 @@ Access to the logging classes from the pex library
 // #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
+#include "lsst/pex/exceptions.h"
 %}
+
+%include "lsst/p_lsstSwig.i"
 
 %inline %{
 using std::list;
@@ -20,13 +23,9 @@ using std::vector;
 using boost::shared_ptr;
 %}
 
-// Logging classes do not throw any of the standard LSST exceptions,
-// so disable the associated SWIG exception handling machinery.
-#define NO_SWIG_LSST_EXCEPTIONS
 
-%include "lsst/p_lsstSwig.i"
-
-%import  "lsst/daf/base/baseLib.i"      // for DataProperty
+%import  "lsst/daf/base/baseLib.i"                // for PropertySet
+%import  "lsst/pex/exceptions/exceptionsLib.i"    // for Exceptions
 
 // SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
 SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
@@ -37,12 +36,10 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
-
-%ignore lsst::pex::logging::LogFormatter::writeDPValue;
-%include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
+
 
 %pythoncode %{
 import lsst.utils
@@ -50,13 +47,15 @@ import lsst.utils
 Log._swiglog_str = Log.log
 
 def _Log_log(self, verb, *args):
-    """send any number of strings and DataProperties in a message to the
-    Log.  
+    """send any number of strings, PropertySets, or other properties 
+    in a message to the Log.  
     """
     rec = LogRec(self, verb)
     for prop in args:
-        if isinstance(prop,str) or isinstance(prop, lsst.daf.base.DataProperty):
+        if isinstance(prop,str):
             rec << prop
+        if isinstance(prop, lsst.daf.base.PropertySet):
+            rec.addProperties(prop)
 
     rec << endr    # sends result
     return self

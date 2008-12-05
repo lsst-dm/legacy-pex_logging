@@ -8,7 +8,6 @@ Run with:
 
 import lsst.utils.tests as tests
 import lsst.pex.logging as log
-from lsst.daf.base import DataProperty
 
 if __name__ == "__main__":
 
@@ -40,9 +39,9 @@ if __name__ == "__main__":
     tgclog.log(log.Log.INFO, "You go first")
 
     # test streaming
-    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << DataProperty("NODE", 5) << "& I can't get up" << log.endr;
-    tmp = DataProperty("NODE",5)
-    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << tmp << "& I can't get up" << log.endr;
+#    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << Prop("NODE", 5) << "& I can't get up" << log.endr;
+#    tmp = DataProperty("NODE",5)
+#    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << tmp << "& I can't get up" << log.endr;
 
     # test flushing on delete
     log.LogRec(tgclog, log.Log.FATAL) << "never mind"

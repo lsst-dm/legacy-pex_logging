@@ -5,7 +5,6 @@
   * \brief logExample.c demonstrates simple use of the Log facility.
   */
 
-#include "lsst/daf/base/DataProperty.h"
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/DualLog.h"
 #include <fstream>
@@ -13,7 +12,6 @@
 using namespace std;
 using namespace lsst::pex::logging;
 using namespace lsst;
-using lsst::daf::base::DataProperty;
 using lsst::pex::logging::Log;
 using lsst::pex::logging::Rec;
 
@@ -66,8 +64,8 @@ int main(int argc, char *argv[]) {
     // You can also send DataProperties to the log.  For this, use the LogRec
     // interface:
     Rec(child, Log::WARN) << "No convergence reached"
-                          << DataProperty("iterations", 541)
-                          << DataProperty("rms", 0.0032)
+                          << Prop<int>("iterations", 541)
+                          << Prop<float>("rms", 0.0032)
                           << Rec::endr;
 
     return 0;

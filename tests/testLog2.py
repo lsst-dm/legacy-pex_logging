@@ -8,7 +8,6 @@ Run with:
 
 import lsst.utils.tests as tests
 import lsst.pex.logging as log
-from lsst.daf.base import DataProperty
 
 if __name__ == "__main__":
 

@@ -1,5 +1,5 @@
 # -*- python -*-
 Import("env")
 
-env.CheckSwig("python", ilang="c++", includedProducts="utils daf_base")
+env.CheckSwig("python", ilang="c++", includedProducts="utils daf_base pex_exceptions")
 env.LoadableModuleIncomplete("_loggingLib", Split("loggingLib.i"), LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
