@@ -18,48 +18,85 @@ namespace logging {
 using std::vector;
 using std::ostream;
 using lsst::daf::base::PropertySet;
+using lsst::daf::base::DateTime;
+
+PrinterIter::~PrinterIter() { }
+
+WrappedPrinterIter::~WrappedPrinterIter() { }
+
+std::ostream& WrappedPrinterIter::write(std::ostream *strm) const {
+    _it.get()->write(strm);
+    return *strm;
+}
+
+PrinterIter& WrappedPrinterIter::operator++() { ++(*_it); return *_it; }
+PrinterIter& WrappedPrinterIter::operator--() { --(*_it); return *_it; }
+bool WrappedPrinterIter::operator==(const PrinterIter& that) const { 
+    return (*_it == that);
+}
+bool WrappedPrinterIter::operator!=(const PrinterIter& that) const { 
+    return (*_it == that);
+}
+bool WrappedPrinterIter::notAtEnd() const {
+    return _it.get()->notAtEnd();
+}
+bool WrappedPrinterIter::notLTBegin() const {
+    return _it.get()->notLTBegin();
+}
 
 DateTimePrinterIter::~DateTimePrinterIter() { }
 
-std::ostream DateTimePrinterIter::write(std::ostream *strm) const {
+std::ostream& DateTimePrinterIter::write(std::ostream *strm) const {
     (*strm) << _it->nsecs();
+    return *strm;
 }
 
 DateTimePrinterList::~DateTimePrinterList() { }
 
 DateTimePrinterList::iterator DateTimePrinterList::begin() const { 
-    PrinterIter *it = new DataTimePrinterIter(_list.begin(), 
-                                              _list.end(), _list.rend());
+    PrinterIter *it = new DateTimePrinterIter(_list.begin(), 
+                                              _list.begin(), _list.end());
     return iterator(boost::shared_ptr<PrinterIter>(it));
 }
-DateTimePrinterList::iterator DateTimePrinterList::rbegin() const { 
-    PrinterIter *it = new DataTimePrinterIter(_list.rbegin(), 
-                                              _list.end(), _list.rend());
+DateTimePrinterList::iterator DateTimePrinterList::last() const { 
+    PrinterIter *it = new DateTimePrinterIter(_list.end()-1, 
+                                              _list.begin(), _list.end());
     return iterator(boost::shared_ptr<PrinterIter>(it));
 }
 
-WrappedPrinterIter::~WrappedPrinterIter() { }
-
-std::ostream WrappedPrinterIter::write(std::ostream *strm) {
-    _it.get()->write(strm);
+PrinterList* makeDateTimePrinter(const PropertySet& prop, 
+                                 const std::string& name) 
+{
+    return new DateTimePrinterList(prop, name);
 }
 
-PrintIter& WrappedPrinterIter::operator++() { ++(_it.get()); }
-PrintIter& WrappedPrinterIter::operator--() { --(_it.get()); }
-bool WrappedPrinterIter::operator==(const PrinterIter& that) { 
-    return (*_it == that);
-}
-bool WrappedPrinterIter::operator!=(const PrinterIter& that) { 
-    return (*_it == that);
-}
-bool WrappedPrinterIter::notAtEnd() {
-    return _it.get()->notAtEnd();
-}
-bool WrappedPrinterIter::notAtRend() {
-    return _it.get()->notAtRend();
+BoolPrinterIter::~BoolPrinterIter() { }
+
+std::ostream& BoolPrinterIter::write(std::ostream *strm) const {
+    (*strm) << ((*_it) ? "true" : "false");
+    return *strm;
 }
 
-#define PF_ADD(T)  add(typeid(T), makePrinter<T>)
+BoolPrinterList::~BoolPrinterList() { }
+
+BoolPrinterList::iterator BoolPrinterList::begin() const { 
+    PrinterIter *it = new BoolPrinterIter(_list.begin(), 
+                                          _list.begin(), _list.end());
+    return iterator(boost::shared_ptr<PrinterIter>(it));
+}
+BoolPrinterList::iterator BoolPrinterList::last() const { 
+    PrinterIter *it = new BoolPrinterIter(_list.end()-1, 
+                                          _list.begin(), _list.end());
+    return iterator(boost::shared_ptr<PrinterIter>(it));
+}
+
+PrinterList* makeBoolPrinter(const PropertySet& prop, 
+                                 const std::string& name) 
+{
+    return new BoolPrinterList(prop, name);
+}
+
+#define PF_ADD(T)  add(typeid(T), &lsst::pex::logging::makePrinter<T>)
 
 void PrinterFactory::_loadDefaults() {
     PF_ADD(short);
@@ -68,12 +105,12 @@ void PrinterFactory::_loadDefaults() {
     PF_ADD(long long);
     PF_ADD(float);
     PF_ADD(double);
-    PF_ADD(bool);
     PF_ADD(char);
     PF_ADD(signed char);
     PF_ADD(unsigned char);
     PF_ADD(string);
-    PF_ADD(DateTime);
+    add(typeid(bool), makeBoolPrinter);
+    add(typeid(DateTime), makeDateTimePrinter);
 }
 
 PrinterFactory PropertyPrinter::defaultPrinterFactory(true);
@@ -83,8 +120,9 @@ PropertyPrinter::PropertyPrinter(const PropertySet& prop, const string& name,
     : _list(fact.makePrinter(prop, name)) 
 {
     if (_list.get() == 0) {
-        _list = new std::vector<string>();
-        _list.get()->push_back("<unprintable>");
+        PropertySet tmp;
+        tmp.set(name, "<unprintable>");
+        _list = boost::shared_ptr<PrinterList>(fact.makePrinter(tmp, name));
     }
 }
  
@@ -92,60 +130,9 @@ PropertyPrinter::iterator PropertyPrinter::begin() {
     return _list.get()->begin();
 }
 
-PropertyPrinter::iterator PropertyPrinter::rbegin() {
-    return _list.get()->rbegin();
+PropertyPrinter::iterator PropertyPrinter::last() {
+    return _list.get()->last();
 }
-
-
-
-
-PropertyPrinter::PropertyPrinter(const PropertySet& prop, const string& name) 
-    : _list(), _tp(prop.typeOf(name));
-{
-
-    if (tp == typeid(int)) {
-        _list = PrintList<int>(prop, name);
-    }
-    else if (tp == typeid(long long)) {
-        _list = PrintList<long long>(name);
-    }
-    else if (tp == typeid(long)) {
-        _list = PrintList<long>(name);
-    }
-    else if (tp == typeid(float)) {
-        _list = PrintList<float>(name);
-    }
-    else if (tp == typeid(double)) {
-        _list = PrintList<double>(name);
-    }
-    else if (tp == typeid(bool)) {
-        _list = PrintList<bool>(name);
-    }
-    else if (tp == typeid(string)) {
-        _list = PrintList<string>(name);
-    }
-    else if (tp == typeid(short)) {
-        _list = PrintList<short>(name);
-    }
-    else if (tp == typeid(long)) {
-        _list = PrintList<unsigned long>(name);
-    }
-    else if (tp == typeid(char)) {
-        _list = PrintList<char>(name);
-    }
-    else if (tp == typeid(signed char)) {
-        _list = PrintList<signed char>(name);
-    }
-    else if (tp == typeid(unsigned char)) {
-        _list = PrintList<unsigned char>(name);
-    }
-    else {
-        vector<string> standin(1);
-        standin.push_back("<unprintable>");
-        _list = standin;
-    }
-}
-
 
 
 }}} // end lsst::pex::logging

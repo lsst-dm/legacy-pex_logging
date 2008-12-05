@@ -18,9 +18,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::list;
 using std::string;
-using boost::shared_ptr;
 using lsst::daf::base::PropertySet;
 
 /**
@@ -44,15 +42,26 @@ public:
      * original item passed in; thus, this should be used only in the same
      * scope as the arguments
      */
-    RecordProperty(const string& pname, const T& value);
+    RecordProperty(const string& pname, const T& pvalue) 
+        : name(pname), value(pvalue) { }
 
     /**
      * add the name-value pair to a PropertySet
      */
-    void addTo(PropertySet& set) { set.add(*this); }
+    void addTo(PropertySet& set) { set.add(this->name, this->value); }
 
-    string name;
+    const string name;
     const T& value;
+};
+
+/*
+ * a shorthand version of the RecordProperty class
+ */
+template <class T>
+class Prop : public RecordProperty<T> { 
+public:
+    Prop(const string& pname, const T& value) 
+        : RecordProperty<T>(pname, value) { }
 };
 
 /**
@@ -93,8 +102,10 @@ public:
      * create a copy of a record
      */
     LogRecord(const LogRecord& that) 
-        : _send(that._send), _vol(that._vol), _data(that._data)
-    { }   
+        : _send(that._send), _vol(that._vol), _data()
+    { 
+        _data = that._data->deepCopy();
+    }   
 
     /**
      * delete this log record
@@ -118,7 +129,7 @@ public:
      * the record is constructed (usually by a Log object).  
      */
     void addComment(const string& comment) {
-        if (_send) _data.add(LSST_LP_COMMENT, comment);
+        if (_send) _data->add(LSST_LP_COMMENT, comment);
     }
 
     /**
@@ -132,33 +143,69 @@ public:
     /**
      * attach a named item of data to this record.
      */
-    void addProperty(const RecordProperty& property) {
-        if (_send) property.addproperty.addTo(_data);
+    template <class T>
+    void addProperty(const RecordProperty<T>& property);
+
+    /**
+     * attach a named item of data to this record.
+     */
+    template <class T>
+    void addProperty(const string& name, const T& val);
+
+    /**
+     * add all of the properties found in the given PropertySet.  
+     * This will make sure not to overwrite critical properties, 
+     * LEVEL, LOG, TIMESTAMP, and DATE.  
+     */
+    void addProperties(const PropertySet& props) {
+        PropertySet::Ptr temp(props.deepCopy());
+        if (temp->exists("LEVEL")) temp->remove("LEVEL");
+        if (temp->exists("LOG")) temp->remove("LOG");
+        if (temp->exists("TIMESTAMP")) temp->remove("TIMESTAMP");
+        if (temp->exists("DATE")) temp->remove("DATE");
+        data().combine(temp);
     }
 
     /**
      * return the read-only data properties that make up this log message.
+     * This is a synonym for data().
      */
-    const PropertySet& getData() const { return _data; }
+    const PropertySet& getProperties() const { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for data().
      */
-    PropertySet& getData() { return data(); }
+    PropertySet& getProperties() { return data(); }
 
     /**
      * return the data properties that make up this log message.  
-     * This is a synonym for getData().
+     * This is a synonym for getProperties().
      */
-    PropertySet& data() { return _data; }
+    const PropertySet& data() const { return *_data; }
 
     /**
-     * return the number of data property values currently contained in this 
-     * log record.  This function will sum the number values associated with 
-     * a name, summed over all available names (including subproperties).
+     * return the data properties that make up this log message.  
+     * This is a synonym for getProperties().
      */
-    size_t countDataItems() const;
+    PropertySet& data() { return *_data; }
+
+    /**
+     * return the number available property parameter names (i.e. ones 
+     * that return non-PropertySet values). 
+     */
+    size_t countParamNames() {
+        std::vector<string> names = data().paramNames(false);
+        return names.size();
+    }
+
+    /**
+     * return the total number of data property values currently contained 
+     * in this log record.  This function will sum the number values 
+     * associated with a name, summed over all available names (including 
+     * subproperties).  This total does not include PropertySet values.  
+     */
+    size_t countParamValues() const;
 
     /**
      * return the verbosity level--a measure of "loudness"--associated with 
@@ -195,23 +242,37 @@ public:
      * This function is intended for use by a Log class that sets the value
      * just before sending this record to the LogDestinations.
      */
-    virtual void setFullDate();
+    virtual void setDate();
 
 protected: 
-    LogRecord() : _send(false), _vol(10), _data() { }
+    LogRecord() : _send(false), _vol(10), _data(new PropertySet()) { }
 
     /**
      * initialize this record with the DATE and LEVEL properties
      */
     void _init() {
-        _data.set("LEVEL", _vol);
-        setDate();
+        if (_send) {
+            _data->set("LEVEL", _vol);
+            setTimestamp();
+        }
     }
 
     bool _send;  // true if this record should be sent to the log
     int _vol;    // the verbosity volume of this message
-    PropertySet _data;
+    PropertySet::Ptr _data;
 };
+
+template <class T>
+void LogRecord::addProperty(const RecordProperty<T>& property) {
+    if (_send) property.addTo(_data);
+}
+
+template <class T>
+void LogRecord::addProperty(const string& name, const T& val) {
+    if (_send) data().add(name, val);
+}
+
+
 
 }}} // end lsst::pex::logging
 

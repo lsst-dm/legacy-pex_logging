@@ -7,6 +7,8 @@
 
 #include "lsst/pex/logging/LogFormatter.h"
 #include "lsst/pex/logging/LogRecord.h"
+#include "lsst/pex/logging/PropertyPrinter.h"
+#include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/PropertySet.h"
 
 #include <boost/shared_ptr.hpp>
@@ -59,22 +61,24 @@ void BriefFormatter::_write(ostream *strm, const LogRecord& rec) {
     std::vector<std::string>::iterator vi;
 
     try { 
-        log = rec.data().getArray(LSST_LP_LOG);
+        log = rec.data().get<string>(LSST_LP_LOG);
     } catch (boost::bad_any_cast ex) {
         log = "mis-specified_log_name";
+    } catch (pex::exceptions::NotFoundException ex) {
+        log = "";
     }
     try {
-        comments = rec.data().getArray(LSST_LP_COMMENT);
+        comments = rec.data().getArray<string>(LSST_LP_COMMENT);
     } catch (boost::bad_any_cast ex) { 
         comments.push_back("(mis-specified_comment)");
-    }
+    } catch (pex::exceptions::NotFoundException ex) { } 
 
-    log += ": ";
+    if (log.length() > 0) log += ": ";
     for(vi = comments.begin(); vi != comments.end(); ++vi) {
         (*strm) << log << *vi << endl;
     }
 
-    if (_doall) {
+    if (isVerbose()) {
         std::vector<std::string> names = rec.data().paramNames(false);
         for(vi = names.begin(); vi != names.end(); ++vi) {
             if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG)
@@ -82,8 +86,8 @@ void BriefFormatter::_write(ostream *strm, const LogRecord& rec) {
 
             PropertyPrinter pp(rec.data(), *vi);
             for(PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
-                strm << "  " << *vi << ": ";
-                pi.write(&strm) << endl;
+                (*strm) << "  " << *vi << ": ";
+                pi.write(strm) << endl;
             }
         }
     }
@@ -93,11 +97,9 @@ void BriefFormatter::_write(ostream *strm, const LogRecord& rec) {
 //  NetLoggerFormatter
 ///////////////////////////////////////////////////////////
 
-const string NetLoggerFormatter::defaultSep(".");
 const string NetLoggerFormatter::defaultValDelim(": ");
 
-NetLoggerFormatter::NetLoggerFormatter(const string& nameSep,
-                                       const string& valueDelim) 
+NetLoggerFormatter::NetLoggerFormatter(const string& valueDelim) 
     : LogFormatter(), _tplookup(), _midfix(valueDelim)
 { 
     loadTypeLookup();
@@ -105,18 +107,18 @@ NetLoggerFormatter::NetLoggerFormatter(const string& nameSep,
 
 NetLoggerFormatter::~NetLoggerFormatter() { } 
 
-#define LSST_TL_ADD(T,C) _tplookup[typeid(T)] = 'C'
+#define LSST_TL_ADD(T, C) _tplookup[typeid(T).name()] = C
 
 void NetLoggerFormatter::loadTypeLookup() {
-    LSST_TL_ADD(int, i);
-    LSST_TL_ADD(long, l);
-    LSST_TL_ADD(long long, L);
-    LSST_TL_ADD(char, c);
-    LSST_TL_ADD(string, s);
-    LSST_TL_ADD(DateTime, L);
-    LSST_TL_ADD(float, f);
-    LSST_TL_ADD(double, d);
-    LSST_TL_ADD(bool, b);
+    LSST_TL_ADD(int, 'i');
+    LSST_TL_ADD(long, 'l');
+    LSST_TL_ADD(long long, 'L');
+    LSST_TL_ADD(char, 'c');
+    LSST_TL_ADD(std::string, 's');
+    LSST_TL_ADD(DateTime, 'L');
+    LSST_TL_ADD(float, 'f');
+    LSST_TL_ADD(double, 'd');
+    LSST_TL_ADD(bool, 'b');
 }
 
 /**
@@ -142,12 +144,16 @@ void NetLoggerFormatter::write(ostream *strm, const LogRecord& rec) {
 
     std::vector<std::string> names = rec.data().paramNames(false);
     for(vi = names.begin(); vi != names.end(); ++vi) {
-        char tp = _tplookup[rec.data().typeOf(*vi)];
-        if (tp == 0) tp = '?';
+        char tp = _tplookup[rec.data().typeOf(*vi).name()];
+        if (*vi == "DATE") 
+            tp = 't';
+        else if (tp == 0) 
+            tp = '?';
+        
 
         PropertyPrinter pp(rec.data(), *vi);
         for(PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
-            strm << tp << "  " << *vi << _midfix;
+            (*strm) << tp << " " << *vi << _midfix;
             pi.write(strm) << newl;
             if (!wrote) wrote = true;
         }

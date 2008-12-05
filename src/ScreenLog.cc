@@ -41,14 +41,30 @@ using boost::shared_ptr;
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
  */
-ScreenLog::ScreenLog(bool verbose, int threshold, 
-                     const vector<shared_ptr<DataProperty> > *preamble) 
+ScreenLog::ScreenLog(const PropertySet& preamble, bool verbose, int threshold) 
     : Log(threshold), _screen(0), _screenFrmtr(0)
 {
     configure(verbose);
-    if (preamble != 0) 
-        _preamble.insert(_preamble.end(), 
-                         preamble->begin(), preamble->end());
+    _preamble->combine(preamble.deepCopy());
+}
+
+/**
+ * create a Log that will write messages to a given file
+ * @param threshold     the verbosity threshold to set for messages going
+ *                        to the screen.
+ * @param verbose     if true, all message data properties will be printed
+ *                        to the screen.  If false, only the Log name 
+ *                        ("LOG") and the text comment ("COMMENT") will be
+ *                        printed.
+ * @param preamble       a list of data properties that should be included 
+ *                         with every recorded message to the Log.  This
+ *                         constructor will automatically add a property 
+ *                         ("LOG") giving the Log name.  
+ */
+ScreenLog::ScreenLog(bool verbose, int threshold) 
+    : Log(threshold), _screen(0), _screenFrmtr(0)
+{
+    configure(verbose);
 }
 
 void ScreenLog::configure(bool verbose) {
@@ -78,21 +94,38 @@ ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
 
 /**
  * create a new log and set it as the default Log
+ * @param preamble       a list of data properties that should be included 
+ *                         with every recorded message to the Log.  This
+ *                         constructor will automatically add a property 
+ *                         ("LOG") giving the Log name.  
  * @param threshold     the verbosity threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
  *                        ("LOG") and the text comment ("COMMENT") will be
  *                        printed.
+ */
+void ScreenLog::createDefaultLog(const PropertySet& preamble, 
+                                 bool verbose, int threshold)
+{
+    Log::setDefaultLog(new ScreenLog(preamble, verbose, threshold));
+}
+
+/**
+ * create a new log and set it as the default Log
  * @param preamble       a list of data properties that should be included 
  *                         with every recorded message to the Log.  This
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
+ * @param threshold     the verbosity threshold to set for messages going
+ *                        to the screen.
+ * @param verbose     if true, all message data properties will be printed
+ *                        to the screen.  If false, only the Log name 
+ *                        ("LOG") and the text comment ("COMMENT") will be
+ *                        printed.
  */
-void ScreenLog::createDefaultLog(bool verbose, int threshold, 
-                                 const vector<shared_ptr<DataProperty> > *preamble)
-{
-    Log::setDefaultLog(new ScreenLog(verbose, threshold, preamble));
+void ScreenLog::createDefaultLog(bool verbose, int threshold) {
+    Log::setDefaultLog(new ScreenLog(verbose, threshold));
 }
 
 

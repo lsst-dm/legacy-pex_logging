@@ -75,7 +75,7 @@ const int Log::INHERIT_THRESHOLD = Component::INHERIT_VERBOSITY;
  */
 Log::Log(const int threshold, const string& name) 
     : _threshold(threshold), _name(name), _thresholds(new Component("", INFO)), 
-      _destinations(), _preamble()
+      _destinations(), _preamble(new PropertySet())
 {
     completePreamble();
 }
@@ -101,11 +101,11 @@ Log::Log(const int threshold, const string& name)
  *                         will override this one.)
  */
 Log::Log(const list<shared_ptr<LogDestination> > &destinations, 
-         const list<shared_ptr<DataProperty> > &preamble,
+         const PropertySet &preamble,
          const string &name, const int threshold)
     : _threshold(threshold), _name(name), 
       _thresholds(new Component(name, threshold)), 
-      _destinations(destinations), _preamble(preamble)
+      _destinations(destinations), _preamble(preamble.deepCopy())
 {  
     completePreamble();
 }
@@ -116,7 +116,7 @@ Log::Log(const list<shared_ptr<LogDestination> > &destinations,
 Log::Log(const Log& that) 
     : _threshold(that._threshold), _name(that._name), 
       _thresholds(that._thresholds),
-      _destinations(that._destinations), _preamble(that._preamble)
+      _destinations(that._destinations), _preamble(that._preamble->deepCopy())
 { }
 
 /** 
@@ -132,30 +132,12 @@ Log& Log::operator=(const Log& that) {
     _name = that._name;
     _thresholds = that._thresholds;
     _destinations = that._destinations;
-    _preamble = that._preamble;
+    _preamble = that._preamble->deepCopy();
     return *this;
 }
 
 void Log::completePreamble() {
-    shared_ptr<DataProperty> nameprop(new DataProperty("LOG", _name));
-
-    LogRecord::DataListT::iterator i;
-    for(i = _preamble.begin(); i != _preamble.end(); i++) {
-        if ((*i)->getName() == "LOG") {
-            *i = nameprop;
-            return;
-        }
-    }
-    _preamble.push_back( nameprop );
-}
-
-/**
- * set a DataProperty to the preamble, overwriting any DataProperty with 
- * the same name.
- */
-void Log::setPreambleProperty(const DataProperty& dp) {
-    _preamble.remove_if(DataPropertyNameEquals(dp.getName())); 
-    addPreambleProperty(dp);
+    _preamble->set<string>("LOG", _name);
 }
 
 /**
@@ -173,7 +155,7 @@ void Log::setPreambleProperty(const DataProperty& dp) {
 Log::Log(const Log& parent, const string& childName, int threshold)
     : _threshold(threshold), _name(parent.getName()), 
       _thresholds(parent._thresholds), _destinations(parent._destinations), 
-      _preamble(parent._preamble)
+      _preamble(parent._preamble)  // Note: share preamble with parent
 { 
     if (_name.length() > 0) _name += _sep;
     _name += childName;
@@ -240,36 +222,14 @@ Log *Log::createChildLog(const string& childName, int threshold) const {
  * @param properties   a list of properties to include in the message.
  */
 void Log::log(int verbosity, const string& message, 
-              const list<shared_ptr<DataProperty> >& properties) 
+              const PropertySet& properties) 
 {
     int threshold = getThreshold();
     if (verbosity < threshold)
         return;
-    LogRecord rec(threshold, verbosity, _preamble);
+    LogRecord rec(threshold, verbosity, *_preamble);
     rec.addComment(message);
-    for(LogRecord::DataIteratorT i=properties.begin(); 
-        i != properties.end();
-        i++)
-    {
-        rec.addProperty(*i);
-    }
-    send(rec);
-}
-
-/**
- * send a message to the log
- * @param verbosity    how loud the message should be
- * @param message      a simple bit of text to send in the message
- * @param prop         a list of properties to include in the message.
- */
-void Log::log(int verbosity, const string& message, const DataProperty& prop) {
-
-    int threshold = getThreshold();
-    if (verbosity < threshold)
-        return;
-    LogRecord rec(threshold, verbosity, _preamble);
-    rec.addComment(message);
-    rec.addProperty(prop);
+    rec.addProperties(properties);
     send(rec);
 }
 
@@ -282,7 +242,7 @@ void Log::log(int verbosity, const string& message) {
     int threshold = getThreshold();
     if (verbosity < threshold)
         return;
-    LogRecord rec(threshold, verbosity, _preamble);
+    LogRecord rec(threshold, verbosity, *_preamble);
     rec.addComment(message);
     send(rec);
 }
@@ -346,7 +306,7 @@ void Log::setDefaultLog(Log *deflog) {
 }
 
 void Log::createDefaultLog(const list<shared_ptr<LogDestination> >& dests, 
-                           const list<shared_ptr<DataProperty> >& preamble,
+                           const PropertySet& preamble,
                            const string& name, const int threshold)
 {
     Log::setDefaultLog(new Log(dests, preamble, name, threshold));

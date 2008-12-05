@@ -21,6 +21,7 @@ using boost::format;
 using lsst::daf::base::DateTime;
 namespace pexExcept = lsst::pex::exceptions;
 
+
 /**
  * Create a log record to be sent to a given log.  
  * @param verbosity  the loudness of the record.  If this value is 
@@ -28,7 +29,7 @@ namespace pexExcept = lsst::pex::exceptions;
  *                     threshold, the message will be recorded.
  */
 LogRecord::LogRecord(int threshold, int verbosity)
-    : _send(threshold <= verbosity), _vol(verbosity), _data()
+    : _send(threshold <= verbosity), _vol(verbosity), _data(new PropertySet())
 { 
     _init();
 }
@@ -49,9 +50,12 @@ LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble)
     : _send(threshold <= verbosity), _vol(verbosity), _data()
 {
     if (_send) {
-        _data.combine(preamble);
-        _init();
+        _data = preamble.deepCopy();
     }
+    else {
+        _data = boost::shared_ptr<PropertySet>(new PropertySet());
+    }
+    _init();
 }
 
 /**
@@ -66,21 +70,23 @@ void LogRecord::setTimestamp() {
     // _tv.tv_sec = seconds since the epoch
     // _tv.tv_usec = microseconds since tv.tv_sec
 
-    time_t rawtime;
-    struct tm timeinfo;
-
-    time(&rawtime);
-    gmtime_r(&rawtime,&timeinfo);
-
-    _data.set(LSST_LP_TIMESTAMP, lsst::daf::base::DateTime(rawtime));
+    long long nsec = static_cast<long long>(tv.tv_sec) * 1000000000L;
+    nsec += tv.tv_usec * 1000L;
+    _data->set(LSST_LP_TIMESTAMP, lsst::daf::base::DateTime(nsec));
+}
 
 void LogRecord::setDate() {
-    if (! data().exists(LSST_LP_TIMESTAMP)) setDate();
+    if (! _send) return;
+    if (! data().exists(LSST_LP_TIMESTAMP)) setTimestamp();
 
     char datestr[40];
-    struct timeval tv = _data.get<DateTime>(LSST_LP_TIMESTAMP).timeval();
+    struct timeval tv = _data->get<DateTime>(LSST_LP_TIMESTAMP).timeval();
 
-    if ( 0 == strftime(datestr,39,"%Y-%m-%dT%H:%M:%S.", tv)) {
+    struct tm timeinfo;
+    time_t secs = (time_t) tv.tv_sec;
+    gmtime_r(&secs, &timeinfo);
+
+    if ( 0 == strftime(datestr,39,"%Y-%m-%dT%H:%M:%S.", &timeinfo) ) {
         throw LSST_EXCEPT(pexExcept::RuntimeErrorException, 
                           "Failed to format time successfully");
     }
@@ -89,12 +95,12 @@ void LogRecord::setDate() {
     data().add(LSST_LP_DATE, fulldate);
 }
 
-int LogRecord::countDataItems() const {
+size_t LogRecord::countParamValues() const {
     size_t sum = 0;
-    std::vector<str::string> names = _data.names(false);
-    std::vector<str::string>::iterator it;
-    for(it = names.begin(); it != it.end(); ++it) {
-        sum += valueCount(*name);
+    std::vector<std::string> names = _data->names(false);
+    std::vector<std::string>::iterator it;
+    for(it = names.begin(); it != names.end(); ++it) {
+        sum += _data->valueCount(*it);
     }
     return sum;
 }

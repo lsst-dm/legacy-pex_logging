@@ -1,8 +1,10 @@
 #include "lsst/pex/logging/LogRecord.h"
+#include "lsst/daf/base/DateTime.h"
 #include <iostream>
 
 using lsst::pex::logging::LogRecord;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
+using lsst::daf::base::DateTime;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {
@@ -14,70 +16,87 @@ int main() {
 
     LogRecord lr1(-1, 10);
     cout << "first record is " << ((lr1.willRecord()) ? "loud" : "quiet")
-         << " and has " << lr1.getDataCount() << " records." << endl;
+         << " and has " << lr1.countParamNames() << " records." << endl;
     assure(lr1.willRecord(), "verbose record not recording.");
-    assure(lr1.getDataCount()==1, string("wrong initial data count (loud)."));
+
+    // when a LogRecord is first created it is initialized with two properties:
+    // LEVEL and TIMESTAMP
+    assure(lr1.countParamNames()==2, 
+           string("wrong initial data count (loud)."));
+    cout << "  LEVEL: " << lr1.data().get<int>("LEVEL") << endl;
+    cout << "  TIMESTAMP: " << lr1.data().get<DateTime>("TIMESTAMP").nsecs() << endl;
 
     LogRecord lr2(10, 5);
     cout << "second record is " << ((lr2.willRecord()) ? "loud" : "quiet")
-         << " and has " << lr2.getDataCount() << " records." << endl;
+         << " and has " << lr2.countParamNames() << " records." << endl;
     assure(! lr2.willRecord(), "quiet record is recording anyway.");
-    assure(lr2.getDataCount()==0, string("wrong initial data count (quiet)."));
+    assure(lr2.countParamNames()==0, string("wrong initial data count (quiet)."));
         
     const char * simple = "a simple comment";
     lr1.addComment(simple);
     lr2.addComment(simple);
-    assure(lr1.getDataCount()==2, 
+    assure(lr1.countParamNames()==3, 
            string("wrong 1st updated data count (loud)."));
-    assure(lr2.getDataCount()==0, 
+    assure(lr2.countParamNames()==0, 
            string("wrong 1st updated data count (quiet)."));
     
-    const LogRecord::DataListT& lis = lr1.getData();
-    LogRecord::DataListT::const_iterator li = lis.begin();
-    assure(li != lis.end(), "no properties in LogRecord");
-    assure(li->get()->getName() == "DATE", "wrong label for DATE");
-    assure((++li)->get()->getName() == "COMMENT", "wrong label for COMMENT");
+    const PropertySet& lis = lr1.getProperties();
+    assure(lis.nameCount() > 0, "no properties in LogRecord");
+    assure(lis.exists("TIMESTAMP"), "wrong label for TIMESTAMP");
+    assure(lis.exists("COMMENT"), "wrong label for COMMENT");
 
-    li = lis.begin();
-    string val1(li->get()->getName()); 
-    string val2(boost::any_cast<string>((++li)->get()->getValue()));
-    cout << (--li)->get()->getName() << ": " + val1 << endl;
-    cout << (++li)->get()->getName() << ": " + val2 << endl;
-    assure(val2 == simple, "Wrong comment value");
+    std::vector<string> comments = lis.getArray<string>("COMMENT");
+    cout << "First record has " << comments.size() << " comments" << endl;
+    cout << "COMMENT: " << comments[0] << endl;
+    assure(comments[0] == simple, "Wrong comment value");
+    assure(comments.size() == 1, "First record has wrong number of comments");
+    assure(! lr2.data().exists("COMMENT"), "2nd quiet record has comments"); 
 
-    typedef boost::shared_ptr<DataProperty> sharedPtrT;
-    sharedPtrT dp1(new DataProperty("dpint", 2));
-    sharedPtrT dp2(new DataProperty("dpfloat", 2.5));
-    sharedPtrT dp3(new DataProperty("dplong", 5l));
+    lr1.addProperty("dpint", 2);
+    lr2.addProperty("dpint", 2);
+    lr1.addProperty("dpfloat", 2.5);
+    lr2.addProperty("dpfloat", 2.5);
+    lr1.addProperty("dplong", 5l);
+    lr2.addProperty("dplong", 5l);
 
-    lr1.addProperty(dp1);
-    lr2.addProperty(dp1);
-    lr1.addProperty(dp2);
-    lr2.addProperty(dp2);
-    lr1.addProperty(dp3);
-    lr2.addProperty(dp3);
-
-    cout << "The first record now has " << lr1.getDataCount() 
+    cout << "The first record now has " << lr1.countParamValues() 
          << " properties" << endl;
-    cout << "The second record now has " << lr2.getDataCount() 
+    cout << "The second record now has " << lr2.countParamValues() 
          << " properties" << endl;
-    assure(lr1.getDataCount()==5, 
+    assure(lr1.countParamValues()==6, 
            string("wrong 1st updated data count (loud)."));
-    assure(lr2.getDataCount()==0, 
+    assure(lr2.countParamValues()==0, 
            string("wrong 1st updated data count (quiet)."));
 
-    LogRecord::DataListT preamble;
-    preamble.push_back(dp1);
-    preamble.push_back(dp2);
-    preamble.push_back(dp3);
+    PropertySet preamble;
+    preamble.set<int>("dpint", 2);
+    preamble.set<float>("dpfloat", 2.5);
+    preamble.set<long>("dplong", 5l);
 
     LogRecord lr3(1, 5, preamble);
-    cout << "The third record starts with " << lr3.getDataCount() 
-         << " records."  << endl;
-    assure(lr3.getDataCount()==5, "wrong initial count via preamble");
-    const LogRecord::DataListT& list = lr3.getData();
+    cout << "The third record starts with " << lr3.countParamNames() 
+         << " properties."  << endl;
+    assure(lr3.countParamNames()==5, "wrong initial count via preamble");
+    lr3.setDate();
+    cout << "It now has " << lr3.countParamNames() 
+         << " properties after adding DATE."  << endl;
+    assure(lr3.countParamNames()==6, "wrong initial count via preamble");
+
+    const PropertySet& list = lr3.getProperties();
     cout << "Properties: ";
-    for(LogRecord::DataIteratorT i=list.begin(); i != list.end(); i++) 
-        cout << (*i)->getName() << " ";
+    std::vector<string> names = list.paramNames();
+    for(std::vector<string>::const_iterator i=names.begin(); 
+        i != names.end(); i++) 
+    {
+        cout << *i << " ";
+    }
     cout << endl;
+
+    cout << "Third record's properties:" << endl;
+    cout << "  LEVEL: " << lr3.data().get<int>("LEVEL") << endl;
+    cout << "  TIMESTAMP: " << lr3.data().get<DateTime>("TIMESTAMP").nsecs() << endl;
+    cout << "  DATE: " << lr3.data().get<string>("DATE") << endl;
+    cout << "  dpint: " << lr3.data().get<int>("dpint") << endl;
+    cout << "  dpfloat: " << lr3.data().get<float>("dpfloat") << endl;
+    cout << "  dplong: " << lr3.data().get<long>("dplong") << endl;
 }

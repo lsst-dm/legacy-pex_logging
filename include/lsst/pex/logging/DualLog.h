@@ -12,7 +12,7 @@ namespace logging {
 
 using std::vector;
 using boost::shared_ptr;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 
 /**
  * @brief a Log that sends message to both the screen and a file. 
@@ -27,6 +27,10 @@ public:
 
     /**
      * create a Log that will write messages to a given file
+     * @param preamble       a list of data properties that should be included 
+     *                         with every recorded message to the Log.  This
+     *                         constructor will automatically add a property 
+     *                         ("LOG") giving the Log name.  
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
      * @param filethresh    the verbosity threshold to set for the log file
@@ -36,14 +40,25 @@ public:
      *                        to the screen.  If false, only the Log name 
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
-     * @param preamble       a list of data properties that should be included 
-     *                         with every recorded message to the Log.  This
-     *                         constructor will automatically add a property 
-     *                         ("LOG") giving the Log name.  
      */
-    DualLog(const string& filename, int filethresh=0, int screenthresh=0,
-            bool screenVerbose=false,
-            const vector<shared_ptr<DataProperty> > *preamble=0);
+    DualLog(const PropertySet& preamble, const string& filename, 
+            int filethresh=0, int screenthresh=0, bool screenVerbose=false);
+            
+    /**
+     * create a Log that will write messages to a given file
+     * @param filename      the name of the file to send messages to.  It will 
+     *                        be opened in append mode.
+     * @param filethresh    the verbosity threshold to set for the log file
+     * @param screenthresh  the verbosity threshold to set for messages going
+     *                        to the screen.
+     * @param screenVerbose if true, all message data properties will be printed
+     *                        to the screen.  If false, only the Log name 
+     *                        ("LOG") and the text comment ("COMMENT") will be
+     *                        printed.
+     */
+    DualLog(const string& filename, int filethresh=0, int screenthresh=0, 
+            bool screenVerbose=false);
+            
 
     /**
      * create a copy
@@ -81,6 +96,10 @@ public:
 
     /**
      * create a new log and set it as the default Log
+     * @param preamble      a list of data properties that should be included 
+     *                        with every recorded message to the Log.  This
+     *                        constructor will automatically add a property 
+     *                        ("LOG") giving the Log name.  
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
      * @param filethresh    the verbosity threshold to set for the log file
@@ -90,19 +109,30 @@ public:
      *                        printed to the screen.  If false, only the Log 
      *                        name ("LOG") and the text comment ("COMMENT") 
      *                        will be printed.
-     * @param preamble      a list of data properties that should be included 
-     *                        with every recorded message to the Log.  This
-     *                        constructor will automatically add a property 
-     *                        ("LOG") giving the Log name.  
      */
-    static void createDefaultLog(
-        const string& filename, int filethresh=0, 
-        int screenthresh=0, bool screenVerbose=false,
-        const vector<shared_ptr<DataProperty> > *preamble=0);
+    static void createDefaultLog(const PropertySet& preamble,
+                                 const string& filename, 
+                                 int filethresh=Log::INHERIT_THRESHOLD, 
+                                 int screenthresh=0, bool screenVerbose=false);
+    /**
+     * create a new log and set it as the default Log
+     * @param filename      the name of the file to send messages to.  It will 
+     *                        be opened in append mode.
+     * @param filethresh    the verbosity threshold to set for the log file
+     * @param screenthresh  the verbosity threshold to set for messages going
+     *                        to the screen.
+     * @param screenVerbose if true, all message data properties will be 
+     *                        printed to the screen.  If false, only the Log 
+     *                        name ("LOG") and the text comment ("COMMENT") 
+     *                        will be printed.
+     */
+    static void createDefaultLog(const string& filename, 
+                                 int filethresh=Log::INHERIT_THRESHOLD, 
+                                 int screenthresh=0, bool screenVerbose=false);
 
 
 private:
-    void setPreamble(int node);
+    void _init(const string& filename, int filethresh);
 
     LogDestination *_file;
     std::ofstream *fstrm;

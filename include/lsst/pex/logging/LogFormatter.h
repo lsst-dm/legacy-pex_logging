@@ -3,10 +3,10 @@
 #define LSST_PEX_LOGFORMATTER_H
 
 #include <string>
+#include <map>
 #include <ostream>
 
 #include "lsst/daf/base/PropertySet.h"
-#include "lsst/pex/logging/TypeInfoLess.h"
 #include "boost/any.hpp"
 
 namespace lsst {
@@ -196,7 +196,7 @@ public:
     static const string defaultValDelim;
 
 private:
-    typedef map<type_info, char, TypeInfoLess> TypeSymbolMap;
+    typedef std::map<std::string, char> TypeSymbolMap;
     void loadTypeLookup();
 
     TypeSymbolMap _tplookup;

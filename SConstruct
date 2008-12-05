@@ -12,7 +12,8 @@ env = scons.makeEnv("pex_logging",
                      ["boost", "boost/serialization/serialization.hpp", "boost_serialization:C++"],
                      ["python", "Python.h"],
                      ["utils", "lsst/utils/Utils.h", "utils:C++"],
-                     ["daf_base", "lsst/daf/base/DataProperty.h", "daf_base:C++"],
+                     ["pex_exceptions", "lsst/pex/exceptions.h", "pex_exceptions:C++"],
+                     ["daf_base", "lsst/daf/base/PropertySet.h", "pex_exceptions daf_base:C++"],
                     ])
 
 #

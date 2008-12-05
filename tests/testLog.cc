@@ -7,8 +7,11 @@ using lsst::pex::logging::Log;
 using lsst::pex::logging::ScreenLog;
 using lsst::pex::logging::LogDestination;
 using lsst::pex::logging::LogRec;
+using lsst::pex::logging::Rec;
+using lsst::pex::logging::Prop;
+using lsst::pex::logging::RecordProperty;
 using lsst::daf::base::Citizen;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 using boost::shared_ptr;
 using namespace std;
 
@@ -43,19 +46,19 @@ int main() {
 
     // test descendent log and ancestor's control of threshold
     Log tgclog(*tlog, "grand.child");       // name is now "test.grand.child"
-    tgclog.log(Log::INFO, "Let's play", DataProperty("STATUS", string("now")));
+    tgclog.log(Log::INFO, "Let's play", Prop<string>("STATUS", "now"));
     tlog->setThreshold(Log::FATAL);
-    tgclog.addPreambleProperty(DataProperty("RUNID", string("testRun")));
+    tgclog.addPreambleProperty("RUNID", string("testRun"));
     tgclog.log(Log::INFO, "You go first");
 
     // test streaming
     LogRec(tgclog, Log::FATAL) << "help: I've fallen" 
-                               << DataProperty("NODE", 5)
+                               << Prop<int>("NODE", 5)
                                << "& I can't get up"
                                << LogRec::endr;
 
     // test flushing on delete
-    LogRec(tgclog, Log::FATAL) << "never mind";
+    Rec(tgclog, Log::FATAL) << "never mind";
 
 
     
