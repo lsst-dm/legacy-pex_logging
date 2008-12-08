@@ -22,17 +22,46 @@ using lsst::pex::logging::Rec;
   */
 int main(int argc, char *argv[]) {
 
-    // to get a root logger, you usually grab the default Log object:
-    Log root = Log::getDefaultLog();
+    // in some function where you want to log a message, the first 
+    // thing you should do is create a Log from the DefaultLog.  (In this 
+    // example, the message verbosity threshold is at the INFO.)
+    Log mylog(Log::getDefaultLog(), "myapp.myfunc");
 
-    // for simple messages just use the log function.  If the versbosity 
-    // threshold is not low enough, this message will be ignored.
-    root.log(Log::INFO, "I'm writing a message.");
+    // for simple messages just use the log function.  The first argument is
+    // the level of message; choices are: DEBUG, INFO, WARN, FATAL.  If the 
+    // versbosity threshold is not low enough, this message will be ignored.
+    mylog.log(Log::INFO, "I'm writing a message.");
 
     // you can use the boost::format object for more complex messages; 
     // however, be careful: you still pay the cost of the format call
-    root.log(Log::INFO, 
-             boost::format("Verbosity threshold: %d") % root.getThreshold());
+    mylog.log(Log::INFO, 
+              boost::format("Verbosity threshold: %d") % mylog.getThreshold());
+
+    // If you want to send multiple messages and/or properties all in the
+    // same message, you can use the shift operator.  Be sure to end the
+    // message with Rec::endr
+    Rec(mylog, Log::WARN) << "No convergence reached"
+                          << Prop<int>("iterations", 541)
+                          << Prop<float>("rms", 0.0032)
+                          << Rec::endr;
+
+    // Normally properties are not printed to the screen.  To see these, we'll
+    // turn them on now.
+    //
+    // Outside the pipeline framework, the default logger is a ScreenLog.
+    // If you want to see properties on the screen, you put this code anywhere
+    // in your python script.  Note that the effect is global.
+    try {
+        ScreenLog slog = dynamic_cast<const ScreenLog&>(Log::getDefaultLog());
+        slog.setScreenVerbose(true);
+    }
+    catch (bad_cast &e) { }
+
+    // now try the complex message again
+    Rec(mylog, Log::FATAL) << "No convergence reached"
+                           << Prop<int>("iterations", 541)
+                           << Prop<float>("rms", 0.0032)
+                           << Rec::endr;
 
     // You can create your own log, if you wish, for testing purposes.
     // This log prints both to the screen and a log file, each with different
@@ -60,13 +89,6 @@ int main(int argc, char *argv[]) {
     // 2 levels down from its root.
     Log anothergc(myOwnLog, "myapp.mysubcomponent");
     anothergc.log(Log::INFO, "Again, a file-only message");
-
-    // You can also send DataProperties to the log.  For this, use the LogRec
-    // interface:
-    Rec(child, Log::WARN) << "No convergence reached"
-                          << Prop<int>("iterations", 541)
-                          << Prop<float>("rms", 0.0032)
-                          << Rec::endr;
 
     return 0;
 }
