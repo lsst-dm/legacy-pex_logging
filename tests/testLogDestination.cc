@@ -7,7 +7,7 @@ using lsst::pex::logging::LogRecord;
 using lsst::pex::logging::LogFormatter;
 using lsst::pex::logging::LogDestination;
 using lsst::pex::logging::BriefFormatter;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {
@@ -17,15 +17,10 @@ void assure(bool mustBeTrue, const string& failureMsg) {
 
 int main() {
 
-    typedef boost::shared_ptr<DataProperty> sharedPtrT;
-    sharedPtrT dp1(new DataProperty("HOST", string("localhost.localdomain")));
-    sharedPtrT dp2(new DataProperty("IP", string("111.111.111.111")));
-    sharedPtrT dp3(new DataProperty("LOG", string("tester")));
-
-    LogRecord::DataListT preamble;
-    preamble.push_back(dp1);
-    preamble.push_back(dp2);
-    preamble.push_back(dp3);
+    PropertySet preamble;
+    preamble.add("HOST", string("localhost.localdomain"));
+    preamble.add("IP", string("111.111.111.111"));
+    preamble.add("LOG", string("tester"));
 
     LogRecord lr1(1, 5, preamble);
     LogRecord lr2(5, 1, preamble);

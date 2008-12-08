@@ -8,10 +8,13 @@ Access to the logging classes from the pex library
 %feature("autodoc", "1");
 %module(package="lsst.pex.logging", docstring=logging_DOCSTRING) loggingLib
 
+%include "lsst/p_lsstSwig.i"
+
 %{
 // #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
+#include "lsst/pex/exceptions.h"
 %}
 
 %inline %{
@@ -20,13 +23,9 @@ using std::vector;
 using boost::shared_ptr;
 %}
 
-// Logging classes do not throw any of the standard LSST exceptions,
-// so disable the associated SWIG exception handling machinery.
-#define NO_SWIG_LSST_EXCEPTIONS
 
-%include "lsst/p_lsstSwig.i"
-
-%import  "lsst/daf/base/baseLib.i"      // for DataProperty
+%import  "lsst/daf/base/baseLib.i"                // for PropertySet
+%import  "lsst/pex/exceptions/exceptionsLib.i"    // for Exceptions
 
 // SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
 SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
@@ -37,26 +36,187 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
-
-%ignore lsst::pex::logging::LogFormatter::writeDPValue;
-%include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
 
+%extend lsst::pex::logging::Log {
+    %template(addPreamblePropertyInt) addPreambleProperty<int>;
+    %template(addPreamblePropertyLong) addPreambleProperty<long>;
+    %template(addPreamblePropertyLongLong) addPreambleProperty<long long>;
+    %template(addPreamblePropertyFloat) addPreambleProperty<float>;
+    %template(addPreamblePropertyDouble) addPreambleProperty<double>;
+    %template(addPreamblePropertyBool) addPreambleProperty<bool>;
+    %template(addPreamblePropertyString) addPreambleProperty<std::string>;
+//    %template(addPreamblePropertyPropertySetPtr) addPreambleProperty<lsst::daf::base::PropertySet::Ptr>;
+
+    %template(setPreamblePropertyInt) setPreambleProperty<int>;
+    %template(setPreamblePropertyLong) setPreambleProperty<long>;
+    %template(setPreamblePropertyLongLong) setPreambleProperty<long long>;
+    %template(setPreamblePropertyFloat) setPreambleProperty<float>;
+    %template(setPreamblePropertyDouble) setPreambleProperty<double>;
+    %template(setPreamblePropertyBool) setPreambleProperty<bool>;
+    %template(setPreamblePropertyString) setPreambleProperty<std::string>;
+//    %template(setPreamblePropertyPropertySetPtr) setPreambleProperty<lsst::daf::base::PropertySet::Ptr>;
+
+    %template(logPropertyInt) log<int>;
+    %template(logPropertyLong) log<long>;
+    %template(logPropertyLongLong) log<long long>;
+    %template(logPropertyFloat) log<float>;
+    %template(logPropertyDouble) log<double>;
+    %template(logPropertyBool) log<bool>;
+    %template(logPropertyString) log<std::string>;
+//    %template(logPropertyPropertySet) log<lsst::daf::base::PropertySet>;
+
+}
+
+%extend lsst::pex::logging::LogRecord {
+    void addPropertyBool(const string& name, const bool val) { $self->addProperty<bool>(name, val); }
+    void addPropertyInt(const string& name, const int val) { $self->addProperty<int>(name, val); }
+    void addPropertyLong(const string& name, const long val) { $self->addProperty<long>(name, val); }
+    void addPropertyLongLong(const string& name, const long long val) { $self->addProperty<long long>(name, val); }
+    void addPropertyFloat(const string& name, const float val) { $self->addProperty<float>(name, val); }
+    void addPropertyDouble(const string& name, const double val) { $self->addProperty<double>(name, val); }
+    void addPropertyString(const string& name, const std::string& val) { $self->addProperty<std::string>(name, val); }
+}
+
+%inline %{
+
+namespace lsst {
+namespace pex {
+namespace logging {
+
+const ScreenLog _getDefaultAsScreenLog() {
+    return ScreenLog(dynamic_cast<const ScreenLog&>(Log::getDefaultLog()));
+}
+bool _DefaultLogIsScreenLog() {
+    return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0);
+}
+
+}}}
+
+%}
+
 %pythoncode %{
 import lsst.utils
+
+def getDefaultLog():
+    if _DefaultLogIsScreenLog():
+        return _getDefaultAsScreenLog();
+    else:
+        return Log_getDefaultLog();
+
+
+class Prop:
+    """package a property to send it to a LogRecord"""
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def addToRec(self, rec):
+        rec.addProperty(self.name, self.value)
+
+def _LogRecord_addProperty(self, name, val):
+    """add a property with a default type.
+
+    Users can explicitly set the C++ type of a property that gets added by 
+    using the proper type-specific addProperty method (addPropertyBool(), 
+    addPropertyLongLong(), etc.); the methods that are supported this way
+    are int, long, long long, float, double, bool, string, and PropertySet.  
+    This method will choose a type for the property based on the value.  
+
+    If the value is a Python integer, then the value will be set based on 
+    its value:  if the value is out of range of a 32-bit integer, 
+    [-2147483648, 2147483648), it will be stored as a C++ int; out of that 
+    range, the type will be long long.  All floating point numbers are stored
+    as C++ doubles.  Booleans and strings are stored as C++ bools and 
+    std::strings, respectively.  Lists are stored as arrays with the same
+    mappings for the elements (but note that all values in the list must be
+    of the same type).  Dictionaries are stored as PropertySets with similar
+    mappings for their underlying types.
+
+    @param name    the name of the property
+    @param val     that value to set for the property
+    @exception LsstException   if the value is of an unsupported type.
+    """
+    if isinstance(val, int):
+        if val > 2147483648 or val <= -2147483648:
+            return self.addPropertyLongLong(name, val)
+        else:
+            return self.addPropertyInt(name, val)
+    elif isinstance(val, float):
+        return self.addPropertyDouble(name, val)
+    elif isinstance(val, bool):
+        return self.addPropertyBool(name, val)
+    elif isinstance(val, str):
+        return self.addPropertyString(name, val)
+    elif isinstance(val, lsst.daf.base.PropertySet):
+#        return self.addPropertyPropertySetPtr(name, val)
+        raise lsst.pex.exceptions.LsstException("PropertySet type temporarily unsupported")
+    elif isinstance(val, list):
+        for v in val:
+            self.addProperty(name, v)
+    elif isinstance(val, dict):
+        for k in val.keys():
+            self.addProperty("%s.%s" % (name, k), val[k])
+    else:
+        raise lsst.pex.exceptions.LsstException("unsupported property type for logging: %s(%s)" % (name, type(val)))
+
+def _LogRecord_setProperty(self, name, val):
+    """add a property with a default type.
+
+    Users can explicitly set the C++ type of a property that gets added by 
+    using the proper type-specific addProperty method (addPropertyBool(), 
+    addPropertyLongLong(), etc.); the methods that are supported this way
+    are int, long, long long, float, double, bool, string, and PropertySet.  
+    This method will choose a type for the property based on the value.
+    See addProperty() for an explanation of the default mappings. 
+
+    @param name    the name of the property
+    @param val     that value to set for the property
+    @exception LsstException   if the value is of an unsupported type.
+    """
+    if isinstance(val, int):
+        if val > 2147483648 or val <= -2147483648:
+            return self.setPropertyLongLong(name, val)
+        else:
+            return self.setPropertyInt(name, val)
+    elif isinstance(val, float):
+        return self.setPropertyDouble(name, val)
+    elif isinstance(val, bool):
+        return self.setPropertyBool(name, val)
+    elif isinstance(val, string):
+        return self.setPropertyBool(name, val)
+    elif isinstance(val, lsst.daf.base.PropertySet):
+#        return self.setPropertyPropertySet(name, val)
+        raise lsst.pex.exceptions.LsstException("PropertySet type temporarily unsupported")
+    elif isinstance(val, list):
+        v = val.pop(0)
+        self.setProperty(name, v)
+        for v in val:
+            self.addProperty(name, v)
+    elif isinstance(val, dict):
+        self.data().remove(name)
+        for k in val.keys():
+            self.addProperty("%s.%s" % (name, k), val[k])
+    else:
+        raise lsst.pex.exceptions.LsstException("unsupported property type for logging: %s(%s)" % (name, type(val)))
+
+LogRecord.addProperty = _LogRecord_addProperty
+LogRecord.setProperty = _LogRecord_setProperty
 
 Log._swiglog_str = Log.log
 
 def _Log_log(self, verb, *args):
-    """send any number of strings and DataProperties in a message to the
-    Log.  
+    """send any number of strings, PropertySets, or other properties 
+    in a message to the Log.  
     """
     rec = LogRec(self, verb)
     for prop in args:
-        if isinstance(prop,str) or isinstance(prop, lsst.daf.base.DataProperty):
+        if isinstance(prop,str):
             rec << prop
+        if isinstance(prop, lsst.daf.base.PropertySet):
+            rec.addProperties(prop)
 
     rec << endr    # sends result
     return self
@@ -113,10 +273,23 @@ LogRec.__init__ = _LogRec_extended__init__
 LogRec.__swiglshift__ = LogRec.__lshift__
 
 def _LogRec_extended__lshift__(self, *args):
-    """extend the << operator to unregister this LogRec from its Log instance.
+    """an extension to the << operator to support C++-like interface.
+
+    This implementation does two things:  (1) supports adding Prop objects,
+    PropertySets, and dictionaries for adding properties, and (2) unregisters
+    this LogRec from its Log instance when an endr object is added.
     """
-    # first handle the default behavior
-    out = self.__swiglshift__(*args)
+    out = self
+    if isinstance(args[0], Prop):
+        self.addProperty(args[0].name, args[0].value)
+    elif isinstance(args[0], lsst.daf.base.PropertySet):
+        self.addProperties(args[0])
+    elif isinstance(args[0], dict):
+        for k in args[0].keys():
+            self.addProperty(k, args[0][k])
+    else:
+        # all other types, handle with the default behavior
+        out = self.__swiglshift__(*args)
 
     # if we just shifted on the endr manipulator, assume that it is safe
     # to garbage collect this object:  unregister it from it's Log.
@@ -130,6 +303,9 @@ LogRec.__lshift__ = _LogRec_extended__lshift__
 
 # finally put an instance of endr at the module level for convenience
 endr = LogRec.endr
+
+# duplicate the Rec typedef
+Rec = LogRec
 
 def version():
     """

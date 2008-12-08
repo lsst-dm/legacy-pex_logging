@@ -10,7 +10,7 @@ namespace logging {
 
 using std::vector;
 using boost::shared_ptr;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 
 /**
  * @brief  a Log configured to send messages to the screen.  The 
@@ -27,13 +27,24 @@ public:
      *                        to the screen.  If false, only the Log name 
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
+     */
+    ScreenLog(bool verbose=false, int threshold=Log::INFO);
+
+    /**
+     * create a Log that will write messages to a given file
      * @param preamble       a list of data properties that should be included 
      *                         with every recorded message to the Log.  This
      *                         constructor will automatically add a property 
      *                         ("LOG") giving the Log name.  
+     * @param threshold     the verbosity threshold to set for messages going
+     *                        to the screen.
+     * @param verbose     if true, all message data properties will be printed
+     *                        to the screen.  If false, only the Log name 
+     *                        ("LOG") and the text comment ("COMMENT") will be
+     *                        printed.
      */
-    ScreenLog(bool verbose=false, int threshold=Log::INFO, 
-              const vector<shared_ptr<DataProperty> > *preamble=0);
+    ScreenLog(const PropertySet& preamble, 
+              bool verbose=false, int threshold=Log::INFO);
 
     /**
      * create a copy
@@ -84,14 +95,24 @@ public:
      *                        to the screen.  If false, only the Log name 
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
+     */
+    static void createDefaultLog(bool verbose=false, int threshold=Log::INFO);
+
+    /**
+     * create a new log and set it as the default Log
      * @param preamble       a list of data properties that should be included 
      *                         with every recorded message to the Log.  This
      *                         constructor will automatically add a property 
      *                         ("LOG") giving the Log name.  
+     * @param threshold     the verbosity threshold to set for messages going
+     *                        to the screen.
+     * @param verbose     if true, all message data properties will be printed
+     *                        to the screen.  If false, only the Log name 
+     *                        ("LOG") and the text comment ("COMMENT") will be
+     *                        printed.
      */
-    static void createDefaultLog(
-        bool verbose=false, int threshold=Log::INFO, 
-        const vector<shared_ptr<DataProperty> > *preamble=0);
+    static void createDefaultLog(const PropertySet& preamble,
+                                 bool verbose=false, int threshold=Log::INFO);
 
 private:
     void configure(bool verbose);

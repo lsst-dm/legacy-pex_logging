@@ -12,7 +12,7 @@ using lsst::pex::logging::LogRecord;
 using lsst::pex::logging::LogFormatter;
 using lsst::pex::logging::BriefFormatter;
 using lsst::pex::logging::NetLoggerFormatter;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 using namespace std;
 
 #define Assert(b, m) tattle(b, m, __LINE__)
@@ -34,26 +34,23 @@ int main() {
     string msg;
     regex datestr("DATE: \\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+");
 
-    typedef boost::shared_ptr<DataProperty> sharedPtrT;
-    sharedPtrT dp1(new DataProperty("HOST", string("localhost.localdomain")));
-    sharedPtrT dp2(new DataProperty("IP", string("111.111.111.111")));
-    sharedPtrT dp3(new DataProperty("LOG", string("tester")));
-
-    LogRecord::DataListT preamble;
-    preamble.push_back(dp1);
-    preamble.push_back(dp2);
-    preamble.push_back(dp3);
+    PropertySet preamble;
+    preamble.add("HOST", string("localhost.localdomain"));
+    preamble.add("IP", string("111.111.111.111"));
+    preamble.add("LOG", string("tester"));
 
     LogRecord lr1(1, 5, preamble);
     LogRecord lr2(5, 1, preamble);
+    lr1.setDate();
+    lr2.setDate();
 
     lr1.addComment("This is a test");
     lr2.addComment("This is a test");
 
-    cout << "data count: " << lr1.getDataCount() << endl;
+    cout << "data count: " << lr1.countParamNames() << endl;
 
-    Assert(lr1.getDataCount() == 6, "Missing comment or preamble property");
-    Assert(lr2.getDataCount() == 0, "Comment or preamble property not ignored");
+    Assert(lr1.countParamNames() == 7, "Missing comment or preamble property");
+    Assert(lr2.countParamNames() == 0, "Comment or preamble property not ignored");
 
     LogFormatter *brief = new BriefFormatter();
     LogFormatter *notsobrief = new BriefFormatter(true);
@@ -123,7 +120,7 @@ int main() {
     brief->write(&cout, lr3); 
 
     LogRecord lr4(1, 5);
-    lr4.addProperty(DataProperty("LOG", string("tester")));
+    lr4.addProperty("LOG", string("tester"));
     brief->write(&cout, lr4); 
 
     delete notsobrief;

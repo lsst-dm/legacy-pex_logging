@@ -2,6 +2,7 @@
 Import("env")
 
 env.Program("testLogRecord",["testLogRecord.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testPropertyPrinter",["testPropertyPrinter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("testLogFormatter", ["testLogFormatter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("testLogDestination", ["testLogDestination.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("testLog", ["testLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
@@ -14,6 +15,7 @@ import os
 
 tests = lsst.tests.Control(env, verbose = True)
 tests.run("testLogRecord.cc")
+tests.run("testPropertyPrinter.cc")
 tests.run("testLogFormatter.cc")
 tests.run("testLogDestination.cc")
 tests.run("testLog.cc")
@@ -23,4 +25,4 @@ env.Append(SWIGFLAGS=" -Ipython")
 
 for target in tests.run("*.py"):
     env.Depends(target,
-               "../python/lsst/pex/logging/_loggingLib%s" % (env['LDMODULESUFFIX']))
+              "../python/lsst/pex/logging/_loggingLib%s" % (env['LDMODULESUFFIX']))

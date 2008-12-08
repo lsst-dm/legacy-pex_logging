@@ -2,12 +2,13 @@
 #ifndef LSST_PEX_LOG_H
 #define LSST_PEX_LOG_H
 
-#include "lsst/daf/base/DataProperty.h"
+#include "lsst/daf/base/PropertySet.h"
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/LogDestination.h"
 #include "lsst/pex/logging/Component.h"
 
 #include <vector>
+#include <list>
 #include <boost/shared_ptr.hpp>
 
 namespace lsst {
@@ -18,7 +19,7 @@ using std::string;
 using std::list;
 using std::ostream;
 using boost::shared_ptr;
-using lsst::daf::base::DataProperty;
+using lsst::daf::base::PropertySet;
 
 /**
  * @brief a place to record messages and descriptions of the state of 
@@ -27,7 +28,7 @@ using lsst::daf::base::DataProperty;
  * This class is the centerpiece of the logging framework.  It allows modules
  * to record plain text statements about what is happening (including errors,
  * warnings, status information, and debugging messages) as well as typed
- * data delivered as DataProperty objects.  It allows users to conveniently
+ * data delivered as named properties.  It allows users to conveniently
  * tag their messages with a hierarchical label that can indicate where in 
  * the application the message originates.  Messages sent to a Log can be 
  * routed to multiple destinations, such as to the terminal screen, to 
@@ -103,13 +104,14 @@ using lsst::daf::base::DataProperty;
  * more convenient to use the streaming method:
  * 
  *     using lsst::pex::logging::Rec;
+ *     using lsst::pex::logging::Prop;
  *     Rec(mylog, Log::DEBUG) << "Completed deconvolution"
- *                            << DataProperty("iterations", 541)
- *                            << DataProperty("rms", 0.0032)
+ *                            << Prop("iterations", 541)
+ *                            << Prop("rms", 0.0032)
  *                            << Rec::endr;   
  *
  *     Rec(mylog, Log::INFO) << boost::format("applying %s kernel") % kern
- *                           << DataProperty("width", width);
+ *                           << Prop("width", width);
  *                           << Rec::endr;
  * 
  * The manipulator Rec::endr triggers the recording of the message to the log. 
@@ -171,7 +173,7 @@ public:
      * method or the createChildLog() method of should be used instead.  
      * @param destinations   the list of LogDestinations to attach to this 
      *                         Log.
-     * @param preamble       a list of data properties that should be included 
+     * @param preamble       a data properties that should be included 
      *                         with every recorded message to the Log.  This
      *                         constructor will automatically add the properties
      *                         "LOG", giving the Log name and "DATE", giving
@@ -187,7 +189,7 @@ public:
      *                         will override this one.)
      */
     Log(const list<shared_ptr<LogDestination> >& destinations, 
-        const list<shared_ptr<DataProperty> >& preamble,
+        const PropertySet& preamble,
         const string& name="", const int threshold=INFO);
 
     /**
@@ -278,17 +280,17 @@ public:
     void setThresholdFor(const string& name, int threshold) const;
 
     /**
-     * add a DataProperty to the preamble
+     * add a property to the preamble
      */
-    void addPreambleProperty(const DataProperty& dp) {
-        _preamble.push_back(DataProperty::PtrType(new DataProperty(dp)));
-    }
+    template <class T>
+    void addPreambleProperty(const string& name, const T& val);
 
     /**
-     * set a DataProperty to the preamble, overwriting any DataProperty with 
+     * set a property to the preamble, overwriting any value with 
      * the same name.
      */
-    void setPreambleProperty(const DataProperty& dp);
+    template <class T>
+    void setPreambleProperty(const string& name, const T& val);
 
     /**
      * create a child of a given Log.  The child log will be attached 
@@ -317,7 +319,7 @@ public:
      * @param properties   a list of properties to include in the message.
      */
     void log(int verbosity, const string& message, 
-             const list<shared_ptr<DataProperty> >& properties);
+             const PropertySet& properties);
 
     /**
      * send a message to the log
@@ -325,7 +327,19 @@ public:
      * @param message      a simple bit of text to send in the message
      * @param prop         a property to include in the message.
      */
-    void log(int verbosity, const string& message, const DataProperty& prop);
+    template <class T>
+    void log(int verbosity, const string& message, 
+             const string& name, const T& val);
+
+    /**
+     * send a message to the log
+     * @param verbosity    how loud the message should be
+     * @param message      a simple bit of text to send in the message
+     * @param prop         a property to include in the message.
+     */
+    template <class T>
+    void log(int verbosity, const string& message, 
+             const RecordProperty<T>& prop);
 
     /**
      * send a simple message to the log
@@ -390,7 +404,7 @@ public:
     /** 
      * return the current set of preamble properties
      */
-    const list<shared_ptr<DataProperty> >& getPreamble() { return _preamble; }
+    const PropertySet& getPreamble() { return *_preamble; }
 
     /**
      * obtain the default root Log instance.
@@ -418,7 +432,7 @@ public:
      */
     static void createDefaultLog(
         const list<shared_ptr<LogDestination> >& destinations, 
-        const list<shared_ptr<DataProperty> >& preamble,
+        const PropertySet& preamble,
         const string& name="", const int threshold=INFO);
 
     /**
@@ -463,8 +477,38 @@ protected:
      * the list preamble data properties that are included with every 
      * log record.
      */
-    LogRecord::DataListT _preamble;
+    PropertySet::Ptr _preamble;
 };
+
+template <class T>
+void Log::addPreambleProperty(const string& name, const T& val) {
+    _preamble->add<T>(name, val);
+}
+
+template <class T>
+void Log::setPreambleProperty(const string& name, const T& val) {
+    _preamble->set<T>(name, val);
+}
+        
+template <class T>
+void Log::log(int verbosity, const string& message, 
+              const string& name, const T& val) {
+
+    int threshold = getThreshold();
+    if (verbosity < threshold)
+        return;
+    LogRecord rec(threshold, verbosity, *_preamble);
+    rec.addComment(message);
+    rec.addProperty(name, val);
+    send(rec);
+}
+
+template <class T>
+void Log::log(int verbosity, const string& message, 
+         const RecordProperty<T>& prop) 
+{
+    log(verbosity, message, prop.name, prop.value);
+}
 
 
 /**
@@ -539,8 +583,17 @@ public:
     /**
      * record a data property into this message
      */
-    LogRec& operator<<(const DataProperty& prop) {
-        addProperty(prop);
+    template <class T>
+    LogRec& operator<<(const RecordProperty<T>& prop) {
+        addProperty(prop.name, prop.value);
+        return *this;
+    }
+
+    /**
+     * record a data property into this message
+     */
+    LogRec& operator<<(const PropertySet& props) {
+        addProperties(props);
         return *this;
     }
 
@@ -573,19 +626,6 @@ private:
  * a shorthand version of the LogRec class
  */
 typedef LogRec Rec;
-
-/**
- * a function class used by Log to remove selected preamble properties
- */
-class DataPropertyNameEquals {
-private:
-    string _name;
-public:
-    DataPropertyNameEquals(const string& name) : _name(name) { }
-    bool operator() (const DataProperty::PtrType& value) { 
-        return (_name == value->getName());
-    }
-};
 
 }}}     // end lsst::pex::logging
 
