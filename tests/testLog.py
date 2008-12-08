@@ -1,4 +1,4 @@
-"""demonstrate simple use of the Log facility."""
+"""test simple use of the Log facility."""
 """
 testLog
 
@@ -12,7 +12,7 @@ import lsst.pex.logging as log
 if __name__ == "__main__":
 
     # test a simple message to the default log
-    dlog = log.Log_getDefaultLog()
+    dlog = log.getDefaultLog()
     dlog.log(log.Log.WARN, "this is a warning")
 
     # now let's create our own root log
@@ -39,11 +39,11 @@ if __name__ == "__main__":
     tgclog.log(log.Log.INFO, "You go first")
 
     # test streaming
-#    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << Prop("NODE", 5) << "& I can't get up" << log.endr;
-#    tmp = DataProperty("NODE",5)
-#    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << tmp << "& I can't get up" << log.endr;
+    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << log.Prop("NODE", 5) << "& I can't get up" << log.endr;
+    tmp = log.Prop("NODE",5)
+    log.LogRec(tgclog, log.Log.FATAL) << "help: I've fallen" << tmp << "& I can't get up" << log.endr;
 
     # test flushing on delete
-    log.LogRec(tgclog, log.Log.FATAL) << "never mind"
-    log.LogRec(tgclog, log.Log.DEBUG) << "testing" << log.endr;
+    log.Rec(tgclog, log.Log.FATAL) << "never mind"
+    log.Rec(tgclog, log.Log.DEBUG) << "testing" << log.endr;
 

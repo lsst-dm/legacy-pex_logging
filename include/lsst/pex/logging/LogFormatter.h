@@ -112,6 +112,7 @@ public:
      * copy another formatter into this one
      */
     BriefFormatter& operator=(const BriefFormatter& that) { 
+        LogFormatter::operator=(that);
         _doAll = that._doAll;
         return *this; 
     }

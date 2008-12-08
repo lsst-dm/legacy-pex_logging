@@ -105,5 +105,14 @@ size_t LogRecord::countParamValues() const {
     return sum;
 }
 
+void LogRecord::addProperties(const PropertySet& props) {
+    PropertySet::Ptr temp(props.deepCopy());
+    if (temp->exists("LEVEL")) temp->remove("LEVEL");
+    if (temp->exists("LOG")) temp->remove("LOG");
+    if (temp->exists("TIMESTAMP")) temp->remove("TIMESTAMP");
+    if (temp->exists("DATE")) temp->remove("DATE");
+    data().combine(temp);
+}
+
 }}} // end lsst::pex::logging
 

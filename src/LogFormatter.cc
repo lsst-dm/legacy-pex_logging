@@ -7,6 +7,7 @@
 
 #include "lsst/pex/logging/LogFormatter.h"
 #include "lsst/pex/logging/LogRecord.h"
+#include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/PropertyPrinter.h"
 #include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/PropertySet.h"
@@ -57,25 +58,33 @@ void BriefFormatter::write(ostream *strm, const LogRecord& rec) {
 
 void BriefFormatter::_write(ostream *strm, const LogRecord& rec) {
     string log;
+    int level=0;
+    string levstr(": ");
     std::vector<std::string> comments;
     std::vector<std::string>::iterator vi;
+
+    try {
+        level = rec.data().get<int>(LSST_LP_LEVEL);
+        if (level >= Log::FATAL) levstr = " FATAL: ";
+        else if (level >= Log::WARN) levstr = " WARNING: ";
+        else if (level < Log::INFO) levstr = " DEBUG: ";
+    } catch (boost::bad_any_cast ex) { 
+    } catch (pex::exceptions::NotFoundException ex) { }
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
     } catch (boost::bad_any_cast ex) {
         log = "mis-specified_log_name";
-    } catch (pex::exceptions::NotFoundException ex) {
-        log = "";
-    }
+    } catch (pex::exceptions::NotFoundException ex) { }
+
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
     } catch (boost::bad_any_cast ex) { 
         comments.push_back("(mis-specified_comment)");
     } catch (pex::exceptions::NotFoundException ex) { } 
 
-    if (log.length() > 0) log += ": ";
     for(vi = comments.begin(); vi != comments.end(); ++vi) {
-        (*strm) << log << *vi << endl;
+        (*strm) << log << levstr << *vi << endl;
     }
 
     if (isVerbose()) {

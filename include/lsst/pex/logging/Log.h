@@ -590,6 +590,14 @@ public:
     }
 
     /**
+     * record a data property into this message
+     */
+    LogRec& operator<<(const PropertySet& props) {
+        addProperties(props);
+        return *this;
+    }
+
+    /**
      * receive a message manipulator signal.  The most common use of this 
      * version is to indicate that the Record is now complete and should 
      * be flushed to the Log.

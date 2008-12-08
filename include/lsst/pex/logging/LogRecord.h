@@ -13,6 +13,7 @@
 #define LSST_LP_TIMESTAMP   "TIMESTAMP"
 #define LSST_LP_DATE        "DATE"
 #define LSST_LP_LOG         "LOG"
+#define LSST_LP_LEVEL       "LEVEL"
 
 namespace lsst {
 namespace pex {
@@ -157,13 +158,15 @@ public:
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
      */
-    void addProperties(const PropertySet& props) {
-        PropertySet::Ptr temp(props.deepCopy());
-        if (temp->exists("LEVEL")) temp->remove("LEVEL");
-        if (temp->exists("LOG")) temp->remove("LOG");
-        if (temp->exists("TIMESTAMP")) temp->remove("TIMESTAMP");
-        if (temp->exists("DATE")) temp->remove("DATE");
-        data().combine(temp);
+    void addProperties(const PropertySet& props);
+
+    /**
+     * add all of the properties found in the given PropertySet.  
+     * This will make sure not to overwrite critical properties, 
+     * LEVEL, LOG, TIMESTAMP, and DATE.  
+     */
+    void addProperties(const PropertySet::Ptr& props) {
+        addProperties(*props);
     }
 
     /**
@@ -253,7 +256,7 @@ protected:
     void _init() {
         if (_send) {
             _data->set("LEVEL", _vol);
-            setTimestamp();
+            setDate();
         }
     }
 
