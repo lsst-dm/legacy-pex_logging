@@ -19,12 +19,13 @@ int main() {
          << " and has " << lr1.countParamNames() << " records." << endl;
     assure(lr1.willRecord(), "verbose record not recording.");
 
-    // when a LogRecord is first created it is initialized with two properties:
-    // LEVEL and TIMESTAMP
-    assure(lr1.countParamNames()==2, 
+    // when a LogRecord is first created it is initialized with three 
+    // properties: LEVEL, TIMESTAMP, and DATE
+    assure(lr1.countParamNames()==3, 
            string("wrong initial data count (loud)."));
     cout << "  LEVEL: " << lr1.data().get<int>("LEVEL") << endl;
     cout << "  TIMESTAMP: " << lr1.data().get<DateTime>("TIMESTAMP").nsecs() << endl;
+    cout << "  DATE: " << lr1.data().get<string>("DATE") << endl;
 
     LogRecord lr2(10, 5);
     cout << "second record is " << ((lr2.willRecord()) ? "loud" : "quiet")
@@ -35,7 +36,7 @@ int main() {
     const char * simple = "a simple comment";
     lr1.addComment(simple);
     lr2.addComment(simple);
-    assure(lr1.countParamNames()==3, 
+    assure(lr1.countParamNames()==4, 
            string("wrong 1st updated data count (loud)."));
     assure(lr2.countParamNames()==0, 
            string("wrong 1st updated data count (quiet)."));
@@ -63,7 +64,7 @@ int main() {
          << " properties" << endl;
     cout << "The second record now has " << lr2.countParamValues() 
          << " properties" << endl;
-    assure(lr1.countParamValues()==6, 
+    assure(lr1.countParamValues()==7, 
            string("wrong 1st updated data count (loud)."));
     assure(lr2.countParamValues()==0, 
            string("wrong 1st updated data count (quiet)."));
@@ -76,7 +77,9 @@ int main() {
     LogRecord lr3(1, 5, preamble);
     cout << "The third record starts with " << lr3.countParamNames() 
          << " properties."  << endl;
-    assure(lr3.countParamNames()==5, "wrong initial count via preamble");
+    assure(lr3.countParamNames()==6, "wrong initial count via preamble");
+
+    // note that this is now set automatically during construction
     lr3.setDate();
     cout << "It now has " << lr3.countParamNames() 
          << " properties after adding DATE."  << endl;
