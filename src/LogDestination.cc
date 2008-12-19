@@ -7,18 +7,11 @@
 
 #include "lsst/pex/logging/LogDestination.h"
 #include "lsst/pex/logging/LogRecord.h"
-#include "lsst/pex/logging/Trace.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
 
 using namespace std;
-
-// #define EXEC_TRACE  20
-// static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::pex::logging::Trace( "pex.logging.LogDestination", level, s );
-// }
-
 
 namespace lsst {
 namespace pex {

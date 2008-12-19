@@ -40,7 +40,7 @@ Alias("install", [env.Install(env['prefix'], "python"),
                                 os.path.join("doc", "htmlDir")),
                   env.InstallEups(env['prefix'] + "/ups", glob.glob("ups/*.table"))])
 
-scons.CleanTree(r"*~ core *.so *.os *.o")
+scons.CleanTree(r"*~ core *.so *.os *.o *_results.txt")
 
 #
 # Build TAGS files

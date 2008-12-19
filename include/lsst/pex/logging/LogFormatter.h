@@ -112,7 +112,9 @@ public:
      * copy another formatter into this one
      */
     BriefFormatter& operator=(const BriefFormatter& that) { 
-        LogFormatter::operator=(that);
+        if (this == &that) return *this;
+
+        dynamic_cast<LogFormatter*>(this)->operator=(that);
         _doAll = that._doAll;
         return *this; 
     }

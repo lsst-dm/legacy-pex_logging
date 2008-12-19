@@ -76,7 +76,8 @@ public:
      * copy another one into this
      */
     DualLog& operator=(const DualLog& that) {
-        ScreenLog::operator=(that);
+        if (this == &that) return *this;
+        dynamic_cast<ScreenLog*>(this)->operator=(that);
         _file = that._file; 
         return *this;
     }

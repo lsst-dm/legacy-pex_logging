@@ -13,11 +13,6 @@
 
 using namespace std;
 
-// #define EXEC_TRACE  20
-// static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::pex::logging::Trace( "pex.logging.ScreenLog", level, s );
-// }
-
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -86,7 +81,9 @@ ScreenLog::~ScreenLog() { }
  *  copy another ScreenLog into this one
  */
 ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
-    Log::operator=(that);
+    if (this == &that) return *this;
+
+    dynamic_cast<Log*>(this)->operator=(that);
     _screen = that._screen;
     _screenFrmtr = that._screenFrmtr;
     return *this;

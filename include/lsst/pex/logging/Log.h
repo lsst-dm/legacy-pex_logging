@@ -277,7 +277,15 @@ public:
      * @param name       the relative name of the child log
      * @param threshold  the verbosity threshold to set Logs with this name to.
      */
-    void setThresholdFor(const string& name, int threshold) const;
+    void setThresholdFor(const string& name, int threshold);
+
+    /**
+     * get the verbosity threshold for a child Log.  When a child Log of the
+     * same name is created, this is the threshold it will have.  
+     * @param name       the relative name of the child log
+     * @param threshold  the verbosity threshold to set Logs with this name to.
+     */
+    int getThresholdFor(const string& name) const;
 
     /**
      * add a property to the preamble
@@ -409,7 +417,7 @@ public:
     /**
      * obtain the default root Log instance.
      */
-    static const Log& getDefaultLog();
+    static Log& getDefaultLog();
 
     /**
      * create a new log and set it as the default Log

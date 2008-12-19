@@ -3,6 +3,7 @@ Import('env')
 
 env.Program("trace", ["trace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("log", ["log.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("debug", ["debug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 
 #
 # Tests

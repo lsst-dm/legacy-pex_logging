@@ -13,11 +13,6 @@
 
 using namespace std;
 
-// #define EXEC_TRACE  20
-// static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::pex::logging::Trace( "pex.logging.Log", level, s );
-// }
-
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -176,7 +171,7 @@ Log::Log(const Log& parent, const string& childName, int threshold)
  *                      empty string.  
  * @param threshold  the verbosity threshold to set Logs with this name to.
  */
-void Log::setThresholdFor(const string& name, int threshold) const {
+void Log::setThresholdFor(const string& name, int threshold) {
     string fullname = getName();
     if (fullname.length() > 0) fullname += _sep;
     fullname += name;
@@ -295,7 +290,7 @@ void Log::addDestination(ostream& destination, int threshold,
     addDestination(dest);
 }
 
-const Log& Log::getDefaultLog() {
+Log& Log::getDefaultLog() {
     if (defaultLog == 0) defaultLog = new ScreenLog();
     return *defaultLog;
 }

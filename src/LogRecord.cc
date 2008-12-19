@@ -63,7 +63,7 @@ LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble)
  */
 LogRecord::~LogRecord() { }
 
-void LogRecord::setTimestamp() {
+long long LogRecord::utcnow() {
     struct timeval tv;      
     struct timezone tz;     
     gettimeofday(&tv,&tz);
@@ -72,7 +72,11 @@ void LogRecord::setTimestamp() {
 
     long long nsec = static_cast<long long>(tv.tv_sec) * 1000000000L;
     nsec += tv.tv_usec * 1000L;
-    _data->set(LSST_LP_TIMESTAMP, lsst::daf::base::DateTime(nsec));
+    return nsec;
+}
+
+void LogRecord::setTimestamp() {
+    _data->set(LSST_LP_TIMESTAMP, lsst::daf::base::DateTime(utcnow()));
 }
 
 void LogRecord::setDate() {

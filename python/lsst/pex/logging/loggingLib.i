@@ -316,7 +316,4 @@ def version():
     return lsst.utils.version(HeadURL)
 %}
 
-%ignore Trace(const std::string&, const int, const std::string&, va_list ap);
-
-%include "lsst/pex/logging/Trace.h"
 

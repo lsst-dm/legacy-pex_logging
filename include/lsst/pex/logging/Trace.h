@@ -17,11 +17,15 @@
 #include <cstdarg>
 #include <boost/format.hpp>
 
-#include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/Debug.h"
 
 namespace lsst {
 namespace pex {
 namespace logging {
+
+#ifndef LSST_DEBUGGING_ON
+#define LSST_NO_TRACE 1
+#endif
 
 #if !defined(LSST_NO_TRACE)
 #  define LSST_NO_TRACE 0               //!< True => turn off all tracing
@@ -55,13 +59,13 @@ public:
     /**
      * Return a Trace object (which will later print if verbosity is high enough
      * for name) to which a message can be attached with <<
-     */
     Trace(const std::string& name,      //!< Name of component
           const int verbosity           //!< Desired verbosity
-         ) :
-        _print(check_level(name, verbosity)), _verbosity(verbosity) {
-        ;
+          ) 
+    {
+        Log::getDefaultLog().setThreshold(-1*verbosity);
     }
+     */
 
     /**
      * Print fmt if verbosity is high enough for name
@@ -74,11 +78,10 @@ public:
           const int verbosity,          //!< Desired verbosity
           const std::string& fmt,       //!< Message to write as a printf format
           ...
-         ) :
-        _print(check_level(name, verbosity)), _verbosity(verbosity) {
-        if (_print) {
+          ) 
+    {
+        if (-1*verbosity >= Log::getDefaultLog().getThresholdFor(name)) {
             va_list ap;
-
             va_start(ap, fmt);
             const int len = vsnprintf(NULL, 0, fmt.c_str(), ap) + 1; // "+ 1" for the '\0'
             va_end(ap);
@@ -88,7 +91,8 @@ public:
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             va_end(ap);
             
-            trace(msg, true);
+            Debug out(Log::getDefaultLog(), name);
+            out.debug(verbosity, msg);
         }
     }
 
@@ -106,15 +110,16 @@ public:
           const int verbosity,          //!< Desired verbosity
           const std::string& fmt,       //!< Message to write as a printf format
           va_list ap                    //!< variable arguments
-         ) :
-        _print(check_level(name, verbosity)), _verbosity(verbosity) {
-        if (_print) {
+          ) 
+    {
+        if (-1*verbosity >= Log::getDefaultLog().getThresholdFor(name)) {
             const int len = fmt.size() + 100; // guess; we can't call vsnprintf twice to get length
             char msg[len];
 
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             
-            trace(msg, true);
+            Debug out(Log::getDefaultLog(), name);
+            out.debug(verbosity, msg);
         }
     }
 
@@ -124,84 +129,40 @@ public:
     Trace(const std::string& name,      //!< Name of component
           const int verbosity,          //!< Desired verbosity
           const boost::format& msg      //!< Message to write
-         ) :
-        _print(check_level(name, verbosity)), _verbosity(verbosity) {
-        if (_print) {
-            trace(msg.str(), true);
+          )
+    {
+        if (-1*verbosity >= Log::getDefaultLog().getThresholdFor(name)) {
+            Debug out(Log::getDefaultLog(), name);
+            out.debug(verbosity, msg.str());
         }
-    }
-
-    /**
-      * Add to a trace record being emitted.
-      *
-      */
-    template<typename T>
-    Trace& operator<<(T v) {
-        if (_print) {
-            std::ostringstream s;
-            s << v;
-            trace(s.str());
-        }
-        return *this;           
     }
 
 #else
+/*
     Trace(const std::string& name, const int verbosity) {}
+*/
     Trace(const std::string& name, const int verbosity,
           const std::string& msg, ...) {}
     Trace(const std::string& name, const int verbosity,
           const boost::format& msg) {}
 
-    template<typename T>
-    Trace& operator<<(T v) {
-        return *this;
-    }
 #endif
 
-    static void reset();
-
-    static void setDestination(std::ostream &fp);
-    static void setVerbosity(const std::string &name);
-    static void setVerbosity(const std::string &name, const int verbosity);
-    static int  getVerbosity(const std::string &name);
-    static void printVerbosity(std::ostream &fp = std::cout);
-private:
-    bool _print;
-    int _verbosity;
-
-    bool check_level(const std::string& name, const int verbosity);
-    void trace(const std::string& msg);
-    void trace(const std::string& msg, const bool add_newline);
+    static void setVerbosity(const std::string &name) {
+        Log::getDefaultLog().setThresholdFor(name, Log::INHERIT_THRESHOLD);
+    }
+    static void setVerbosity(const std::string &name, const int verbosity) {
+        Log::getDefaultLog().setThresholdFor(name, -1*verbosity);
+    }
+    static int  getVerbosity(const std::string &name) {
+        return Log::getDefaultLog().getThresholdFor(name);
+    }
 };
 
-template<int VERBOSITY>
-void TTrace(const char *name,           //!< Name of component
-            const char *fmt,            //!< Message to write as a printf format
-            ...
-           ) {
-    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
-        va_list ap;
-        va_start(ap, fmt);
-        Trace(name, VERBOSITY, fmt, ap);
-        va_end(ap);
-    }
-}
-       
-template<int VERBOSITY>
-void TTrace(const std::string& name,      //!< Name of component
-            const std::string& fmt,       //!< Message to write as a printf format
-            ...
-           ) {
-    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
-        va_list ap;
-        va_start(ap, fmt);
-        Trace(name, VERBOSITY, fmt, ap);
-        va_end(ap);
-    }
-}
-       
+
 
 } // namespace logging
 } // namespace pex
 } // namespace lsst
-#endif
+#endif    // end LSST_PEX_UTILS_TRACE_H
+

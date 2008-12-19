@@ -12,7 +12,6 @@
 #include <map>
 #include <boost/tokenizer.hpp>
 
-#include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/Component.h"
 
 using namespace lsst::pex::logging;
