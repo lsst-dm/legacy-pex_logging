@@ -1,6 +1,7 @@
 # -*- python -*-
 Import("env")
 
+env.Program("testThresholdMemory", ["testThresholdMemory.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 env.Program("testLogRecord",["testLogRecord.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("testPropertyPrinter",["testPropertyPrinter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
 env.Program("testLogFormatter", ["testLogFormatter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
@@ -16,6 +17,7 @@ import lsst.tests
 import os
 
 tests = lsst.tests.Control(env, verbose = True)
+tests.run("testThresholdMemory.cc")
 tests.run("testLogRecord.cc")
 tests.run("testPropertyPrinter.cc")
 tests.run("testLogFormatter.cc")

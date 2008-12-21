@@ -7,7 +7,6 @@
 
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/ScreenLog.h"
-#include "lsst/pex/logging/Trace.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -23,7 +22,7 @@ using boost::shared_ptr;
 //  Log
 ///////////////////////////////////////////////////////////
 
-/**
+/*
  * the conventional verbosity level for messages that aid in debugging.  
  * This value is set to -10 with the intention that messages with 
  * negative verbosity levels (or more precisely, >= -10) will be printed 
@@ -31,7 +30,7 @@ using boost::shared_ptr;
  */
 const int Log::DEBUG = -10;
 
-/**
+/*
  * the conventional verbosity level for messages that are informational
  * and which report on normal behavior.  The value is set to 0 with the 
  * intention that this is the default threshold for logs and their 
@@ -39,13 +38,13 @@ const int Log::DEBUG = -10;
  */
 const int Log::INFO = 0;
 
-/**
+/*
  * the conventional verbosity level for messages that warn about 
  * abnormal but non-fatal behavior.  The value is set to 10.
  */
 const int Log::WARN = 10;
 
-/**
+/*
  * the conventional verbosity level for messages that report on fatal
  * behavior.  The value is set to 20.  Note that the logging module 
  * makes no attempt to shutdown execution or other wise affect control 
@@ -53,13 +52,13 @@ const int Log::WARN = 10;
  */
 const int Log::FATAL = 20;
 
-/**
+/*
  * a magic threshold value that indicates that a threshold of a Log
  * should be set to its nearest ancestor
  */
 const int Log::INHERIT_THRESHOLD = Component::INHERIT_VERBOSITY;
 
-/**
+/*
  * create a null log.  This constructor should 
  * not normally be employed to obtain a Log; the static getDefaultLog() 
  * method should be used instead.  This is provided primarily for 
@@ -75,7 +74,7 @@ Log::Log(const int threshold, const string& name)
     completePreamble();
 }
 
-/**
+/*
  * create a fully configured Log.  This constructor is 
  * not normally employed to obtain a Log; the static getDefaultLog() 
  * method or the createChildLog() method of should be used instead.  
@@ -105,7 +104,7 @@ Log::Log(const list<shared_ptr<LogDestination> > &destinations,
     completePreamble();
 }
 
-/**
+/*
  * create a copy
  */
 Log::Log(const Log& that) 
@@ -114,12 +113,12 @@ Log::Log(const Log& that)
       _destinations(that._destinations), _preamble(that._preamble->deepCopy())
 { }
 
-/** 
+/* 
  * delete this Log
  */
 Log::~Log() { }
 
-/**
+/*
  * create a copy
  */
 Log& Log::operator=(const Log& that) {
@@ -135,7 +134,7 @@ void Log::completePreamble() {
     _preamble->set<string>("LOG", _name);
 }
 
-/**
+/*
  * create a child of a given Log
  * @param parent        the Log that will serve as its parent.  
  * @param childName     the name of the child log, relative to the given 
@@ -161,7 +160,7 @@ Log::Log(const Log& parent, const string& childName, int threshold)
     completePreamble();
 }
 
-/**
+/*
  * set the verbosity threshold for a child Log.  When a child Log of the
  * same name is created, it will be assigned this threshold.  Any existing
  * Log object with name that has already explicitly set its verbosity
@@ -172,13 +171,19 @@ Log::Log(const Log& parent, const string& childName, int threshold)
  * @param threshold  the verbosity threshold to set Logs with this name to.
  */
 void Log::setThresholdFor(const string& name, int threshold) {
-    string fullname = getName();
+    string fullname(getName());
     if (fullname.length() > 0) fullname += _sep;
     fullname += name;
     _thresholds->add(fullname, threshold, _sep);
 }
 
-/**
+int Log::getThresholdFor(const string& name) const {
+    string fullname(getName());
+    if (_name.length() > 0) fullname += _sep;
+    return _thresholds->getVerbosity(fullname+name, _sep);
+}
+
+/*
  * create a child Log.  A child Log is a Log that is attached to a sub
  * channel of this log.  Its full name will be formed from this parent's 
  * name followed by a dot-delimiter (".") followed by the childName 
@@ -210,7 +215,7 @@ Log *Log::createChildLog(const string& childName, int threshold) const {
     return new Log(*this, childName, threshold);
 }
 
-/**
+/*
  * send a message to the log
  * @param verbosity    how loud the message should be
  * @param message      a simple bit of text to send in the message
@@ -228,7 +233,7 @@ void Log::log(int verbosity, const string& message,
     send(rec);
 }
 
-/**
+/*
  * send a simple message to the log
  * @param verbosity    how loud the message should be
  * @param message      a simple bit of text to send in the message
@@ -242,7 +247,7 @@ void Log::log(int verbosity, const string& message) {
     send(rec);
 }
 
-/**
+/*
  * send a fully formed LogRecord to the log destinations
  */
 void Log::send(const LogRecord& record) {
@@ -254,7 +259,7 @@ void Log::send(const LogRecord& record) {
     }
 }
 
-/**
+/*
  * add a destination to this log.  The destination stream will included
  * in all child Logs created from this log after a call to this function.
  * All previously created logs, including ancestor logs, will be 
@@ -269,7 +274,7 @@ void Log::addDestination(ostream& destination, int threshold) {
     addDestination(destination, threshold, frmtr);
 }
 
-/**
+/*
  * add a destination to this log.  The destination stream will included
  * in all child Logs created from this log after a call to this function.
  * All previously created logs, including ancestor logs, will be 

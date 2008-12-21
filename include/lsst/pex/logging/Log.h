@@ -448,6 +448,13 @@ public:
      */
     static void closeDefaultLog();
 
+    /**
+     * print the entire tree of thresholds
+     */
+    void printThresholds(std::ostream& out) {
+        _thresholds->printVerbosity(out);
+    }
+
 protected:
     /**
      * the default Log

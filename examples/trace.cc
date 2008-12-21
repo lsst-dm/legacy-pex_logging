@@ -1,3 +1,9 @@
+/*
+ * NOTE:  Use of Trace is now deprecated.  This file demonstrates use of 
+ * remaining Trace capabilities provided for backward-compatibility.  
+ * 
+ */
+
 //#define LSST_NO_TRACE 1                 // define to compile out tracing
 
 #define LSST_MAX_TRACE 5                // the maximum trace level that'll be compiled in
@@ -8,24 +14,19 @@ using namespace lsst::pex::logging;
 
 namespace {
 void work() {
-    std::cout << "\nVerbosity levels:\n";
+    std::cout << "\nThreshold levels:\n";
     Trace::printVerbosity(std::cout);
     std::cout << "traces:\n";
 
     Trace("foo", 1, "foo 1");
-    Trace("foo.bar", 2) << "foo.bar " << 2 << "\n";
     Trace("foo.bar.goo", 4, "foo.bar.goo 4");
     Trace("foo.bar.goo", 4, boost::format("foo.bar.goo %d") % 4);
     Trace("foo.bar.goo.hoo", 3, "foo.bar.goo.hoo %d", 3);
 
-    TTrace<3>("foo.tar", "foo.tar %d", 3);
-    TTrace<5>("foo.tar", "foo.tar 5");
 }
 }
 
 int main() {
-    Trace::setDestination(std::cout);
-    
     Trace::setVerbosity(".", 100);
     work();
 

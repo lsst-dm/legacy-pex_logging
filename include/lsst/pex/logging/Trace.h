@@ -3,9 +3,9 @@
   *
   * \ingroup pex
   *
-  * \brief  Class providing basic run-time trace facilities.
+  * \brief  This class provides limited backward compatibility to the 
+  * DC2 run-time trace facilities 
   *
-  * \author Robert Lupton, Princeton University
   */
 
 #if !defined(LSST_PEX_UTILS_TRACE_H)        //!< multiple inclusion guard macro
@@ -36,8 +36,20 @@ namespace logging {
 #endif
 
 /**
- * \brief  Class providing basic run-time trace facilities.
+ * \brief  limited backward compatibility to the 
+ * DC2 run-time trace facilities 
  *
+ * This class replaces the original Trace facility and is provided for 
+ * backward-compatibility.  This fully in-lined implementation sends Trace
+ * calls to the logging framework.
+ *
+ * Developers should prefer the use of DEBUG macros in available via 
+ * Debug.h in the future which sends debugging messages through the 
+ * logging framework.
+ *
+ * From the original Trace.h (by Robert Lupton):
+ * 
+ * \verbatim
  *      Tracing is controlled on a per "component" basis, where a "component" 
  *      is a name of the form aaa.bbb.ccc where aaa is the Most significant 
  *      part; for example, the utilities library might be called "utils", 
@@ -46,26 +58,18 @@ namespace logging {
  *
  *      All tracing may be disabled by recompiling with LSST_NO_TRACE defined
  *      to be non-zero
+ * \endverbaitm
  *
- * \see templated function TTrace, which can control the maximum acceptable
- * verbosity via the CPP symbol LSST_TRACE_MAX
- *
- * \see Component class for details on the verbosity tree which
- *      determines when a trace record will be emitted.
+ * Old Trace capabilities not supported were chose based on current use
+ * at the time this class was developed.  These include
+ * \verbatim
+ *   o  stream printing to Trace objects via << operator
+ *   o  TTrace templated functions
+ * \endverbaitm
  */
 class Trace {
 public:
 #if !LSST_NO_TRACE
-    /**
-     * Return a Trace object (which will later print if verbosity is high enough
-     * for name) to which a message can be attached with <<
-    Trace(const std::string& name,      //!< Name of component
-          const int verbosity           //!< Desired verbosity
-          ) 
-    {
-        Log::getDefaultLog().setThreshold(-1*verbosity);
-    }
-     */
 
     /**
      * Print fmt if verbosity is high enough for name
@@ -156,6 +160,9 @@ public:
     }
     static int  getVerbosity(const std::string &name) {
         return Log::getDefaultLog().getThresholdFor(name);
+    }
+    static void printVerbosity(std::ostream& out) {
+        Log::getDefaultLog().printThresholds(out);
     }
 };
 

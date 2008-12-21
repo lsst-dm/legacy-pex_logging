@@ -30,18 +30,18 @@ int main() {
 
     boost::shared_ptr<LogFormatter> brief(new BriefFormatter());
 
-    LogDestination shy(&cout, brief, 10);
-    cout << "Shy: " << endl;
+    LogDestination shy(&cerr, brief, 10);
+    cerr << "Shy: " << endl;
     shy.write(lr1);
-    cout << "-------------" << endl;
+    cerr << "-------------" << endl;
     shy.write(lr2);
-    cout << "=============" << endl;
+    cerr << "=============" << endl;
 
-    LogDestination chatty(&cout, brief);
-    cout << "Chatty: " << endl;
+    LogDestination chatty(&cerr, brief);
+    cerr << "Chatty: " << endl;
     chatty.write(lr1);
-    cout << "-------------" << endl;
+    cerr << "-------------" << endl;
     chatty.write(lr2);
-    cout << "=============" << endl;
+    cerr << "=============" << endl;
 
 }

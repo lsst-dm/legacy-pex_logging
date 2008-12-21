@@ -14,7 +14,12 @@ def captureOutput(prog, outfile):
     """execute the given program and append the output to the given file.
     """
     out = open(outfile, 'w')
-    test = subprocess.Popen(prog, bufsize=1, close_fds=True, stderr=out)
+    test = subprocess.Popen(prog, bufsize=1, close_fds=True,
+                            stderr=subprocess.PIPE)
+    filter = subprocess.Popen("egrep -v DATE:|TIMESTAMP:".split(), 
+                              bufsize=1, close_fds=True,
+                              stdin=test.stderr, stdout=out)
+    filter.wait()
     excode = test.wait()
     out.close()
 
