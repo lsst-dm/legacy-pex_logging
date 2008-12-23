@@ -9,8 +9,6 @@
 #include "lsst/daf/base/DateTime.h"
 #include <boost/any.hpp>
 
-using std::string;
-
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -91,7 +89,7 @@ BoolPrinterList::iterator BoolPrinterList::last() const {
 }
 
 PrinterList* makeBoolPrinter(const PropertySet& prop, 
-                                 const std::string& name) 
+                             const std::string& name) 
 {
     return new BoolPrinterList(prop, name);
 }
@@ -108,14 +106,15 @@ void PrinterFactory::_loadDefaults() {
     PF_ADD(char);
     PF_ADD(signed char);
     PF_ADD(unsigned char);
-    PF_ADD(string);
+    PF_ADD(std::string);
     add(typeid(bool), makeBoolPrinter);
     add(typeid(DateTime), makeDateTimePrinter);
 }
 
 PrinterFactory PropertyPrinter::defaultPrinterFactory(true);
 
-PropertyPrinter::PropertyPrinter(const PropertySet& prop, const string& name, 
+PropertyPrinter::PropertyPrinter(const PropertySet& prop, 
+                                 const std::string& name, 
                                  const PrinterFactory& fact) 
     : _list(fact.makePrinter(prop, name)) 
 {

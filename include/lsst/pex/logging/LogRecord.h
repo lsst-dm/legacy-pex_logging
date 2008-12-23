@@ -247,6 +247,12 @@ public:
      */
     virtual void setDate();
 
+    /**
+     * return the current UTC time in nanosecs since Jan 1, 1970.  This value
+     * is suitable for passing to a DateTime constructor.  
+     */
+    static long long utcnow();
+
 protected: 
     LogRecord() : _send(false), _vol(10), _data(new PropertySet()) { }
 

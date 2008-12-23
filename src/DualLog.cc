@@ -6,17 +6,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "lsst/pex/logging/DualLog.h"
-#include "lsst/pex/logging/Trace.h"
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
 using namespace std;
-
-// #define EXEC_TRACE  20
-// static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::pex::logging::Trace( "pex.logging.ScreenLog", level, s );
-// }
 
 namespace lsst {
 namespace pex {

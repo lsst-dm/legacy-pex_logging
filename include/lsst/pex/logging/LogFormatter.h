@@ -112,7 +112,9 @@ public:
      * copy another formatter into this one
      */
     BriefFormatter& operator=(const BriefFormatter& that) { 
-        LogFormatter::operator=(that);
+        if (this == &that) return *this;
+
+        dynamic_cast<LogFormatter*>(this)->operator=(that);
         _doAll = that._doAll;
         return *this; 
     }
@@ -154,9 +156,6 @@ public:
     
     /**
      * create a formatter for NetLogger-like ouput
-     * @param nameSep     the string to use as the delimiter between 
-     *                      hierarchical components of a name.  The default is 
-     *                      ".".
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
      */
@@ -201,7 +200,6 @@ private:
     void loadTypeLookup();
 
     TypeSymbolMap _tplookup;
-    string _sep;
     string _midfix;
 };
 

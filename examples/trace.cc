@@ -1,6 +1,15 @@
-//#define LSST_NO_TRACE 1                 // define to compile out tracing
+/*
+ * NOTE:  Use of Trace is now deprecated.  This file demonstrates use of 
+ * remaining Trace capabilities provided for backward-compatibility.  
+ * 
+ */
 
-#define LSST_MAX_TRACE 5                // the maximum trace level that'll be compiled in
+// If you want to turn off debug messages, uncomment this define before
+// you include any LSST includes.
+//
+//#define LSST_NO_TRACE 1
+
+#define LSST_MAX_TRACE 5     // the maximum trace level that'll be compiled in
 
 #include "lsst/pex/logging/Trace.h"
 
@@ -8,12 +17,11 @@ using namespace lsst::pex::logging;
 
 namespace {
 void work() {
-    std::cout << "\nVerbosity levels:\n";
+    std::cout << "\nThreshold levels:\n";
     Trace::printVerbosity(std::cout);
     std::cout << "traces:\n";
 
     Trace("foo", 1, "foo 1");
-    Trace("foo.bar", 2) << "foo.bar " << 2 << "\n";
     Trace("foo.bar.goo", 4, "foo.bar.goo 4");
     Trace("foo.bar.goo", 4, boost::format("foo.bar.goo %d") % 4);
     Trace("foo.bar.goo.hoo", 3, "foo.bar.goo.hoo %d", 3);
@@ -24,8 +32,6 @@ void work() {
 }
 
 int main() {
-    Trace::setDestination(std::cout);
-    
     Trace::setVerbosity(".", 100);
     work();
 

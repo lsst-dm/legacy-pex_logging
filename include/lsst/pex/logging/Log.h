@@ -5,7 +5,7 @@
 #include "lsst/daf/base/PropertySet.h"
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/LogDestination.h"
-#include "lsst/pex/logging/Component.h"
+#include "lsst/pex/logging/threshold/Memory.h"
 
 #include <vector>
 #include <list>
@@ -240,9 +240,9 @@ public:
      * threshold. 
      */
     int getThreshold() const { 
-        return ((_threshold > INHERIT_THRESHOLD) 
+        return ((_threshold > INHERIT_THRESHOLD || _name.length() == 0) 
                        ? _threshold
-                       : _thresholds->getVerbosity(_name, _sep) );
+                       : _thresholds->getThresholdFor(_name) );
     }
 
     /**
@@ -253,7 +253,7 @@ public:
      */
     void setThreshold(int threshold) { 
         _threshold = threshold;
-        _thresholds->add(_name, threshold, _sep);
+        if (_name.length() > 0) _thresholds->setThresholdFor(_name, threshold);
     } 
 
     /**
@@ -277,7 +277,14 @@ public:
      * @param name       the relative name of the child log
      * @param threshold  the verbosity threshold to set Logs with this name to.
      */
-    void setThresholdFor(const string& name, int threshold) const;
+    void setThresholdFor(const string& name, int threshold);
+
+    /**
+     * get the verbosity threshold for a child Log.  When a child Log of the
+     * same name is created, this is the threshold it will have.  
+     * @param name       the relative name of the child log
+     */
+    int getThresholdFor(const string& name) const;
 
     /**
      * add a property to the preamble
@@ -325,7 +332,8 @@ public:
      * send a message to the log
      * @param verbosity    how loud the message should be
      * @param message      a simple bit of text to send in the message
-     * @param prop         a property to include in the message.
+     * @param name         the name of a property to include in the message.
+     * @param val          the value of the property to include
      */
     template <class T>
     void log(int verbosity, const string& message, 
@@ -409,7 +417,7 @@ public:
     /**
      * obtain the default root Log instance.
      */
-    static const Log& getDefaultLog();
+    static Log& getDefaultLog();
 
     /**
      * create a new log and set it as the default Log
@@ -440,6 +448,20 @@ public:
      */
     static void closeDefaultLog();
 
+    /**
+     * print the entire tree of thresholds
+     */
+    void printThresholds(std::ostream& out) {
+        _thresholds->printThresholds(out);
+    }
+
+    /**
+     * reset all thresholds to the default set at the construction of the 
+     * root log.  In general, use of this function is not recommended as 
+     * it will affect all other users of Logs.  
+     */
+    void reset() { _thresholds->forgetAllNames(); }
+
 protected:
     /**
      * the default Log
@@ -466,7 +488,7 @@ protected:
     /**
      * the memory of child verbosity thresholds.
      */
-    shared_ptr<Component> _thresholds;
+    shared_ptr<threshold::Memory> _thresholds;
 
     /**
      * the list of destinations to send messages to

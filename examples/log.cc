@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     // verbosities
     int fileThreshold = Log::DEBUG;
     int screenThreshold = Log::INFO;
-    DualLog myOwnLog("example.log", fileThreshold, screenThreshold);
+    DualLog myOwnLog("anexample.log", fileThreshold, screenThreshold);
     myOwnLog.log(Log::DEBUG, "This will only go to the file");
     myOwnLog.log(Log::WARN, "You will see this on the screen");
 

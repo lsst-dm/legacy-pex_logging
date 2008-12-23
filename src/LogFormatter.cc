@@ -135,7 +135,9 @@ void NetLoggerFormatter::loadTypeLookup() {
  */
 NetLoggerFormatter& NetLoggerFormatter::operator=(const NetLoggerFormatter& that)
 {
-    LogFormatter::operator=(that);
+    if (this == &that) return *this;
+
+    dynamic_cast<NetLoggerFormatter*>(this)->operator=(that);
     _midfix = that._midfix;
     return *this;
 }

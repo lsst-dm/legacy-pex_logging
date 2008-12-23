@@ -6,17 +6,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "lsst/pex/logging/ScreenLog.h"
-#include "lsst/pex/logging/Trace.h"
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
 using namespace std;
-
-// #define EXEC_TRACE  20
-// static void execTrace( string s, int level = EXEC_TRACE ){
-//     lsst::pex::logging::Trace( "pex.logging.ScreenLog", level, s );
-// }
 
 namespace lsst {
 namespace pex {
@@ -28,7 +22,7 @@ using boost::shared_ptr;
 //  ScreenLog
 ///////////////////////////////////////////////////////////
 
-/**
+/*
  * create a Log that will write messages to a given file
  * @param threshold     the verbosity threshold to set for messages going
  *                        to the screen.
@@ -48,7 +42,7 @@ ScreenLog::ScreenLog(const PropertySet& preamble, bool verbose, int threshold)
     _preamble->combine(preamble.deepCopy());
 }
 
-/**
+/*
  * create a Log that will write messages to a given file
  * @param threshold     the verbosity threshold to set for messages going
  *                        to the screen.
@@ -82,11 +76,13 @@ void ScreenLog::configure(bool verbose) {
 
 ScreenLog::~ScreenLog() { }
 
-/** 
+/*
  *  copy another ScreenLog into this one
  */
 ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
-    Log::operator=(that);
+    if (this == &that) return *this;
+
+    dynamic_cast<Log*>(this)->operator=(that);
     _screen = that._screen;
     _screenFrmtr = that._screenFrmtr;
     return *this;
@@ -111,7 +107,7 @@ void ScreenLog::createDefaultLog(const PropertySet& preamble,
     Log::setDefaultLog(new ScreenLog(preamble, verbose, threshold));
 }
 
-/**
+/*
  * create a new log and set it as the default Log
  * @param preamble       a list of data properties that should be included 
  *                         with every recorded message to the Log.  This

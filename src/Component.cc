@@ -12,7 +12,6 @@
 #include <map>
 #include <boost/tokenizer.hpp>
 
-#include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/Component.h"
 
 using namespace lsst::pex::logging;
@@ -30,6 +29,7 @@ Component::Component(const std::string &name,   //!< component's name
 /** Destroy the component structure.
  */
 Component::~Component() {
+    // Note from rlp:  memory leak!  map members not deleted.
     delete &_subcomp;
     delete _name;
 }
@@ -185,7 +185,8 @@ void Component::printVerbosity(std::ostream &fp,    //!< Output stream
         fp << ' ';
     }
 
-    const std::string &name = *_name;
+    std::string &name = *_name;
+    if (name.length() == 0) name = "(root)";
     fp << name;
     for (int i = 0; i < 20 - depth - static_cast<int>(name.size()); i++) {
         fp << ' ';

@@ -51,6 +51,11 @@ int main() {
     tgclog.addPreambleProperty("RUNID", string("testRun"));
     tgclog.log(Log::INFO, "You go first");
 
+    // test printing of the Log tree's thresholds
+    cerr << "Non-default Thresholds:" << endl;
+    log.printThresholds(cerr);
+    cerr << endl;
+
     // test streaming
     LogRec(tgclog, Log::FATAL) << "help: I've fallen" 
                                << Prop<int>("NODE", 5)
