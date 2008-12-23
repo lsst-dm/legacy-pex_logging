@@ -178,6 +178,31 @@ public:
     }
 };
 
+template<int VERBOSITY>
+void TTrace(const char *name,           //!< Name of component
+            const char *fmt,            //!< Message to write as a printf format
+            ...
+           ) {
+    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
+        va_list ap;
+        va_start(ap, fmt);
+        Trace(name, VERBOSITY, fmt, ap);
+        va_end(ap);
+    }
+}
+
+template<int VERBOSITY>
+void TTrace(const std::string& name,      //!< Name of component
+            const std::string& fmt,       //!< Message to write as a printf form at
+            ...
+           ) {
+    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
+        va_list ap;
+        va_start(ap, fmt);
+        Trace(name, VERBOSITY, fmt, ap);
+        va_end(ap);
+    }
+}
 
 
 } // namespace logging

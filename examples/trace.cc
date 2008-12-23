@@ -23,6 +23,8 @@ void work() {
     Trace("foo.bar.goo", 4, boost::format("foo.bar.goo %d") % 4);
     Trace("foo.bar.goo.hoo", 3, "foo.bar.goo.hoo %d", 3);
 
+    TTrace<3>("foo.tar", "foo.tar %d", 3);
+    TTrace<5>("foo.tar", "foo.tar 5");
 }
 }
 
