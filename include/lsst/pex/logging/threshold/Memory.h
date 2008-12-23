@@ -37,8 +37,7 @@ public:
 
     /** 
      * create a hierarchical container for threshold data
-     * @param topname    the name for the top of this hierarchy
-     * @param threshold  the threshold value to associate with the name
+     * @param defaultThreshold  the threshold value to associate with the name
      */
     Family(int defaultThreshold=INHERIT);
 

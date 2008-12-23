@@ -58,14 +58,14 @@ namespace logging {
  *
  *      All tracing may be disabled by recompiling with LSST_NO_TRACE defined
  *      to be non-zero
- * \endverbaitm
+ * \endverbatim
  *
  * Old Trace capabilities not supported were chose based on current use
  * at the time this class was developed.  These include
  * \verbatim
  *   o  stream printing to Trace objects via << operator
  *   o  TTrace templated functions
- * \endverbaitm
+ * \endverbatim
  */
 class Trace {
 public:

@@ -121,7 +121,8 @@ Family::~Family() {
     deleteDescendants();
 }
 
-void Family::printDescThresholds(ostream& out, const std::string& prefix) const 
+void Family::printDescThresholds(std::ostream& out, 
+                                 const std::string& prefix) const 
 {
     if (_children == 0) return;
 
@@ -152,7 +153,7 @@ Memory::Memory(const std::string& delims)
 /**
  * print the thresholds stored in this Memory that are not set to INHERIT.
  */
-void Memory::printThresholds(ostream& out) {
+void Memory::printThresholds(std::ostream& out) {
     out << "(root)              ";
     int top = _tree.getThreshold();
     if (top < 10 && top >= 0) out << ' ';

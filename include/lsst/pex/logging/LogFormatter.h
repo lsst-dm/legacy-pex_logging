@@ -156,9 +156,6 @@ public:
     
     /**
      * create a formatter for NetLogger-like ouput
-     * @param nameSep     the string to use as the delimiter between 
-     *                      hierarchical components of a name.  The default is 
-     *                      ".".
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
      */
@@ -203,7 +200,6 @@ private:
     void loadTypeLookup();
 
     TypeSymbolMap _tplookup;
-    string _sep;
     string _midfix;
 };
 

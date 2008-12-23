@@ -240,7 +240,7 @@ public:
      * threshold. 
      */
     int getThreshold() const { 
-        return ((_threshold > INHERIT_THRESHOLD || _name.length() > 0) 
+        return ((_threshold > INHERIT_THRESHOLD || _name.length() == 0) 
                        ? _threshold
                        : _thresholds->getThresholdFor(_name) );
     }
@@ -283,7 +283,6 @@ public:
      * get the verbosity threshold for a child Log.  When a child Log of the
      * same name is created, this is the threshold it will have.  
      * @param name       the relative name of the child log
-     * @param threshold  the verbosity threshold to set Logs with this name to.
      */
     int getThresholdFor(const string& name) const;
 
@@ -333,7 +332,8 @@ public:
      * send a message to the log
      * @param verbosity    how loud the message should be
      * @param message      a simple bit of text to send in the message
-     * @param prop         a property to include in the message.
+     * @param name         the name of a property to include in the message.
+     * @param val          the value of the property to include
      */
     template <class T>
     void log(int verbosity, const string& message, 
