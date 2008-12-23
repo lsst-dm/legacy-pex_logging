@@ -11,7 +11,7 @@ test.grand.child: Let's play
   STATUS: now
 
 Non-default Thresholds:
-(root)              0
+(root)               0
  test               20
 
 test.grand.child FATAL: help: I've fallen

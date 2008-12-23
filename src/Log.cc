@@ -56,7 +56,7 @@ const int Log::FATAL = 20;
  * a magic threshold value that indicates that a threshold of a Log
  * should be set to its nearest ancestor
  */
-const int Log::INHERIT_THRESHOLD = Component::INHERIT_VERBOSITY;
+const int Log::INHERIT_THRESHOLD = threshold::INHERIT;
 
 /*
  * create a null log.  This constructor should 
@@ -68,9 +68,12 @@ const int Log::INHERIT_THRESHOLD = Component::INHERIT_VERBOSITY;
  *                    (the default) denotes a root log.
  */
 Log::Log(const int threshold, const string& name) 
-    : _threshold(threshold), _name(name), _thresholds(new Component("", INFO)), 
+    : _threshold(threshold), _name(name), 
+      _thresholds(new threshold::Memory(Log::_sep)), 
       _destinations(), _preamble(new PropertySet())
 {
+    _thresholds->setRootThreshold(threshold);
+    if (name.length() > 0) _thresholds->setThresholdFor(name, threshold);
     completePreamble();
 }
 
@@ -98,9 +101,11 @@ Log::Log(const list<shared_ptr<LogDestination> > &destinations,
          const PropertySet &preamble,
          const string &name, const int threshold)
     : _threshold(threshold), _name(name), 
-      _thresholds(new Component(name, threshold)), 
+      _thresholds(new threshold::Memory(Log::_sep)), 
       _destinations(destinations), _preamble(preamble.deepCopy())
 {  
+    _thresholds->setRootThreshold(threshold);
+    if (name.length() > 0) _thresholds->setThresholdFor(name, threshold);
     completePreamble();
 }
 
@@ -155,7 +160,7 @@ Log::Log(const Log& parent, const string& childName, int threshold)
     _name += childName;
 
     if (_threshold > INHERIT_THRESHOLD) 
-        _thresholds->add(_name, _threshold, _sep);
+        _thresholds->setThresholdFor(_name, _threshold);
 
     completePreamble();
 }
@@ -174,13 +179,13 @@ void Log::setThresholdFor(const string& name, int threshold) {
     string fullname(getName());
     if (fullname.length() > 0) fullname += _sep;
     fullname += name;
-    _thresholds->add(fullname, threshold, _sep);
+    _thresholds->setThresholdFor(fullname, threshold);
 }
 
 int Log::getThresholdFor(const string& name) const {
     string fullname(getName());
     if (_name.length() > 0) fullname += _sep;
-    return _thresholds->getVerbosity(fullname+name, _sep);
+    return _thresholds->getThresholdFor(fullname+name);
 }
 
 /*

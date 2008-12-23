@@ -5,7 +5,7 @@
 #include "lsst/daf/base/PropertySet.h"
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/LogDestination.h"
-#include "lsst/pex/logging/Component.h"
+#include "lsst/pex/logging/threshold/Memory.h"
 
 #include <vector>
 #include <list>
@@ -240,9 +240,9 @@ public:
      * threshold. 
      */
     int getThreshold() const { 
-        return ((_threshold > INHERIT_THRESHOLD) 
+        return ((_threshold > INHERIT_THRESHOLD || _name.length() > 0) 
                        ? _threshold
-                       : _thresholds->getVerbosity(_name, _sep) );
+                       : _thresholds->getThresholdFor(_name) );
     }
 
     /**
@@ -253,7 +253,7 @@ public:
      */
     void setThreshold(int threshold) { 
         _threshold = threshold;
-        _thresholds->add(_name, threshold, _sep);
+        if (_name.length() > 0) _thresholds->setThresholdFor(_name, threshold);
     } 
 
     /**
@@ -452,8 +452,15 @@ public:
      * print the entire tree of thresholds
      */
     void printThresholds(std::ostream& out) {
-        _thresholds->printVerbosity(out);
+        _thresholds->printThresholds(out);
     }
+
+    /**
+     * reset all thresholds to the default set at the construction of the 
+     * root log.  In general, use of this function is not recommended as 
+     * it will affect all other users of Logs.  
+     */
+    void reset() { _thresholds->forgetAllNames(); }
 
 protected:
     /**
@@ -481,7 +488,7 @@ protected:
     /**
      * the memory of child verbosity thresholds.
      */
-    shared_ptr<Component> _thresholds;
+    shared_ptr<threshold::Memory> _thresholds;
 
     /**
      * the list of destinations to send messages to

@@ -153,16 +153,28 @@ public:
 #endif
 
     static void setVerbosity(const std::string &name) {
-        Log::getDefaultLog().setThresholdFor(name, Log::INHERIT_THRESHOLD);
+        if (name.length() == 0 || name == ".") 
+            Log::getDefaultLog().setThreshold(Log::INHERIT_THRESHOLD);
+        else
+            Log::getDefaultLog().setThresholdFor(name, Log::INHERIT_THRESHOLD);
     }
     static void setVerbosity(const std::string &name, const int verbosity) {
-        Log::getDefaultLog().setThresholdFor(name, -1*verbosity);
+        if (name.length() == 0 || name == ".") 
+            Log::getDefaultLog().setThreshold(-1*verbosity);
+        else
+            Log::getDefaultLog().setThresholdFor(name, -1*verbosity);
     }
-    static int  getVerbosity(const std::string &name) {
-        return Log::getDefaultLog().getThresholdFor(name);
+    static int getVerbosity(const std::string &name) {
+        if (name.length() == 0 || name == ".") 
+            return Log::getDefaultLog().getThreshold();
+        else 
+            return Log::getDefaultLog().getThresholdFor(name);
     }
     static void printVerbosity(std::ostream& out) {
         Log::getDefaultLog().printThresholds(out);
+    }
+    static void reset() {
+        Log::getDefaultLog().reset();
     }
 };
 
