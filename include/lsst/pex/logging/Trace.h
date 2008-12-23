@@ -28,11 +28,11 @@ namespace logging {
 #endif
 
 #if !defined(LSST_NO_TRACE)
-#  define LSST_NO_TRACE 0               //!< True => turn off all tracing
+#  define LSST_NO_TRACE 0    //!< True => turn off all tracing
 #endif
 
 #if !defined(LSST_MAX_TRACE)
-#  define LSST_MAX_TRACE -1             //!< Maximum level to trace (only works for TTrace)
+#  define LSST_MAX_TRACE -1  //!< Maximum level to trace (only works for TTrace)
 #endif
 
 /**

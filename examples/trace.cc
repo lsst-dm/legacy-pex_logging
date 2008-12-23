@@ -4,9 +4,12 @@
  * 
  */
 
-//#define LSST_NO_TRACE 1                 // define to compile out tracing
+// If you want to turn off debug messages, uncomment this define before
+// you include any LSST includes.
+//
+//#define LSST_NO_TRACE 1
 
-#define LSST_MAX_TRACE 5                // the maximum trace level that'll be compiled in
+#define LSST_MAX_TRACE 5     // the maximum trace level that'll be compiled in
 
 #include "lsst/pex/logging/Trace.h"
 

@@ -9,6 +9,8 @@ env.Program("testLogDestination", ["testLogDestination.cc"], LIBS=env.libs["boos
 env.Program("testLog", ["testLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 env.Program("testDebug", ["testDebug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 env.Program("testNoDebug", ["testNoDebug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testTrace", ["testTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testNoTrace", ["testNoTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 
 #
 # Tests
@@ -25,6 +27,8 @@ tests.run("testLogDestination.cc")
 tests.run("testLog.cc")
 tests.run("testDebug.cc")
 tests.run("testNoDebug.cc")
+tests.run("testTrace.cc")
+tests.run("testNoTrace.cc")
 
 env.CheckSwig("python", ilang="c++")
 env.Append(SWIGFLAGS=" -Ipython")

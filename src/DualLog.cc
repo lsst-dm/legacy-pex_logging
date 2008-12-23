@@ -6,7 +6,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "lsst/pex/logging/DualLog.h"
-#include "lsst/pex/logging/Trace.h"
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
