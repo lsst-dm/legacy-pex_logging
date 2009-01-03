@@ -137,6 +137,7 @@ Log& Log::operator=(const Log& that) {
 
 void Log::completePreamble() {
     _preamble->set<string>("LOG", _name);
+    _preamble->markPersistent();
 }
 
 /*
@@ -301,7 +302,10 @@ void Log::addDestination(ostream& destination, int threshold,
 }
 
 Log& Log::getDefaultLog() {
-    if (defaultLog == 0) defaultLog = new ScreenLog();
+    if (defaultLog == 0) {
+        defaultLog = new ScreenLog();
+    }
+    
     return *defaultLog;
 }
 

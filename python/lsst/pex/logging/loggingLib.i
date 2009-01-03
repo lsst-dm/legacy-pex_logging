@@ -11,7 +11,7 @@ Access to the logging classes from the pex library
 %include "lsst/p_lsstSwig.i"
 
 %{
-// #include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
 #include "lsst/pex/exceptions.h"
@@ -39,6 +39,7 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
+%include "lsst/pex/logging/Trace.h"
 
 %extend lsst::pex::logging::Log {
     %template(addPreamblePropertyInt) addPreambleProperty<int>;
