@@ -182,32 +182,71 @@ public:
     }
 };
 
-template<int VERBOSITY>
-void TTrace(const char *name,           //!< Name of component
-            const char *fmt,            //!< Message to write as a printf format
-            ...
-           ) {
-    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
-        va_list ap;
-        va_start(ap, fmt);
-        Trace(name, VERBOSITY, fmt, ap);
-        va_end(ap);
-    }
+/************************************************************************************************************/
+
+#include <boost/preprocessor/iteration/local.hpp>
+
+/*
+ * Define a macro to generate definitions of TTRace, or needed partial specializations of TTrace if we want
+ * the general case to do nothing --- we do this if only want small values of N to be compiled into the code
+ */
+#define LSST_TTRACE0(STYPE, TEMPLATE, SPECIALIZATION, N) \
+template<TEMPLATE> \
+inline void TTrace SPECIALIZATION(STYPE name, \
+                                  STYPE fmt,  \
+                                  ... \
+                                 ) {  \
+    va_list ap; \
+    va_start(ap, fmt); \
+    Trace(name, N, fmt, ap); \
+    va_end(ap); \
 }
 
-template<int VERBOSITY>
-void TTrace(const std::string& name,      //!< Name of component
-            const std::string& fmt,       //!< Message to write as a printf form at
-            ...
-           ) {
-    if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
-        va_list ap;
-        va_start(ap, fmt);
-        Trace(name, VERBOSITY, fmt, ap);
-        va_end(ap);
-    }
+#define LSST_TTRACE(TEMPLATE, SPECIALIZATION, N) \
+    LSST_TTRACE0(char const*, TEMPLATE, SPECIALIZATION, N) \
+    LSST_TTRACE0(std::string const&, TEMPLATE, SPECIALIZATION, N)
+
+#if !defined(LSST_MAX_TRACE) || LSST_MAX_TRACE < 0
+LSST_TTRACE(int N, , N)                 // allow all N to be instantiated
+#else
+/*
+ * General case does nothing (but partial specializations do)
+ */
+/**
+ * \brief Print a trace message if the verbosity is >= N
+ *
+ * \note Traces at level > LSST_MAX_TRACE are compiled out of the code (if it's non-negative)
+ */
+template<int N>
+inline void TTrace(const char *name,    //!< Name of component
+                   const char *fmt,     //!< Message to write as a printf format     
+                   ...                  //!< arguments for fmt
+                  ) {
+    ;                                   // the general TTrace doesn't so anything (specializations do)
 }
 
+template<int N>
+inline void TTrace(std::string const& name, //!< Name of component
+                   std::string const& fmt,  //!< Message to write as a printf format      
+                   ...                      //!< arguments for fmt
+           ) {
+    ;                                   // the general TTrace doesn't so anything (specializations do)
+}
+
+/*
+ * Use boost's C-preprocessor metaprogramming to generate the needed partial specializations
+ *
+ * We could do this via recursive template specialisations of TRACE if it weren't for the
+ * varargs, which cause g++ to refuse to inline the function call needed to convert ...
+ * to va_list before the recursion can begin.
+ */
+#   define BOOST_PP_LOCAL_MACRO(n)   LSST_TTRACE( , <n>, n) // expand this macro
+#   define BOOST_PP_LOCAL_LIMITS     (0, LSST_MAX_TRACE) // for n=0...LSST_MAX_TRACE
+#   include BOOST_PP_LOCAL_ITERATE()                     // do the work
+#endif
+
+#undef LSST_TTRACE0
+#undef LSST_TTRACE
 
 } // namespace logging
 } // namespace pex
