@@ -7,7 +7,7 @@
 # results.  Note that when the underlying test program is changed, the file
 # containing the canonical results usually must change as well.  
 
-import sys, os
+import sys, os, re
 import subprocess 
 
 def captureOutput(prog, outfile):
@@ -33,11 +33,69 @@ def compareOutput(test, canon, showdiff=True):
     @param canon      a file containing the "correct" results
     @param showdiff   if True (the default), print differences to stdout
     """
-    diffout = None
-    if showdiff:  diffout = sys.stdout
-    excode = subprocess.call(["diff", test, canon],
-                             stdout=sys.stdout, stderr=sys.stderr)
-    return (excode == 0)
+    corr = file(canon)
+    act = file(test)
+
+    fields = {}
+    list = []
+    pat = re.compile(r'^  ([A-Z\._]*):(.*)')
+
+    for line in corr:
+        match = pat.match(line)
+        if match:
+            fields[match.group(1)] = match.group(2)
+        else:
+            list.append([line, fields])
+            fields = {}
+    corr.close()
+    if len(fields) != 0:
+        list.append([None, fields])
+
+    fields = {}
+    for line in act:
+        match = pat.match(line)
+        if match:
+            fields[match.group(1)] = match.group(2)
+        else:
+            if len(list) == 0:
+                print >> sys.stderr, "Actual longer than correct"
+                return False
+            check = list.pop(0)
+            if line != check[0]:
+                print >> sys.stderr, "Mismatched lines:"
+                print >> sys.stderr, "Actual: " + line + "Correct: " + check[0]
+                return False
+            if fields != check[1]:
+                print >> sys.stderr, "Mismatched fields:"
+                print >> sys.stderr, "Actual: " + line + repr(fields)
+                print >> sys.stderr, "Correct: " + check[0] + repr(check[1])
+                return False
+                         
+            fields = {}
+    act.close()
+
+    if len(fields) != 0:
+        if len(list) == 0:
+            print >> sys.stderr, "Actual longer than correct"
+            return False
+        check = list.pop(0)
+        if check[0] is not None:
+            print >> sys.stderr, "Correct longer than actual"
+            return False
+        if fields != check[1]:
+            print >> sys.stderr, "Mismatched fields:"
+            print >> sys.stderr, "Actual:"
+            print >> sys.stderr, repr(fields)
+            print >> sys.stderr, "Correct:"
+            print >> sys.stderr, repr(check[1])
+            return False
+
+    if len(list) != 0:
+        print >> sys.stderr, "Correct longer than actual"
+        return False
+
+    return True
+
 
 def checkOutput(prog, outfile, canon, showdiff=True):
     """run the test program and compare its (text) output to the canonical 
