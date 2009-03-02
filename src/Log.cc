@@ -1,9 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// Log.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
+/**
+ * @file Log.cc
+ * @author Ray Plante
+ */
 
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/ScreenLog.h"
@@ -16,7 +14,13 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
+
+using std::string;
+using std::list;
+using std::ostream;
 using boost::shared_ptr;
+using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////
 //  Log
@@ -68,7 +72,7 @@ const int Log::INHERIT_THRESHOLD = threshold::INHERIT;
  *                    (the default) denotes a root log.
  */
 Log::Log(const int threshold, const string& name) 
-    : _threshold(threshold), _name(name), 
+    : _showAll(false), _threshold(threshold), _name(name), 
       _thresholds(new threshold::Memory(Log::_sep)), 
       _destinations(), _preamble(new PropertySet())
 {
@@ -100,7 +104,7 @@ Log::Log(const int threshold, const string& name)
 Log::Log(const list<shared_ptr<LogDestination> > &destinations, 
          const PropertySet &preamble,
          const string &name, const int threshold)
-    : _threshold(threshold), _name(name), 
+    : _showAll(false), _threshold(threshold), _name(name), 
       _thresholds(new threshold::Memory(Log::_sep)), 
       _destinations(destinations), _preamble(preamble.deepCopy())
 {  
@@ -113,7 +117,7 @@ Log::Log(const list<shared_ptr<LogDestination> > &destinations,
  * create a copy
  */
 Log::Log(const Log& that) 
-    : _threshold(that._threshold), _name(that._name), 
+    : _showAll(that._showAll), _threshold(that._threshold), _name(that._name), 
       _thresholds(that._thresholds),
       _destinations(that._destinations), _preamble(that._preamble->deepCopy())
 { }
@@ -152,8 +156,9 @@ void Log::completePreamble() {
  *                          it will be set to the threshold of the parent.  
  */
 Log::Log(const Log& parent, const string& childName, int threshold)
-    : _threshold(threshold), _name(parent.getName()), 
-      _thresholds(parent._thresholds), _destinations(parent._destinations), 
+    : _showAll(parent._showAll), _threshold(threshold), 
+      _name(parent.getName()), _thresholds(parent._thresholds), 
+      _destinations(parent._destinations), 
       _preamble(parent._preamble)  // Note: share preamble with parent
 { 
     if (_name.length() > 0) _name += _sep;
@@ -232,7 +237,7 @@ void Log::log(int verbosity, const string& message,
     int threshold = getThreshold();
     if (verbosity < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble);
+    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
     rec.addComment(message);
     rec.addProperties(properties);
     send(rec);
@@ -247,7 +252,7 @@ void Log::log(int verbosity, const string& message) {
     int threshold = getThreshold();
     if (verbosity < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble);
+    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
     rec.addComment(message);
     send(rec);
 }
@@ -333,6 +338,8 @@ LogRec& LogRec::operator<<(const string& comment) {
     addComment(comment);
     return *this;
 }
+
+// @endcond
 
 }}} // end lsst::pex::logging
 

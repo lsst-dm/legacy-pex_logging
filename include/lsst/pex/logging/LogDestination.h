@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file LogDestination.h
+ * @brief definition of the LogDestination class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGDESTINATION_H
 #define LSST_PEX_LOGDESTINATION_H
 
@@ -11,10 +16,6 @@
 namespace lsst {
 namespace pex {
 namespace logging {
-
-using std::ostream;
-using std::string;
-using boost::shared_ptr;
 
 // forward declaration of LogRecord
 class LogRecord;
@@ -49,8 +50,8 @@ public:
      *                       to the stream.  If not provided, it would be set
      *                       to 0.  
      */
-    LogDestination(ostream *strm, 
-                   const shared_ptr<LogFormatter>& formatter, 
+    LogDestination(std::ostream *strm, 
+                   const boost::shared_ptr<LogFormatter>& formatter, 
                    int threshold=0);
 
     /**
@@ -94,7 +95,7 @@ public:
 
 protected:
     int _threshold;   // the stream's threshold
-    ostream *_strm;   // the output stream
+    std::ostream *_strm;   // the output stream
     boost::shared_ptr<LogFormatter> _frmtr;    // the formatter to use
 };
 

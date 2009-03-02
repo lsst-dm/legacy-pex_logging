@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file LogRecord.h
+ * @brief definition of the LogRecord, RecordProperty and Prop classes
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGRECORD_H
 #define LSST_PEX_LOGRECORD_H
 
@@ -19,8 +24,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::string;
-using lsst::daf::base::PropertySet;
+namespace dafBase = lsst::daf::base;
 
 /**
  * @brief a container for a named data property for a LogRecord
@@ -43,15 +47,15 @@ public:
      * original item passed in; thus, this should be used only in the same
      * scope as the arguments
      */
-    RecordProperty(const string& pname, const T& pvalue) 
+    RecordProperty(const std::string& pname, const T& pvalue) 
         : name(pname), value(pvalue) { }
 
     /**
      * add the name-value pair to a PropertySet
      */
-    void addTo(PropertySet& set) { set.add(this->name, this->value); }
+    void addTo(dafBase::PropertySet& set) { set.add(this->name, this->value); }
 
-    const string name;
+    const std::string name;
     const T& value;
 };
 
@@ -61,7 +65,7 @@ public:
 template <class T>
 class Prop : public RecordProperty<T> { 
 public:
-    Prop(const string& pname, const T& value) 
+    Prop(const std::string& pname, const T& value) 
         : RecordProperty<T>(pname, value) { }
 };
 
@@ -82,8 +86,11 @@ public:
      * @param verbosity  the loudness of the record.  If this value is 
      *                     greater than or equal to the given verbosity 
      *                     threshold, the message will be recorded.
+     * @param showAll    if true, prefer showing all properties when 
+     *                     rendering this record.  The default is false.
+     *                     (See willShow().)
      */
-    LogRecord(int threshold, int verbosity);
+    LogRecord(int threshold, int verbosity, bool showAll=false);
 
     /**
      * Create a log record to be sent to a given log.  The current time is 
@@ -96,14 +103,18 @@ public:
      * @param preamble   an ordered set of properties that constitute the 
      *                     preamble of this message.  This should not include
      *                     the current time.  
+     * @param showAll    if true, prefer showing all properties when 
+     *                     rendering this record.  The default is false.
+     *                     (See willShowAll().)
      */
-    LogRecord(int threshold, int verbosity, const PropertySet& preamble);
+    LogRecord(int threshold, int verbosity, 
+              const dafBase::PropertySet& preamble, bool showAll=false);
 
     /**
      * create a copy of a record
      */
     LogRecord(const LogRecord& that) 
-        : _send(that._send), _vol(that._vol), _data()
+        : _send(that._send), _showAll(that._showAll), _vol(that._vol), _data()
     { 
         _data = that._data->deepCopy();
     }   
@@ -118,6 +129,7 @@ public:
      */
     LogRecord& operator=(const LogRecord& that) {
         _send = that._send; 
+        _showAll = that._showAll; 
         _vol = that._vol; 
         _data = that._data;
         return *this;
@@ -129,7 +141,7 @@ public:
      * only get added when willRecord() is returns true which is set when
      * the record is constructed (usually by a Log object).  
      */
-    void addComment(const string& comment) {
+    void addComment(const std::string& comment) {
         if (_send) _data->add(LSST_LP_COMMENT, comment);
     }
 
@@ -151,21 +163,21 @@ public:
      * attach a named item of data to this record.
      */
     template <class T>
-    void addProperty(const string& name, const T& val);
+    void addProperty(const std::string& name, const T& val);
 
     /**
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
      */
-    void addProperties(const PropertySet& props);
+    void addProperties(const dafBase::PropertySet& props);
 
     /**
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
      */
-    void addProperties(const PropertySet::Ptr& props) {
+    void addProperties(const dafBase::PropertySet::Ptr& props) {
         addProperties(*props);
     }
 
@@ -173,32 +185,32 @@ public:
      * return the read-only data properties that make up this log message.
      * This is a synonym for data().
      */
-    const PropertySet& getProperties() const { return data(); }
+    const dafBase::PropertySet& getProperties() const { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for data().
      */
-    PropertySet& getProperties() { return data(); }
+    dafBase::PropertySet& getProperties() { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
      */
-    const PropertySet& data() const { return *_data; }
+    const dafBase::PropertySet& data() const { return *_data; }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
      */
-    PropertySet& data() { return *_data; }
+    dafBase::PropertySet& data() { return *_data; }
 
     /**
      * return the number available property parameter names (i.e. ones 
      * that return non-PropertySet values). 
      */
     size_t countParamNames() {
-        std::vector<string> names = data().paramNames(false);
+        std::vector<std::string> names = data().paramNames(false);
         return names.size();
     }
 
@@ -222,6 +234,24 @@ public:
      * construction time only.  
      */
     bool willRecord() const { return _send; }
+
+    /**
+     * return true if there is a preference by the creator of this record
+     * to show all the properties associated with this record.  A
+     * LogFormatter may or may not choose to honor this preference when 
+     * this LogRecord is rendered.
+     */
+    bool willShowAll() const { return _showAll; } 
+
+    /**
+     * set whether all of the properties attached to this record should 
+     * be displayed when the record is rendered.  A LogFormatter may or may 
+     * not choose to honor the preference, according to the purposes of 
+     * its implmentation.  
+     * @param yesno    the preference for showing all.  willShowAll() will 
+     *                    return this value.  
+     */
+    void setShowAll(bool yesno) {  _showAll = yesno;  }
 
     /**
      * set the TIMESTAMP property to the current time.  The value is stored as 
@@ -254,7 +284,7 @@ public:
     static long long utcnow();
 
 protected: 
-    LogRecord() : _send(false), _vol(10), _data(new PropertySet()) { }
+    LogRecord() : _send(false), _vol(10), _data(new dafBase::PropertySet()) { }
 
     /**
      * initialize this record with the DATE and LEVEL properties
@@ -266,9 +296,10 @@ protected:
         }
     }
 
-    bool _send;  // true if this record should be sent to the log
-    int _vol;    // the verbosity volume of this message
-    PropertySet::Ptr _data;
+    bool _send;    // true if this record should be sent to the log
+    bool _showAll; // true if there is preference to have all data displayed
+    int _vol;      // the verbosity volume of this message
+    dafBase::PropertySet::Ptr _data;
 };
 
 template <class T>
@@ -277,7 +308,7 @@ void LogRecord::addProperty(const RecordProperty<T>& property) {
 }
 
 template <class T>
-void LogRecord::addProperty(const string& name, const T& val) {
+void LogRecord::addProperty(const std::string& name, const T& val) {
     if (_send) data().add(name, val);
 }
 

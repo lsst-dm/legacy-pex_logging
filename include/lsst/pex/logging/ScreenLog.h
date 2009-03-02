@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file ScreenLog.h
+ * @brief definition of the ScreenLog class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_SCREENLOG_H
 #define LSST_PEX_SCREENLOG_H
 
@@ -8,9 +13,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::vector;
-using boost::shared_ptr;
-using lsst::daf::base::PropertySet;
+namespace dafBase = lsst::daf::base;
 
 /**
  * @brief  a Log configured to send messages to the screen.  The 
@@ -43,7 +46,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    ScreenLog(const PropertySet& preamble, 
+    ScreenLog(const dafBase::PropertySet& preamble, 
               bool verbose=false, int threshold=Log::INFO);
 
     /**
@@ -111,7 +114,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    static void createDefaultLog(const PropertySet& preamble,
+    static void createDefaultLog(const dafBase::PropertySet& preamble,
                                  bool verbose=false, int threshold=Log::INFO);
 
 private:

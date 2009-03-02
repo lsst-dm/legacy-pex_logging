@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file Log.h
+ * @brief definition of the DualLog class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_DUALLOG_H
 #define LSST_PEX_DUALLOG_H
 
@@ -10,9 +15,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::vector;
-using boost::shared_ptr;
-using lsst::daf::base::PropertySet;
+namespace defBase = lsst::daf::base;
 
 /**
  * @brief a Log that sends message to both the screen and a file. 
@@ -41,7 +44,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    DualLog(const PropertySet& preamble, const string& filename, 
+    DualLog(const dafBase::PropertySet& preamble, const std::string& filename, 
             int filethresh=0, int screenthresh=0, bool screenVerbose=false);
             
     /**
@@ -56,7 +59,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    DualLog(const string& filename, int filethresh=0, int screenthresh=0, 
+    DualLog(const std::string& filename, int filethresh=0, int screenthresh=0, 
             bool screenVerbose=false);
             
 
@@ -111,8 +114,8 @@ public:
      *                        name ("LOG") and the text comment ("COMMENT") 
      *                        will be printed.
      */
-    static void createDefaultLog(const PropertySet& preamble,
-                                 const string& filename, 
+    static void createDefaultLog(const dafBase::PropertySet& preamble,
+                                 const std::string& filename, 
                                  int filethresh=Log::INHERIT_THRESHOLD, 
                                  int screenthresh=0, bool screenVerbose=false);
     /**
@@ -127,13 +130,13 @@ public:
      *                        name ("LOG") and the text comment ("COMMENT") 
      *                        will be printed.
      */
-    static void createDefaultLog(const string& filename, 
+    static void createDefaultLog(const std::string& filename, 
                                  int filethresh=Log::INHERIT_THRESHOLD, 
                                  int screenthresh=0, bool screenVerbose=false);
 
 
 private:
-    void _init(const string& filename, int filethresh);
+    void _init(const std::string& filename, int filethresh);
 
     LogDestination *_file;
     std::ofstream *fstrm;

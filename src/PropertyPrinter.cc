@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// PropertyPrinter.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file PropertyPrinter.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/PropertyPrinter.h"
 #include "lsst/daf/base/DateTime.h"
 #include <boost/any.hpp>
@@ -41,6 +38,8 @@ bool WrappedPrinterIter::notAtEnd() const {
 bool WrappedPrinterIter::notLTBegin() const {
     return _it.get()->notLTBegin();
 }
+
+PrinterList::~PrinterList() { }
 
 DateTimePrinterIter::~DateTimePrinterIter() { }
 

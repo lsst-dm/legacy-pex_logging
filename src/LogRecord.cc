@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// LogRecord.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file LogRecord.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/DateTime.h"
@@ -18,23 +15,26 @@ namespace pex {
 namespace logging {
 
 using boost::format;
+using std::string;
 using lsst::daf::base::DateTime;
+using lsst::daf::base::PropertySet;
 namespace pexExcept = lsst::pex::exceptions;
 
 
-/**
+/*
  * Create a log record to be sent to a given log.  
  * @param verbosity  the loudness of the record.  If this value is 
  *                     greater than or equal to the Log's verbosity 
  *                     threshold, the message will be recorded.
  */
-LogRecord::LogRecord(int threshold, int verbosity)
-    : _send(threshold <= verbosity), _vol(verbosity), _data(new PropertySet())
+LogRecord::LogRecord(int threshold, int verbosity, bool showAll)
+    : _send(threshold <= verbosity), _showAll(showAll), _vol(verbosity), 
+      _data(new PropertySet())
 { 
     _init();
 }
 
-/**
+/*
  * Create a log record to be sent to a given log.  The current time is 
  * recorded and set as the DATE property.
  * @param threshold  the verbosity threshold that determines if a message
@@ -46,8 +46,9 @@ LogRecord::LogRecord(int threshold, int verbosity)
  *                     preamble of this message.  This should not include
  *                     the current time.  
  */
-LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble) 
-    : _send(threshold <= verbosity), _vol(verbosity), _data()
+LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble,
+                     bool showAll) 
+    : _send(threshold <= verbosity), _showAll(showAll), _vol(verbosity),_data()
 {
     if (_send) {
         _data = preamble.deepCopy();
@@ -58,7 +59,7 @@ LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble)
     _init();
 }
 
-/**
+/*
  * delete this log record
  */
 LogRecord::~LogRecord() { }

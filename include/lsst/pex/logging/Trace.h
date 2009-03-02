@@ -3,8 +3,7 @@
   *
   * \ingroup pex
   *
-  * \brief  This class provides limited backward compatibility to the 
-  * DC2 run-time trace facilities 
+  * \brief  definition of the Trace messaging facilities
   *
   */
 

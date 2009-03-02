@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file Debug.h
+ * @brief definition of the Debug class and macros
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGGING_DEBUG_H
 #define LSST_PEX_LOGGING_DEBUG_H
 
@@ -25,10 +30,10 @@ namespace logging {
 class Debug : public Log {
 public:
 
-    Debug(const string& name, int verbosity=-1*Log::INHERIT_THRESHOLD) 
+    Debug(const std::string& name, int verbosity=-1*Log::INHERIT_THRESHOLD) 
         : Log(Log::getDefaultLog(), name, -1*verbosity) { }
 
-    Debug(const Log& parent, const string& name, 
+    Debug(const Log& parent, const std::string& name, 
           int verbosity=-1*Log::INHERIT_THRESHOLD) 
         : Log(parent, name , -1*verbosity) { }
     Debug(const Debug& that) : Log(that) { }
@@ -38,18 +43,18 @@ public:
         return *this;
     }
 
-    void debug(int verbosity, const string& message) {
+    void debug(int verbosity, const std::string& message) {
         log(-1*verbosity, message);
     }
     void debug(int verbosity, const boost::format& message) {
         log(-1*verbosity, message);
     }
 
-    void debug(const string& message) { debug(1, message); }
-    void debug2(const string& message) { debug(2, message); }
-    void debug3(const string& message) { debug(3, message); }
-    void debug4(const string& message) { debug(4, message); }
-    void debug5(const string& message) { debug(5, message); }
+    void debug(const std::string& message) { debug(1, message); }
+    void debug2(const std::string& message) { debug(2, message); }
+    void debug3(const std::string& message) { debug(3, message); }
+    void debug4(const std::string& message) { debug(4, message); }
+    void debug5(const std::string& message) { debug(5, message); }
 
     void debug(const boost::format& message) { debug(1, message); }
     void debug2(const boost::format& message) { debug(2, message); }

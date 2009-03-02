@@ -1,4 +1,11 @@
 // -*- lsst-c++ -*-
+/**
+ * @file LogFormatter.h
+ * @ingroup pex
+ * @brief definitions of the LogFormatter.h abstract class and its 
+ * implementing classes, BriefFormatter, NetLoggerFormatter
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGFORMATTER_H
 #define LSST_PEX_LOGFORMATTER_H
 
@@ -16,16 +23,12 @@ namespace logging {
 // forward declaration
 class LogRecord;
 
-using lsst::daf::base::PropertySet;
-using std::string;
-using std::ostream;
-
 /**
  * @brief  an abstract class for formatting log records into a text stream.
  * 
  * Implementations of this class actually write log messages to a stream 
  * in a particular format.  The messages come in as LogRecord objects, which 
- * stores its data as a list of DataProperty objects.  The formatter can
+ * stores its data in a PropertySet object.  The formatter can
  * expect certain properties to be given specific names.  The following are 
  * standard names:
  *
@@ -73,7 +76,7 @@ public:
      *                 the pointer is null, nothing is written.  
      * @param rec    the record to write
      */
-    virtual void write(ostream *strm, const LogRecord &rec) = 0;
+    virtual void write(std::ostream *strm, const LogRecord &rec) = 0;
 
 };
 
@@ -122,13 +125,16 @@ public:
     /**
      * return true if all data properties will be printed or false if 
      * just the Log name ("LOG") and the text comment ("COMMENT") will 
-     * be printed.
+     * be printed by default.  All properties will always be printed 
+     * when the LogRecord's willShowAll() returns true. 
      */
     bool isVerbose() { return _doAll; }
 
     /**
-     * set whether all data properties will be printed or
+     * set whether all data properties will be printed by default or
      * just the Log name ("LOG") and the text comment ("COMMENT").
+     * This will be over-ridden for any LogRecord whose willShowAll() 
+     * returns true.  
      * @param printAll   true if all properties should be printed.
      */
     void setVerbose(bool printAll) { _doAll = printAll; }
@@ -138,12 +144,58 @@ public:
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
-    virtual void write(ostream *strm, const LogRecord& rec);
+    virtual void write(std::ostream *strm, const LogRecord& rec);
 
 private:
-    virtual void _write(ostream *strm, const LogRecord& rec);
 
     bool _doAll;
+};
+
+/**
+ * a screen-oriented formatter that indents messages according to the 
+ * depth of the log name.  
+ *
+ * This class replicates the DC2 formatting of Trace messages.  
+ */
+class IndentedFormatter : public BriefFormatter {
+public: 
+
+    /**
+     * create the formatter. 
+     * @param verbose    all data property values will be printed.
+     */
+    explicit IndentedFormatter(bool verbose=false) 
+        : BriefFormatter(verbose)
+    { }
+
+    /**
+     * create a copy of a LogFormatter
+     */ 
+    IndentedFormatter(const IndentedFormatter& that) 
+        : BriefFormatter(that)
+    { }
+
+    /**
+     * delete the formatter
+     */
+    virtual ~IndentedFormatter();
+
+    /**
+     * copy another formatter into this one
+     */
+    IndentedFormatter& operator=(const IndentedFormatter& that) { 
+        if (this == &that) return *this;
+
+        dynamic_cast<BriefFormatter*>(this)->operator=(that);
+        return *this; 
+    }
+
+    /**
+     * write out a log record to a stream
+     * @param strm   the output stream to write the record to
+     * @param rec    the record to write
+     */
+    virtual void write(std::ostream *strm, const LogRecord& rec);
 };
 
 /**
@@ -159,7 +211,7 @@ public:
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
      */
-    explicit NetLoggerFormatter(const string& valueDelim = defaultValDelim);
+    explicit NetLoggerFormatter(const std::string& valueDelim = defaultValDelim);
 
     /**
      * create a copy
@@ -184,23 +236,23 @@ public:
      * return the string used to separate a property name and its value 
      * in the output stream.
      */
-    const string& getValueDelimiter() const { return _midfix; }
+    const std::string& getValueDelimiter() const { return _midfix; }
 
     /**
      * write out a log record to a stream
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
-    virtual void write(ostream *strm, const LogRecord& rec);
+    virtual void write(std::ostream *strm, const LogRecord& rec);
 
-    static const string defaultValDelim;
+    static const std::string defaultValDelim;
 
 private:
     typedef std::map<std::string, char> TypeSymbolMap;
     void loadTypeLookup();
 
     TypeSymbolMap _tplookup;
-    string _midfix;
+    std::string _midfix;
 };
 
 }}}     // end lsst::pex::logging

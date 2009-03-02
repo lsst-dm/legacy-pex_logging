@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file Log.h
+ * @brief definition of the Log and LogRec classes
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOG_H
 #define LSST_PEX_LOG_H
 
@@ -15,11 +20,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::string;
-using std::list;
-using std::ostream;
-using boost::shared_ptr;
-using lsst::daf::base::PropertySet;
+namespace dafBase = lsst::daf::base;
 
 /**
  * @brief a place to record messages and descriptions of the state of 
@@ -165,7 +166,7 @@ public:
      * @param name        the initial name for this log.  An empty string 
      *                    (the default) denotes a root log.
      */
-    Log(const int threshold=INFO, const string& name="");
+    Log(const int threshold=INFO, const std::string& name="");
 
     /**
      * create a fully configured Log.  This constructor is 
@@ -188,9 +189,9 @@ public:
      *                         with destinations have their own thresholds that
      *                         will override this one.)
      */
-    Log(const list<shared_ptr<LogDestination> >& destinations, 
-        const PropertySet& preamble,
-        const string& name="", const int threshold=INFO);
+    Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
+        const dafBase::PropertySet& preamble,
+        const std::string& name="", const int threshold=INFO);
 
     /**
      * create a child of a given Log.  The child log will be attached 
@@ -210,7 +211,7 @@ public:
      *                          is being created for the first time, it is
      *                          set to track the threshold of the parent. 
      */
-    Log(const Log& parent, const string& childName, 
+    Log(const Log& parent, const std::string& childName, 
         int threshold=INHERIT_THRESHOLD);
 
     /**
@@ -277,27 +278,53 @@ public:
      * @param name       the relative name of the child log
      * @param threshold  the verbosity threshold to set Logs with this name to.
      */
-    void setThresholdFor(const string& name, int threshold);
+    void setThresholdFor(const std::string& name, int threshold);
 
     /**
      * get the verbosity threshold for a child Log.  When a child Log of the
      * same name is created, this is the threshold it will have.  
      * @param name       the relative name of the child log
      */
-    int getThresholdFor(const string& name) const;
+    int getThresholdFor(const std::string& name) const;
+
+    /**
+     * return true if this log will prefer showing all properties when
+     * rendering log records.  This preference will be passed to 
+     * LogFormatters via all LogRecords created by or sent via this Log.
+     * A LogFormatter may or may not choose to honor this preference when 
+     * the LogRecord is rendered.
+     */
+    bool willShowAll() const { return _showAll; } 
+
+    /**
+     * set whether all of the properties should be displayed when 
+     * rendering log records.  This preference will be passed to 
+     * LogFormatters via all LogRecords created by or sent via this Log.
+     * A LogFormatter may or may not choose to honor the preference, 
+     * according to the purposes of its implmentation.  
+     *
+     * Note that while this attribute's default value is inherited from 
+     * the parent log, it is not persistently associated with the log's 
+     * name like the verbosity threshold.  If this log is destroyed and 
+     * then recreated again with the same name, this attribute will revert 
+     * to that of the parent log.  
+     * @param yesno    the preference for showing all.  willShowAll() will 
+     *                    return this value.  
+     */
+    void setShowAll(bool yesno) {  _showAll = yesno;  }
 
     /**
      * add a property to the preamble
      */
     template <class T>
-    void addPreambleProperty(const string& name, const T& val);
+    void addPreambleProperty(const std::string& name, const T& val);
 
     /**
      * set a property to the preamble, overwriting any value with 
      * the same name.
      */
     template <class T>
-    void setPreambleProperty(const string& name, const T& val);
+    void setPreambleProperty(const std::string& name, const T& val);
 
     /**
      * create a child of a given Log.  The child log will be attached 
@@ -316,7 +343,7 @@ public:
      *                          is being created for the first time, it is
      *                          set to track the threshold of the parent. 
      */
-    Log *createChildLog(const string& childName, 
+    Log *createChildLog(const std::string& childName, 
                         int threshold=INHERIT_THRESHOLD) const;
 
     /**
@@ -325,8 +352,8 @@ public:
      * @param message      a simple bit of text to send in the message
      * @param properties   a list of properties to include in the message.
      */
-    void log(int verbosity, const string& message, 
-             const PropertySet& properties);
+    void log(int verbosity, const std::string& message, 
+             const dafBase::PropertySet& properties);
 
     /**
      * send a message to the log
@@ -336,8 +363,8 @@ public:
      * @param val          the value of the property to include
      */
     template <class T>
-    void log(int verbosity, const string& message, 
-             const string& name, const T& val);
+    void log(int verbosity, const std::string& message, 
+             const std::string& name, const T& val);
 
     /**
      * send a message to the log
@@ -346,7 +373,7 @@ public:
      * @param prop         a property to include in the message.
      */
     template <class T>
-    void log(int verbosity, const string& message, 
+    void log(int verbosity, const std::string& message, 
              const RecordProperty<T>& prop);
 
     /**
@@ -354,7 +381,7 @@ public:
      * @param verbosity    how loud the message should be
      * @param message      a simple bit of text to send in the message
      */
-    void log(int verbosity, const string& message);
+    void log(int verbosity, const std::string& message);
 
     /**
      * send a simple message to the log
@@ -381,7 +408,7 @@ public:
      * @param threshold     the verbosity threshold to use to filter messages
      *                         sent to the stream.
      */
-    void addDestination(ostream& destination, int threshold);
+    void addDestination(std::ostream& destination, int threshold);
 
     /**
      * add a destination to this log.  The destination stream will included
@@ -396,8 +423,8 @@ public:
      *                         sent to the stream.
      * @param formatter     the log formatter to use.
      */
-    void addDestination(ostream &destination, int threshold, 
-                        const shared_ptr<LogFormatter> &formatter);
+    void addDestination(std::ostream &destination, int threshold, 
+                        const boost::shared_ptr<LogFormatter> &formatter);
 
     /**
      * add a destination to this log.  The destination stream will included
@@ -405,14 +432,14 @@ public:
      * All previously created logs, including ancestor logs, will be 
      * unaffected.  
      */
-    void addDestination(const shared_ptr<LogDestination> &destination) {
+    void addDestination(const boost::shared_ptr<LogDestination> &destination) {
         _destinations.push_back(destination);
     }
 
     /** 
      * return the current set of preamble properties
      */
-    const PropertySet& getPreamble() { return *_preamble; }
+    const dafBase::PropertySet& getPreamble() { return *_preamble; }
 
     /**
      * obtain the default root Log instance.
@@ -439,9 +466,9 @@ public:
      *                         will override this one.)
      */
     static void createDefaultLog(
-        const list<shared_ptr<LogDestination> >& destinations, 
-        const PropertySet& preamble,
-        const string& name="", const int threshold=INFO);
+        const std::list<boost::shared_ptr<LogDestination> >& destinations, 
+        const dafBase::PropertySet& preamble,
+        const std::string& name="", const int threshold=INFO);
 
     /**
      * shutdown and destroy the default log
@@ -476,11 +503,12 @@ protected:
      */
     static void setDefaultLog(Log* deflog);
 
-    static const string _sep;
+    static const std::string _sep;
 
 private:
     void completePreamble();
 
+    bool _showAll; 
     int _threshold;
     std::string _name;
 
@@ -488,45 +516,45 @@ protected:
     /**
      * the memory of child verbosity thresholds.
      */
-    shared_ptr<threshold::Memory> _thresholds;
+    boost::shared_ptr<threshold::Memory> _thresholds;
 
     /**
      * the list of destinations to send messages to
      */
-    list<shared_ptr<LogDestination> > _destinations;
+    std::list<boost::shared_ptr<LogDestination> > _destinations;
 
     /**
      * the list preamble data properties that are included with every 
      * log record.
      */
-    PropertySet::Ptr _preamble;
+    dafBase::PropertySet::Ptr _preamble;
 };
 
 template <class T>
-void Log::addPreambleProperty(const string& name, const T& val) {
+void Log::addPreambleProperty(const std::string& name, const T& val) {
     _preamble->add<T>(name, val);
 }
 
 template <class T>
-void Log::setPreambleProperty(const string& name, const T& val) {
+void Log::setPreambleProperty(const std::string& name, const T& val) {
     _preamble->set<T>(name, val);
 }
         
 template <class T>
-void Log::log(int verbosity, const string& message, 
-              const string& name, const T& val) {
+void Log::log(int verbosity, const std::string& message, 
+              const std::string& name, const T& val) {
 
     int threshold = getThreshold();
     if (verbosity < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble);
+    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
     rec.addComment(message);
     rec.addProperty(name, val);
     send(rec);
 }
 
 template <class T>
-void Log::log(int verbosity, const string& message, 
+void Log::log(int verbosity, const std::string& message, 
          const RecordProperty<T>& prop) 
 {
     log(verbosity, message, prop.name, prop.value);
@@ -589,7 +617,7 @@ public:
     /**
      * record a string comment into this message
      */
-    LogRec& operator<<(const string& comment); /* {
+    LogRec& operator<<(const std::string& comment); /* {
         addComment(comment);
         return *this;
     }  */
@@ -614,7 +642,7 @@ public:
     /**
      * record a data property into this message
      */
-    LogRec& operator<<(const PropertySet& props) {
+    LogRec& operator<<(const dafBase::PropertySet& props) {
         addProperties(props);
         return *this;
     }

@@ -1,8 +1,8 @@
 // -*- lsst-c++ -*-
 /**
-  * \file logExample.cc
+  * \file log.cc
   *
-  * \brief logExample.c demonstrates simple use of the Log facility.
+  * \brief demonstrates simple use of the Log facility.
   */
 
 #include "lsst/pex/logging/Log.h"
@@ -47,15 +47,7 @@ int main(int argc, char *argv[]) {
 
     // Normally properties are not printed to the screen.  To see these, we'll
     // turn them on now.
-    //
-    // Outside the pipeline framework, the default logger is a ScreenLog.
-    // If you want to see properties on the screen, you put this code anywhere
-    // in your python script.  Note that the effect is global.
-    try {
-        ScreenLog slog = dynamic_cast<const ScreenLog&>(Log::getDefaultLog());
-        slog.setScreenVerbose(true);
-    }
-    catch (bad_cast &e) { }
+    mylog.setShowAll(true);
 
     // now try the complex message again
     Rec(mylog, Log::FATAL) << "No convergence reached"

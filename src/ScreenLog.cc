@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// ScreenLog.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file ScreenLog.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/ScreenLog.h"
 
 #include <iostream>
@@ -17,6 +14,7 @@ namespace pex {
 namespace logging {
 
 using boost::shared_ptr;
+using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////
 //  ScreenLog
@@ -64,7 +62,7 @@ ScreenLog::ScreenLog(bool verbose, int threshold)
 void ScreenLog::configure(bool verbose) {
     // note that the shared_ptr held by the screen LogDestination will 
     // handle the deletion of this pointer.
-    _screenFrmtr = new BriefFormatter(verbose);
+    _screenFrmtr = new IndentedFormatter(verbose);
     shared_ptr<LogFormatter> fmtr(_screenFrmtr);
 
     // note that the shared_ptr held by LogDestination list will 

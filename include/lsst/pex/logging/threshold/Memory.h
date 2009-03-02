@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file Memory.h
+ * @brief definition of the Memory class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGGGING_THRESHOLD_MEMORY_H
 #define LSST_PEX_LOG_THRESHOLD_MEMORY_H
 

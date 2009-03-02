@@ -1,22 +1,19 @@
-//////////////////////////////////////////////////////////////////////////////
-// DualLog.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file DualLog.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/DualLog.h"
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
-using namespace std;
-
 namespace lsst {
 namespace pex {
 namespace logging {
 
+using namespace std;
 using boost::shared_ptr;
+using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////
 //  DualLog
