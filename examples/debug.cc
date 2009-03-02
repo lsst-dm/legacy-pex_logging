@@ -5,10 +5,9 @@
   * \brief logExample.c demonstrates simple use of the Log facility.
   */
 
-// If you want to turn off debug messages, uncomment this define before
-// you include any LSST includes.
-//
-// #define LSST_NO_DEBUG
+// Set a compile-time verbosity limit for this code.  Messages with a 
+// verbosity level greater than this will not be printed.
+#define LSST_MAX_DEBUG 3
 
 #include "lsst/pex/logging/Debug.h"
 #include "boost/format.hpp"
@@ -18,6 +17,8 @@ using namespace std;
 using lsst::pex::logging::Log;
 using lsst::pex::logging::Rec;
 using lsst::pex::logging::Prop;
+using lsst::pex::logging::Debug;
+using lsst::pex::logging::debug;
 
 /** \brief Demonstrate the recording debugging messages
   *
@@ -35,33 +36,33 @@ using lsst::pex::logging::Prop;
 int main(int argc, char *argv[]) {
 
     // any function that wishes to have debug messages should
-    // declare the log name
-    DEBUGLOG("myapp", 1);
+    // declare a log with a given name.
+    Debug dblog("myapp");
 
     // Simple messages can use DEBUG(); these will have a verbosity
-    // level of 1.
+    // level of 1 and, thus, will be printed.
     // 
-    DEBUG("I'm starting this routine");
+    dblog.debug<1>("I'm starting this routine");
 
-    // You can use boost:;format without concern for performance
-    DEBUG(boost::format("This is execution number %i") % 5);
+    // formatted messages are supported as well
+    //
+    dblog.debug<3>("Starting iteration #%i", 100);
 
-    // Use of DEBUGN() to set an arbitrary verbosity level
-    DEBUGN(3, "This is a nitpic");
+    // this message will not get printed as it exceeds LSST_MAX_DEBUG
+    //
+    dblog.debug<5>("This is too verbose to be seen");
 
-    // Same as above; just a convenience
-    DEBUG3("The same level of nitpicing");
+    // Of course you can call any Log or Log-related functions explicitly.
+    // The filtering, however, is done a run-time, and thus is less 
+    // efficient.  
+    Rec(dblog, Log::DEBUG) << Prop<double>("rms", 3.2) << Rec::endr;
 
-    // The previous DEBUGLOG call defined a default variable __debugLog__
-    // For the Debug log.  If you want to write to more than one log topic
-    // name, use MDEBUGLOG that let's you name the variables yourself. 
-    // 
-    MDEBUGLOG(dbl, "myapp.subroutine", 2);
-    MDEBUG(dbl, "okay");
+    // if your routine will only have print one debug message with a given 
+    // log name, you can use this technique, which is slightly more 
+    // efficient (since a log object is only created if the compile-time 
+    // limit is not exceeded).  If you expect to print at least two debug 
+    // messages that will be satisfy the limit, the above technique is more 
+    // efficient.
+    debug<2>("myapp.func", "calling the function: %s", "func");
 
-    // Of course you can call any Log or Log-related functions explicitly,
-    // just be sure to wrap it in a preprocessor check for LSST_DEBUGGING_ON.
-#ifdef LSST_DEBUGGING_ON
-    Rec(dbl, Log::DEBUG) << Prop<double>("rms", 3.2) << Rec::endr;
-#endif
 }

@@ -56,9 +56,10 @@ int main(int argc, char* argv[]) {
     Trace("myapp.foo.bar", 4, "Testing verbosity past limit.");
 
     t0 = LogRecord::utcnow();
-    lg::TTrace<4>("myapp", "Testing verbosity past limit again.");
+    for (int k=0; k < 10; k++)
+        lg::TTrace<4>("myapp", "Testing verbosity past limit again.");
     t1 = LogRecord::utcnow();
-    cout << "TTrace message not printed in " << (t1-t0)/1000 << " usesc" <<endl;
+    cout << "TTrace message not printed in " << (t1-t0)/10000 << " usesc" <<endl;
     
 
 }
