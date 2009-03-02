@@ -13,6 +13,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using boost::shared_ptr;
 using lsst::daf::base::PropertySet;
 
@@ -122,6 +123,6 @@ void ScreenLog::createDefaultLog(bool verbose, int threshold) {
     Log::setDefaultLog(new ScreenLog(verbose, threshold));
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 

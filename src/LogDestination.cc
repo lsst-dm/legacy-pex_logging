@@ -14,6 +14,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using boost::shared_ptr;
 
 /*
@@ -74,5 +75,6 @@ bool LogDestination::write(const LogRecord& rec) {
     return false;
 }
 
+//@endcond
 }}} // end lsst::pex::logging
 

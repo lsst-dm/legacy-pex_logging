@@ -14,6 +14,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using boost::format;
 using std::string;
 using lsst::daf::base::DateTime;
@@ -119,5 +120,6 @@ void LogRecord::addProperties(const PropertySet& props) {
     data().combine(temp);
 }
 
+//@endcond
 }}} // end lsst::pex::logging
 

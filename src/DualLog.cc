@@ -11,6 +11,8 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
+
 using namespace std;
 using boost::shared_ptr;
 using lsst::daf::base::PropertySet;
@@ -79,6 +81,6 @@ void DualLog::createDefaultLog(const string& filename, int filethresh,
                                    screenthresh, screenVerbose));
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 

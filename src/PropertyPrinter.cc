@@ -10,6 +10,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using std::vector;
 using std::ostream;
 using lsst::daf::base::PropertySet;
@@ -132,6 +133,6 @@ PropertyPrinter::iterator PropertyPrinter::last() {
     return _list.get()->last();
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 
