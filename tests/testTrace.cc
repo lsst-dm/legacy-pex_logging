@@ -37,8 +37,21 @@ int main(int argc, char* argv[]) {
     t1 = LogRecord::utcnow();
     cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
+    t0 = LogRecord::utcnow();
     Trace("myapp.foo.bar", 2, "Testing arbitrary verbosity.");
+    t1 = LogRecord::utcnow();
+    cout << "Trace message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
+    t0 = LogRecord::utcnow();
+    Trace("myapp.foo.bar", 5, "Testing arbitrary verbosity.");
+    t1 = LogRecord::utcnow();
+    cout << "Trace message not printed in " <<(t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    lg::TTrace<2>("myapp", "Testing arbitrary verbosity again.");
+    t1 = LogRecord::utcnow();
+    cout << "TTrace message printed in " << (t1-t0)/1000 << " usesc" << endl;
+    
     t0 = LogRecord::utcnow();
     lg::TTrace<2>("myapp", "Testing arbitrary verbosity again.");
     t1 = LogRecord::utcnow();

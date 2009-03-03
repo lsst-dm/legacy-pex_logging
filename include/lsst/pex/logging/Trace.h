@@ -94,7 +94,7 @@ public:
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             va_end(ap);
             
-            Debug out(name);
+            Debug out(name, LSST_MAX_TRACE);
             out.debug(verbosity, msg);
         }
     }
@@ -121,7 +121,7 @@ public:
 
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             
-            Debug out(name);
+            Debug out(name, LSST_MAX_TRACE);
             out.debug(verbosity, msg);
         }
     }

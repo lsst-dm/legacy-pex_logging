@@ -139,11 +139,10 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
     } catch (pexExcept::NotFoundException ex) { } 
 
     std::ostringstream indentstr;
-    if (log.length() > 0) {
+    if (level < 0) {
         // indent the message
-        indentstr << ' ';
-        for(size_t i=0; i < log.length(); ++i) {
-            if (log[i] == '.') indentstr << ' ';
+        for(int i=level; i < 0; ++i) {
+            indentstr << ' ';
         }
     }
     string indent(indentstr.str());

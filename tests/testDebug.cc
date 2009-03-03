@@ -53,17 +53,22 @@ int main(int argc, char* argv[]) {
     t0 = LogRecord::utcnow();
     log.debug<2>("Testing verbosity 2.");
     t1 = LogRecord::utcnow();
-    cout << "message printed in " << (t1-t0)/10000 << " usesc" << endl;
+    cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
     t0 = LogRecord::utcnow();
     log.debug<2>("Testing verbosity 2.");
     t1 = LogRecord::utcnow();
-    cout << "message printed in " << (t1-t0)/10000 << " usesc" << endl;
+    cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
     t0 = LogRecord::utcnow();
     log.debug(1, "I'm starting this routine");
     t1 = LogRecord::utcnow();
     cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    log.debug(5, "I'm starting this routine");
+    t1 = LogRecord::utcnow();
+    cout << "message not printed in " << (t1-t0)/1000 << " usesc" << endl;
 
     if (argc > 1) {
         t0 = LogRecord::utcnow();
