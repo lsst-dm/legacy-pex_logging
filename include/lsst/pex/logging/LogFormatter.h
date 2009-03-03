@@ -152,8 +152,8 @@ private:
 };
 
 /**
- * a screen-oriented formatter that indents messages according to the 
- * depth of the log name.  
+ * a screen-oriented formatter that indents debugging messages according 
+ * to their verbosity level.  
  *
  * This class replicates the DC2 formatting of Trace messages.  
  */
