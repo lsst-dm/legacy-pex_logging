@@ -321,13 +321,17 @@ void Log::addDestination(ostream& destination, int threshold,
 }
 
 Log& Log::getDefaultLog() {
-    if (defaultLog == 0) defaultLog = new ScreenLog();
+    if (defaultLog == 0) {
+        Log::setDefaultLog(new ScreenLog());
+    }
+    
     return *defaultLog;
 }
 
 void Log::setDefaultLog(Log *deflog) {
     if (defaultLog != 0) delete defaultLog;
     defaultLog = deflog;
+    defaultLog->_preamble->markPersistent();
 }
 
 void Log::createDefaultLog(const list<shared_ptr<LogDestination> >& dests, 

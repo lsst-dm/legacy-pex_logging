@@ -151,6 +151,10 @@ public:
 
 #endif
 
+    /// set where logging is sent; ignored in new implementation
+    static void setDestination(std::ostream &) {
+    }
+
     static void setVerbosity(const std::string &name) {
         if (name.length() == 0 || name == ".") 
             Log::getDefaultLog().setThreshold(Log::INHERIT_THRESHOLD);
