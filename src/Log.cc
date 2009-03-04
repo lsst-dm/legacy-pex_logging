@@ -258,6 +258,21 @@ void Log::log(int verbosity, const string& message) {
 }
 
 /*
+ * format and send a message using a variable argument list.  This does 
+ * not check the Log threshold; it assumes this has already been done.
+ */
+void Log::_send(int threshold, int verbosity, const char *fmt, va_list ap) {
+    const int len = strlen(fmt) + 100;  // guess the length
+    char message[len];
+    vsnprintf(message, len, fmt, ap);
+
+    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
+    rec.addComment(message);
+    send(rec);
+}
+
+
+/*
  * send a fully formed LogRecord to the log destinations
  */
 void Log::send(const LogRecord& record) {

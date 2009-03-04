@@ -81,14 +81,27 @@ public:
     }
 
     /**
-     * print a formatted message with a particular verbosity.  This 
-     * version is mainly in support of the debug<n>() routines.
+     * print a formatted message with a particular verbosity.  
+     * @param verbosity    the verboseness to associate with this message
+     * @param fmt          a printf-style format string
+     * @param ...          the inputs to the formatting.
+     */
+    void debug(int verbosity, const char *fmt, ...) {
+        va_list ap;
+        va_start(ap, fmt);
+        debug(verbosity, fmt, ap);
+        va_end(ap);
+    }
+
+    /**
+     * print a formatted message with a particular verbosity.  
+     * This function is not usually called directly by applications.
+     * @param verbosity    the verboseness to associate with this message
+     * @param fmt          a printf-style format string
+     * @param ap           the inputs to the formatting.
      */
     void debug(int verbosity, const char *fmt, va_list ap) {
-        const int len = strlen(fmt) + 100;  // guess the length
-        char msg[len];
-        vsnprintf(msg, len, fmt, ap);
-        log(-1*verbosity, msg);
+        format(-1*verbosity, fmt, ap);
     }
 
     /**

@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <list>
+#include <cstdarg>
 #include <boost/shared_ptr.hpp>
 
 namespace lsst {
@@ -384,13 +385,43 @@ public:
     void log(int verbosity, const std::string& message);
 
     /**
-     * send a simple message to the log
+     * send a simple, formatted message to the log
      * @param verbosity    how loud the message should be
      * @param message      a simple message in the form of a boost::format
      *                       instance
      */
     void log(int verbosity, const boost::format& message) {
         log(verbosity, message.str());
+    }
+
+    /**
+     * send a simple, formatted message.  Use of this function tends to 
+     * perform better than log(int, boost::format) as the formatting is 
+     * only done if the message will actually get recorded.
+     * @param verbosity    how loud the message should be
+     * @param fmt          a printf-style format string
+     * @param ...          the inputs to the formatting.
+     */
+    void format(int verbosity, const char *fmt, ...) {
+        int threshold = getThreshold();
+        if (verbosity < threshold) return;
+        va_list ap;
+        va_start(ap, fmt);
+        _send(threshold, verbosity, fmt, ap);
+        va_end(ap);
+    }
+
+    /**
+     * send a simple, formatted message.  This function is not usually 
+     * called directly by applications.
+     * @param verbosity    how loud the message should be
+     * @param fmt          a printf-style format string
+     * @param ap           the inputs to the formatting.
+     */
+    void format(int verbosity, const char *fmt, va_list ap) {
+        int threshold = getThreshold();
+        if (verbosity < threshold) return;
+        _send(threshold, verbosity, fmt, ap);
     }
 
     /**
@@ -504,6 +535,12 @@ protected:
     static void setDefaultLog(Log* deflog);
 
     static const std::string _sep;
+
+    /**
+     * format and send a message using a variable argument list.  This does 
+     * not check the Log threshold; it assumes this has already been done.
+     */
+    void _send(int threshold, int verbosity, const char *fmt, va_list ap);
 
 private:
     void completePreamble();

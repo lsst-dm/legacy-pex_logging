@@ -37,6 +37,10 @@ int main(int argc, char *argv[]) {
     mylog.log(Log::INFO, 
               boost::format("Verbosity threshold: %d") % mylog.getThreshold());
 
+    // a cheaper way to accomplish the same thing is with the format()
+    // function which provides printf-like formatting:
+    mylog.format(Log::INFO, "Verbosity threshold: %d", mylog.getThreshold());
+
     // If you want to send multiple messages and/or properties all in the
     // same message, you can use the shift operator.  Be sure to end the
     // message with Rec::endr

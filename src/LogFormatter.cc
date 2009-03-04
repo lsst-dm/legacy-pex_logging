@@ -92,9 +92,8 @@ void BriefFormatter::write(std::ostream *strm, const LogRecord& rec) {
                 pi.write(strm) << std::endl;
             }
         }
+        (*strm)  << std::endl;
     }
-
-    (*strm)  << std::endl;
 }
 
 ///////////////////////////////////////////////////////////
@@ -163,9 +162,8 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
                 pi.write(strm) << std::endl;
             }
         }
+        (*strm)  << std::endl;
     }
-
-    (*strm)  << std::endl;
 }
 
 ///////////////////////////////////////////////////////////

@@ -140,6 +140,61 @@ child log without affecting the parent log.
 
 \subsection secLogVerb Verbosity and Thresholds
 
+Verbosity levels and verbosity thresholds work together to control the
+amount of logging actually recorded.  In particular, every LogRecord
+is created with a verbosity level or "volume":  one can think of it as
+a measure of the "loudness" of the message or its level of urgency.
+It is measured as an integer where higher numbers are louder or more
+urgent.  Log objects (as well as LogDestinations; see previous
+section) have associated verbosity thresholds--like a signal
+barrier--also measured as an integer.  If a record's level is as high
+as the Log's threshold or higher, the Log will send the record onto
+the destination.  Thus, one can increase the number of messages that
+get recorded by lowering the threshold of the log.  
+
+Applications have the ability to set message volumes and thresholds
+however desired; however, to provide some consistency across different
+modules, the logging framework defines some conventional levels via
+static constants defined in the Log class:
+
+<table>
+<tr>
+<th>Constant Name</th><th>Value</th><th>Meaning</th>
+</tr>
+<tr>
+<td>FATAL</td> <td>20</td>  <td>message reporting a severe,
+                                debilitating, or fatal error</td>
+</tr>
+<tr>
+<td>WARN</td>  <td>10</td>  <td>message reporting abnormal but non-fatal 
+                                conditions or behavior</td>
+</tr>
+<tr>
+<td>INFO</td>  <td>0</td>   <td>message reporting normal behavior</td>
+</tr>
+<tr>
+<td>DEBUG</td> <td>-10</td> <td>message reporting status that aids in 
+                                debugging</td>
+</tr>
+</table>
+
+These constants can be used to set either a message level or a Log
+threshold.  Given this and the above convention, this means that
+<em>any message with a negative level is considered a debugging
+message</em>.  This fact is used by the default screen formatter
+(IndentedFormatter) to indent debugging messages based on the
+verbosity level.  
+
+Note that in the debugging interfaces provide via the Debug and Trace
+API, verbosity works slightly differently.  Here, the verbosity number
+represents how \e unimportant or detailed the message is; that is, the
+higher the number provided, the less likely it is to be actually
+printed.  As the Debug interface is built on top of Log, the
+number is multiplied by -1 to convert it to a verbosity level.  
+
+
+
+
 
 
 

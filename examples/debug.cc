@@ -54,8 +54,14 @@ int main(int argc, char *argv[]) {
 
     // Of course you can call any Log or Log-related functions explicitly.
     // The filtering, however, is done a run-time, and thus is less 
-    // efficient.  
-    Rec(dblog, Log::DEBUG) << Prop<double>("rms", 3.2) << Rec::endr;
+    // efficient.  Note that this will not get printed.
+    Rec(dblog, Log::DEBUG) << "starting iterations" 
+                           << Prop<double>("rms", 3.2) << Rec::endr;
+
+    // If you want to attach properties but with different verbosity levels,
+    // multiply the verbosity level by -1:
+    Rec(dblog, -2) << "starting iterations" 
+                   << Prop<double>("rms", 3.2) << Rec::endr;
 
     // if your routine will only have print one debug message with a given 
     // log name, you can use this technique, which is slightly more 

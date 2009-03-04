@@ -14,6 +14,7 @@ Access to the logging classes from the pex library
 // #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
+#include "lsst/pex/logging/Debug.h"
 #include "lsst/pex/exceptions.h"
 %}
 
@@ -34,10 +35,16 @@ SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, l
 SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
 SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 
+%ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
+%ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
+%ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, va_list ap);
+%ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
+
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
 %include "lsst/pex/logging/Log.h"
+%include "lsst/pex/logging/Debug.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
 
@@ -307,6 +314,18 @@ endr = LogRec.endr
 
 # duplicate the Rec typedef
 Rec = LogRec
+
+# tweak Debug
+
+Debug.default_max_debug = None
+_Debug_wrapped_ctr = Debug.__init__
+
+def _Debug__init__(s, name, maxverb=None):
+    if maxverb is None:  maxverb = Debug.default_max_debug
+    if maxverb is None:  maxverb = -1 * Log.INHERIT_THRESHOLD
+    _Debug_wrapped_ctr(s, name, maxverb)
+
+Debug.__init__ = _Debug__init__
 
 def version():
     """
