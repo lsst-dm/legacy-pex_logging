@@ -1,9 +1,9 @@
 // -*- lsst-c++ -*-
-/** \file
+/** \file Component.h
   *
   * \ingroup pex
   *
-  * \brief Create a component in the verbosity tree.
+  * \brief Defines the (deprecated) Component class
   *
   * \author Robert Lupton, Princeton University
   */
@@ -19,7 +19,9 @@ namespace pex {
 namespace logging {
 
 
-/** \brief Create a component in the verbosity tree.
+/** \brief Create a component in the verbosity tree (deprecated).
+ *
+ * \deprecated threshold::Memory class now provides this functionality.
  *
  * A name is a string of the form aaa.bbb.ccc, and may itself contain further
  * subcomponents. The Component structure doesn't in fact contain its full name,
