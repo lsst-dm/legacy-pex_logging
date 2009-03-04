@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file LogDestination.h
+ * @brief definition of the LogDestination class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGDESTINATION_H
 #define LSST_PEX_LOGDESTINATION_H
 
@@ -12,16 +17,12 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using std::ostream;
-using std::string;
-using boost::shared_ptr;
-
 // forward declaration of LogRecord
 class LogRecord;
 
 /**
  * @brief an encapsulation of a logging stream that will filter messages
- * based on their volume (verbosity) level.  
+ * based on their volume (importance) level.  
  *
  * Multiple destinations can be added to a Log either at its
  * contruction time or later using one of its addDestination()
@@ -30,7 +31,7 @@ class LogRecord;
  * get garbled if multiple threads or processes write to the same
  * stream simultaneously.
  * 
- * A LogDestination has its own verbosity threshold associated with it that 
+ * A LogDestination has its own importance threshold associated with it that 
  * is in addition to a Log's threshold.  If the threshold of a destination
  * is higher than that associated with its Log, then the destination threshold
  * will override the Log's in preventing message from being recorded.  This 
@@ -49,8 +50,8 @@ public:
      *                       to the stream.  If not provided, it would be set
      *                       to 0.  
      */
-    LogDestination(ostream *strm, 
-                   const shared_ptr<LogFormatter>& formatter, 
+    LogDestination(std::ostream *strm, 
+                   const boost::shared_ptr<LogFormatter>& formatter, 
                    int threshold=0);
 
     /**
@@ -69,12 +70,12 @@ public:
     LogDestination& operator=(const LogDestination& that);
 
     /**
-     * return the verbosity threshold associated with this stream.  
+     * return the importance threshold associated with this stream.  
      */
     int getThreshold() const { return _threshold; }
 
     /**
-     * set the verbosity threshold associated with this stream.  If this 
+     * set the importance threshold associated with this stream.  If this 
      * threshold is higher than the threshold associated with the 
      * LogDestination's Log, it will override it.
      */
@@ -84,7 +85,7 @@ public:
      * record a given log record to this destinations output stream. The 
      * record will be sent to the stream attached to this class if (a)
      * there is actually an attached stream, (b) there is an attached
-     * formatter, and (c) the verbosity level associated with the
+     * formatter, and (c) the importance level associated with the
      * record is equal to or greater than the threshold associated
      * with this destination. 
      * @return  true if the record was actually passed to the
@@ -94,7 +95,7 @@ public:
 
 protected:
     int _threshold;   // the stream's threshold
-    ostream *_strm;   // the output stream
+    std::ostream *_strm;   // the output stream
     boost::shared_ptr<LogFormatter> _frmtr;    // the formatter to use
 };
 

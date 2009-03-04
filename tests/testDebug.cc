@@ -1,3 +1,12 @@
+/**
+ * @file testDebug.cc
+ * @brief tests the Debug class
+ */
+
+// Set a compile-time verbosity limit for this code.  Messages with a 
+// verbosity level greater than this will not be printed.
+#define LSST_MAX_DEBUG 3
+
 #include "lsst/pex/logging/Debug.h"
 #include "lsst/pex/logging/DualLog.h"
 #include <iostream>
@@ -6,6 +15,7 @@
 using lsst::pex::logging::LogRecord;
 using lsst::pex::logging::Log;
 using lsst::pex::logging::DualLog;
+using lsst::pex::logging::Debug;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {
@@ -26,33 +36,54 @@ int main(int argc, char* argv[]) {
     }
     if (argc > 2) verb = atoi(argv[2]);
 
-    DEBUGLOG("myapp", verb);
+    Debug log("myapp");
 
     t0 = LogRecord::utcnow();
-    DEBUG("I'm starting this routine");
+    log.debug(1, "I'm starting this routine");
     t1 = LogRecord::utcnow();
     cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
-    DEBUGN(2, "Testing arbitrary verbosity.");
-
     t0 = LogRecord::utcnow();
-    DEBUG2("Testing verbosity 2.");
+    log.debug(1, "I'm starting this routine");
     t1 = LogRecord::utcnow();
     cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
+
+    log.debug(2, "Testing arbitrary verbosity.");
+
+    t0 = LogRecord::utcnow();
+    log.debug<2>("Testing verbosity 2.");
+    t1 = LogRecord::utcnow();
+    cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    log.debug<2>("Testing verbosity 2.");
+    t1 = LogRecord::utcnow();
+    cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    log.debug(1, "I'm starting this routine");
+    t1 = LogRecord::utcnow();
+    cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    log.debug(5, "I'm starting this routine");
+    t1 = LogRecord::utcnow();
+    cout << "message not printed in " << (t1-t0)/1000 << " usesc" << endl;
 
     if (argc > 1) {
         t0 = LogRecord::utcnow();
-        DEBUG2("Testing file writing at verbosity 2.");
+        log.debug<2>("Testing file writing at verbosity 2.");
         t1 = LogRecord::utcnow();
         cout << "Cost of printing just to file: " << (t1-t0)/1000 
              << " usesc" << endl;
     }
 
-    DEBUG3("Testing verbosity 3.");
+    log.debug<3>("Testing verbosity 3.");
     t0 = LogRecord::utcnow();
-    DEBUG4("Testing verbosity 4.");
+    for (int k=0; k < 10; k++)
+        log.debug<4>("Testing verbosity 4.");
     t1 = LogRecord::utcnow();
-    cout << "Cost of not printing message: " << (t1-t0)/1000 << " usesc" << endl;
-    DEBUG5("Testing verbosity 5.");
+    cout << "Cost of not printing message: " << (t1-t0)/10000 << " usesc" << endl;
+    log.debug<5>("Testing verbosity 5.");
 
 }

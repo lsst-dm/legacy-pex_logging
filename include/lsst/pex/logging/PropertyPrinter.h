@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file PropertyPrinter.h
+ * @brief definition of the PropertyPrinter class and its helpers
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_PROPERTYPRINTER_H
 #define LSST_PEX_PROPERTYPRINTER_H
 
@@ -16,8 +21,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-using lsst::daf::base::PropertySet;
-using lsst::daf::base::DateTime;
+namespace dafBase = lsst::daf::base;
 
 /**
  * @brief an abstract iterator class used to print out property values
@@ -203,6 +207,8 @@ class PrinterList {
 public:
     typedef WrappedPrinterIter iterator;
 
+    virtual ~PrinterList();
+
     /**
      * return a PrinterIter set at the first property value 
      */
@@ -222,7 +228,8 @@ public:
 template <class T>
 class BaseTmplPrinterList : public PrinterList {
 public:
-    BaseTmplPrinterList(const PropertySet& prop, const std::string& name)
+    BaseTmplPrinterList(const dafBase::PropertySet& prop, 
+                        const std::string& name)
         : _list(prop.getArray<T>(name)) { }
 
     virtual ~BaseTmplPrinterList();
@@ -240,7 +247,7 @@ size_t BaseTmplPrinterList<T>::valueCount() const { return _list.size(); }
 template <class T>
 class TmplPrinterList : public BaseTmplPrinterList<T> {
 public:
-    TmplPrinterList(const PropertySet& prop, const std::string& name)
+    TmplPrinterList(const dafBase::PropertySet& prop, const std::string& name)
         : BaseTmplPrinterList<T>(prop, name) { }
 
     virtual PrinterList::iterator begin() const;
@@ -275,31 +282,35 @@ typename PrinterList::iterator TmplPrinterList<T>::last() const {
  * operator.  
  */
 template <class T> 
-PrinterList* makePrinter(const PropertySet& prop, const std::string& name) {
+PrinterList* makePrinter(const dafBase::PropertySet& prop, 
+                         const std::string& name) {
     return new TmplPrinterList<T>(prop, name);
 }
 
-class DateTimePrinterIter : public BaseTmplPrinterIter<DateTime> {
+class DateTimePrinterIter : public BaseTmplPrinterIter<dafBase::DateTime> {
 public:
-    DateTimePrinterIter(std::vector<DateTime>::const_iterator listiter,
-                        std::vector<DateTime>::const_iterator beginiter,
-                        std::vector<DateTime>::const_iterator enditer)
-        : BaseTmplPrinterIter<DateTime>(listiter, beginiter, enditer) { }
+    DateTimePrinterIter(std::vector<dafBase::DateTime>::const_iterator listiter,
+                        std::vector<dafBase::DateTime>::const_iterator beginiter,
+                        std::vector<dafBase::DateTime>::const_iterator enditer)
+        : BaseTmplPrinterIter<dafBase::DateTime>(listiter, beginiter, enditer) 
+    { }
+
     virtual ~DateTimePrinterIter();
     virtual std::ostream& write(std::ostream *strm) const;
 };
 
-class DateTimePrinterList : public BaseTmplPrinterList<DateTime> {
+class DateTimePrinterList : public BaseTmplPrinterList<dafBase::DateTime> {
 public:
-    DateTimePrinterList(const PropertySet& prop, const std::string& name) 
-        : BaseTmplPrinterList<DateTime>(prop, name) { }
+    DateTimePrinterList(const dafBase::PropertySet& prop, 
+                        const std::string& name) 
+        : BaseTmplPrinterList<dafBase::DateTime>(prop, name) { }
 
     virtual ~DateTimePrinterList();
     virtual iterator begin() const;
     virtual iterator last() const;
 };
 
-PrinterList* makeDateTimePrinter(const PropertySet& prop, 
+PrinterList* makeDateTimePrinter(const dafBase::PropertySet& prop, 
                                  const std::string& name);
 
 class BoolPrinterIter : public BaseTmplPrinterIter<bool> {
@@ -314,7 +325,7 @@ public:
 
 class BoolPrinterList : public BaseTmplPrinterList<bool> {
 public:
-    BoolPrinterList(const PropertySet& prop, const std::string& name) 
+    BoolPrinterList(const dafBase::PropertySet& prop, const std::string& name) 
         : BaseTmplPrinterList<bool>(prop, name) { }
 
     virtual ~BoolPrinterList();
@@ -322,7 +333,8 @@ public:
     virtual iterator last() const;
 };
 
-PrinterList* makeBoolPrinter(const PropertySet& prop, const std::string& name);
+PrinterList* makeBoolPrinter(const dafBase::PropertySet& prop, 
+                             const std::string& name);
 
 /**
  * @brief a factory used to create PrinterList instances to be used by 
@@ -347,7 +359,7 @@ PrinterList* makeBoolPrinter(const PropertySet& prop, const std::string& name);
 class PrinterFactory {
 public: 
     typedef PrinterList* 
-        (*factoryFuncPtr)(const PropertySet&, const std::string&);
+        (*factoryFuncPtr)(const dafBase::PropertySet&, const std::string&);
         
     PrinterFactory(bool loadDefaults=false) : _factFuncs() { 
         if (loadDefaults) _loadDefaults();
@@ -357,7 +369,7 @@ public:
         _factFuncs[tp.name()] = func; 
     }
 
-    PrinterList* makePrinter(const PropertySet& prop, 
+    PrinterList* makePrinter(const dafBase::PropertySet& prop, 
                              const std::string& name) const 
     {
         Lookup::const_iterator fi = _factFuncs.find(prop.typeOf(name).name());
@@ -433,7 +445,7 @@ public:
     /**
      * create the PropertyPrinter for a given name
      */
-    PropertyPrinter(const PropertySet& prop, const std::string& name, 
+    PropertyPrinter(const dafBase::PropertySet& prop, const std::string& name, 
                     const PrinterFactory& fact=defaultPrinterFactory);
 
     /**

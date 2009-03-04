@@ -3,7 +3,5 @@ Shy:
 =============
 Chatty: 
 tester: This is a test
-
 -------------
-
 =============

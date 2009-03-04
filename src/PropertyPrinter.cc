@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// PropertyPrinter.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file PropertyPrinter.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/PropertyPrinter.h"
 #include "lsst/daf/base/DateTime.h"
 #include <boost/any.hpp>
@@ -13,6 +10,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using std::vector;
 using std::ostream;
 using lsst::daf::base::PropertySet;
@@ -41,6 +39,8 @@ bool WrappedPrinterIter::notAtEnd() const {
 bool WrappedPrinterIter::notLTBegin() const {
     return _it.get()->notLTBegin();
 }
+
+PrinterList::~PrinterList() { }
 
 DateTimePrinterIter::~DateTimePrinterIter() { }
 
@@ -133,6 +133,6 @@ PropertyPrinter::iterator PropertyPrinter::last() {
     return _list.get()->last();
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 

@@ -60,7 +60,7 @@ int main() {
     brief->write(cap.get(), lr1);
     msg = cap->str();
     cout << "[" << msg << "]" << endl;
-    Assert(msg == "tester: This is a test\n\n", "Brief formatting failed");
+    Assert(msg == "tester: This is a test\n", "Brief formatting failed");
     cout << "-------------" << endl;
 
     cap.reset(new ostringstream());

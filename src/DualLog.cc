@@ -1,22 +1,21 @@
-//////////////////////////////////////////////////////////////////////////////
-// DualLog.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file DualLog.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/DualLog.h"
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 
-using namespace std;
-
 namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
+
+using namespace std;
 using boost::shared_ptr;
+using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////
 //  DualLog
@@ -26,8 +25,8 @@ using boost::shared_ptr;
  * create a Log that will write messages to a given file
  * @param filename      the name of the file to send messages to.  It will 
  *                        be opened in append mode.
- * @param filethresh    the verbosity threshold to set for the log file
- * @param screenthresh  the verbosity threshold to set for messages going
+ * @param filethresh    the importance threshold to set for the log file
+ * @param screenthresh  the importance threshold to set for messages going
  *                        to the screen.
  * @param screenVerbose if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -82,6 +81,6 @@ void DualLog::createDefaultLog(const string& filename, int filethresh,
                                    screenthresh, screenVerbose));
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 

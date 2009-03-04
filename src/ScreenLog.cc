@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// ScreenLog.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file ScreenLog.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/ScreenLog.h"
 
 #include <iostream>
@@ -16,7 +13,9 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using boost::shared_ptr;
+using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////
 //  ScreenLog
@@ -24,7 +23,7 @@ using boost::shared_ptr;
 
 /*
  * create a Log that will write messages to a given file
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -44,7 +43,7 @@ ScreenLog::ScreenLog(const PropertySet& preamble, bool verbose, int threshold)
 
 /*
  * create a Log that will write messages to a given file
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -64,7 +63,7 @@ ScreenLog::ScreenLog(bool verbose, int threshold)
 void ScreenLog::configure(bool verbose) {
     // note that the shared_ptr held by the screen LogDestination will 
     // handle the deletion of this pointer.
-    _screenFrmtr = new BriefFormatter(verbose);
+    _screenFrmtr = new IndentedFormatter(verbose);
     shared_ptr<LogFormatter> fmtr(_screenFrmtr);
 
     // note that the shared_ptr held by LogDestination list will 
@@ -94,7 +93,7 @@ ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
  *                         with every recorded message to the Log.  This
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -113,7 +112,7 @@ void ScreenLog::createDefaultLog(const PropertySet& preamble,
  *                         with every recorded message to the Log.  This
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -124,6 +123,6 @@ void ScreenLog::createDefaultLog(bool verbose, int threshold) {
     Log::setDefaultLog(new ScreenLog(verbose, threshold));
 }
 
-
+//@endcond
 }}} // end lsst::pex::logging
 

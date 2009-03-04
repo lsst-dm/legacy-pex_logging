@@ -3,13 +3,12 @@
   *
   * \ingroup pex
   *
-  * \brief  This class provides limited backward compatibility to the 
-  * DC2 run-time trace facilities 
+  * \brief  definition of the Trace messaging facilities
   *
   */
 
-#if !defined(LSST_PEX_UTILS_TRACE_H)        //!< multiple inclusion guard macro
-#define LSST_PEX_UTILS_TRACE_H 1
+#if !defined(LSST_PEX_LOGGING_TRACE_H)     //!< multiple inclusion guard macro
+#define LSST_PEX_LOGGING_TRACE_H 1
 
 #include <iostream>
 #include <string>
@@ -95,7 +94,7 @@ public:
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             va_end(ap);
             
-            Debug out(Log::getDefaultLog(), name);
+            Debug out(name, LSST_MAX_TRACE);
             out.debug(verbosity, msg);
         }
     }
@@ -122,7 +121,7 @@ public:
 
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             
-            Debug out(Log::getDefaultLog(), name);
+            Debug out(name, LSST_MAX_TRACE);
             out.debug(verbosity, msg);
         }
     }
@@ -136,7 +135,7 @@ public:
           )
     {
         if (-1*verbosity >= Log::getDefaultLog().getThresholdFor(name)) {
-            Debug out(Log::getDefaultLog(), name);
+            Debug out(name);
             out.debug(verbosity, msg.str());
         }
     }
@@ -212,5 +211,5 @@ void TTrace(const std::string& name,      //!< Name of component
 } // namespace logging
 } // namespace pex
 } // namespace lsst
-#endif    // end LSST_PEX_UTILS_TRACE_H
+#endif    // end LSST_PEX_LOGGING_TRACE_H
 

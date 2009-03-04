@@ -11,9 +11,10 @@ Access to the logging classes from the pex library
 %include "lsst/p_lsstSwig.i"
 
 %{
-#include "lsst/pex/logging/Trace.h"
+// #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
+#include "lsst/pex/logging/Debug.h"
 #include "lsst/pex/exceptions.h"
 %}
 
@@ -30,16 +31,22 @@ using boost::shared_ptr;
 // SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
 SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
 SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::BriefFormatter)
+SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, lsst::pex::logging::IndentedFormatter)
 SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
 SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
+
+%ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
+%ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
+%ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, va_list ap);
+%ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
 
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
 %include "lsst/pex/logging/Log.h"
+%include "lsst/pex/logging/Debug.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
-%include "lsst/pex/logging/Trace.h"
 
 %extend lsst::pex::logging::Log {
     %template(addPreamblePropertyInt) addPreambleProperty<int>;
@@ -72,13 +79,13 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 }
 
 %extend lsst::pex::logging::LogRecord {
-    void addPropertyBool(const string& name, const bool val) { $self->addProperty<bool>(name, val); }
-    void addPropertyInt(const string& name, const int val) { $self->addProperty<int>(name, val); }
-    void addPropertyLong(const string& name, const long val) { $self->addProperty<long>(name, val); }
-    void addPropertyLongLong(const string& name, const long long val) { $self->addProperty<long long>(name, val); }
-    void addPropertyFloat(const string& name, const float val) { $self->addProperty<float>(name, val); }
-    void addPropertyDouble(const string& name, const double val) { $self->addProperty<double>(name, val); }
-    void addPropertyString(const string& name, const std::string& val) { $self->addProperty<std::string>(name, val); }
+    void addPropertyBool(const std::string& name, const bool val) { $self->addProperty<bool>(name, val); }
+    void addPropertyInt(const std::string& name, const int val) { $self->addProperty<int>(name, val); }
+    void addPropertyLong(const std::string& name, const long val) { $self->addProperty<long>(name, val); }
+    void addPropertyLongLong(const std::string& name, const long long val) { $self->addProperty<long long>(name, val); }
+    void addPropertyFloat(const std::string& name, const float val) { $self->addProperty<float>(name, val); }
+    void addPropertyDouble(const std::string& name, const double val) { $self->addProperty<double>(name, val); }
+    void addPropertyString(const std::string& name, const std::string& val) { $self->addProperty<std::string>(name, val); }
 }
 
 %inline %{
@@ -307,6 +314,18 @@ endr = LogRec.endr
 
 # duplicate the Rec typedef
 Rec = LogRec
+
+# tweak Debug
+
+Debug.default_max_debug = None
+_Debug_wrapped_ctr = Debug.__init__
+
+def _Debug__init__(s, name, maxverb=None):
+    if maxverb is None:  maxverb = Debug.default_max_debug
+    if maxverb is None:  maxverb = -1 * Log.INHERIT_THRESHOLD
+    _Debug_wrapped_ctr(s, name, maxverb)
+
+Debug.__init__ = _Debug__init__
 
 def version():
     """

@@ -1,8 +1,8 @@
 // -*- lsst-c++ -*-
 /**
-  * \file logExample.cc
+  * \file log.cc
   *
-  * \brief logExample.c demonstrates simple use of the Log facility.
+  * \brief demonstrates simple use of the Log facility.
   */
 
 #include "lsst/pex/logging/Log.h"
@@ -37,6 +37,10 @@ int main(int argc, char *argv[]) {
     mylog.log(Log::INFO, 
               boost::format("Verbosity threshold: %d") % mylog.getThreshold());
 
+    // a cheaper way to accomplish the same thing is with the format()
+    // function which provides printf-like formatting:
+    mylog.format(Log::INFO, "Verbosity threshold: %d", mylog.getThreshold());
+
     // If you want to send multiple messages and/or properties all in the
     // same message, you can use the shift operator.  Be sure to end the
     // message with Rec::endr
@@ -47,15 +51,7 @@ int main(int argc, char *argv[]) {
 
     // Normally properties are not printed to the screen.  To see these, we'll
     // turn them on now.
-    //
-    // Outside the pipeline framework, the default logger is a ScreenLog.
-    // If you want to see properties on the screen, you put this code anywhere
-    // in your python script.  Note that the effect is global.
-    try {
-        ScreenLog slog = dynamic_cast<const ScreenLog&>(Log::getDefaultLog());
-        slog.setScreenVerbose(true);
-    }
-    catch (bad_cast &e) { }
+    mylog.setShowAll(true);
 
     // now try the complex message again
     Rec(mylog, Log::FATAL) << "No convergence reached"

@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file Memory.h
+ * @brief definition of the Memory class
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGGGING_THRESHOLD_MEMORY_H
 #define LSST_PEX_LOG_THRESHOLD_MEMORY_H
 
@@ -137,6 +142,13 @@ private:
     ChildMap *_children;
 };
 
+/**
+ * a container for keeping track of the threshold data for a family of Logs.
+ * The actually mappings of log names to remembered threshold values is 
+ * stored internally (privately) as a Family instance.  One Memory instance 
+ * shared by all the Log instances in a Log hierarchy, created first by the 
+ * root log and passed (by shared pointer) to child logs as they are created.
+ */
 class Memory {
 public:
 

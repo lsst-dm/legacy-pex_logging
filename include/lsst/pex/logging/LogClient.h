@@ -1,4 +1,9 @@
 // -*- lsst-c++ -*-
+/**
+ * @file LogClient.h
+ * @brief definition of the LogClient and LogClientHelper classes
+ * @author Ray Plante
+ */
 #ifndef LSST_PEX_LOGCLIENT_H
 #define LSST_PEX_LOGCLIENT_H
 

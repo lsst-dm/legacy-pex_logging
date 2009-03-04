@@ -37,8 +37,21 @@ int main(int argc, char* argv[]) {
     t1 = LogRecord::utcnow();
     cout << "message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
+    t0 = LogRecord::utcnow();
     Trace("myapp.foo.bar", 2, "Testing arbitrary verbosity.");
+    t1 = LogRecord::utcnow();
+    cout << "Trace message printed in " << (t1-t0)/1000 << " usesc" << endl;
 
+    t0 = LogRecord::utcnow();
+    Trace("myapp.foo.bar", 5, "Testing arbitrary verbosity.");
+    t1 = LogRecord::utcnow();
+    cout << "Trace message not printed in " <<(t1-t0)/1000 << " usesc" << endl;
+
+    t0 = LogRecord::utcnow();
+    lg::TTrace<2>("myapp", "Testing arbitrary verbosity again.");
+    t1 = LogRecord::utcnow();
+    cout << "TTrace message printed in " << (t1-t0)/1000 << " usesc" << endl;
+    
     t0 = LogRecord::utcnow();
     lg::TTrace<2>("myapp", "Testing arbitrary verbosity again.");
     t1 = LogRecord::utcnow();
@@ -56,9 +69,10 @@ int main(int argc, char* argv[]) {
     Trace("myapp.foo.bar", 4, "Testing verbosity past limit.");
 
     t0 = LogRecord::utcnow();
-    lg::TTrace<4>("myapp", "Testing verbosity past limit again.");
+    for (int k=0; k < 10; k++)
+        lg::TTrace<4>("myapp", "Testing verbosity past limit again.");
     t1 = LogRecord::utcnow();
-    cout << "TTrace message not printed in " << (t1-t0)/1000 << " usesc" <<endl;
+    cout << "TTrace message not printed in " << (t1-t0)/10000 << " usesc" <<endl;
     
 
 }

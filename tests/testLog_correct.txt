@@ -1,5 +1,4 @@
  WARNING: this is a warning
-
 test: I like your hat
   LEVEL: 0
 

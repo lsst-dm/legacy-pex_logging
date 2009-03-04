@@ -1,10 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-// LogDestination.cc
-//
-// Contact: Ray Plante
-// 
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * @file LogDestination.cc
+ * @author Ray Plante
+ */
 #include "lsst/pex/logging/LogDestination.h"
 #include "lsst/pex/logging/LogRecord.h"
 
@@ -17,9 +14,10 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+//@cond
 using boost::shared_ptr;
 
-/**
+/*
  * @brief create a destination with a threshold.  
  * @param strm       the output stream to send messages to.  If the pointer
  *                       id null, this LogDestination will act as a null-op
@@ -35,19 +33,19 @@ LogDestination::LogDestination(ostream *strm,
     : _threshold(threshold), _strm(strm), _frmtr(formatter)
 { }
 
-/**
+/*
  * create a copy
  */
 LogDestination::LogDestination(const LogDestination& that)
     : _threshold(that._threshold), _strm(that._strm), _frmtr(that._frmtr)
 { }
 
-/**
+/*
  * delete this destination
  */
 LogDestination::~LogDestination() { }
 
-/**
+/*
  * copy a destination into this one
  */
 LogDestination& LogDestination::operator=(const LogDestination& that) {
@@ -57,11 +55,11 @@ LogDestination& LogDestination::operator=(const LogDestination& that) {
     return *this;
 }
 
-/**
+/*
  * record a given log record to this destinations output stream. The 
  * record will be sent to the stream attached to this class if (a)
  * there is actually an attached stream, (b) there is an attached
- * formatter, and (c) the verbosity level associated with the
+ * formatter, and (c) the importance level associated with the
  * record is equal to or greater than the threshold associated
  * with this destination. 
  * @return  true if the record was actually passed to the
@@ -69,7 +67,7 @@ LogDestination& LogDestination::operator=(const LogDestination& that) {
  */
 bool LogDestination::write(const LogRecord& rec) {
     if (_strm != 0 && _frmtr.get() != 0 && 
-        rec.getVerbosity() >= _threshold)
+        rec.getImportance() >= _threshold)
     {
         _frmtr->write(_strm, rec);
         return true;
@@ -77,5 +75,6 @@ bool LogDestination::write(const LogRecord& rec) {
     return false;
 }
 
+//@endcond
 }}} // end lsst::pex::logging
 
