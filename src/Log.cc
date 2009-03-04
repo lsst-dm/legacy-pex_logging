@@ -27,15 +27,15 @@ using lsst::daf::base::PropertySet;
 ///////////////////////////////////////////////////////////
 
 /*
- * the conventional verbosity level for messages that aid in debugging.  
+ * the conventional importance level for messages that aid in debugging.  
  * This value is set to -10 with the intention that messages with 
- * negative verbosity levels (or more precisely, >= -10) will be printed 
+ * negative importance levels (or more precisely, >= -10) will be printed 
  * when the threshold is set to this value.  
  */
 const int Log::DEBUG = -10;
 
 /*
- * the conventional verbosity level for messages that are informational
+ * the conventional importance level for messages that are informational
  * and which report on normal behavior.  The value is set to 0 with the 
  * intention that this is the default threshold for logs and their 
  * destinations.  
@@ -43,16 +43,16 @@ const int Log::DEBUG = -10;
 const int Log::INFO = 0;
 
 /*
- * the conventional verbosity level for messages that warn about 
+ * the conventional importance level for messages that warn about 
  * abnormal but non-fatal behavior.  The value is set to 10.
  */
 const int Log::WARN = 10;
 
 /*
- * the conventional verbosity level for messages that report on fatal
+ * the conventional importance level for messages that report on fatal
  * behavior.  The value is set to 20.  Note that the logging module 
  * makes no attempt to shutdown execution or other wise affect control 
- * flow when a message having a verbosity exceeding this level.  
+ * flow when a message having a importance exceeding this level.  
  */
 const int Log::FATAL = 20;
 
@@ -67,7 +67,7 @@ const int Log::INHERIT_THRESHOLD = threshold::INHERIT;
  * not normally be employed to obtain a Log; the static getDefaultLog() 
  * method should be used instead.  This is provided primarily for 
  * subclasses and containers that require a no-arg constructor.  
- * @param threshold   the initial verbosity threshold for this log
+ * @param threshold   the initial importance threshold for this log
  * @param name        the initial name for this log.  An empty string 
  *                    (the default) denotes a root log.
  */
@@ -94,8 +94,8 @@ Log::Log(const int threshold, const string& name)
  * @param name           the name to give this log.  By default, the 
  *                         name will be an empty string, signifying a 
  *                         root log.  
- * @param threshold      the verbosity threshold to assign to this Log.  
- *                         Messages sent to this log must have a verbosity
+ * @param threshold      the importance threshold to assign to this Log.  
+ *                         Messages sent to this log must have a importance
  *                         level equal to or greater than this value to 
  *                         be recorded.  (Note that thresholds associated
  *                         with destinations have their own thresholds that
@@ -171,14 +171,14 @@ Log::Log(const Log& parent, const string& childName, int threshold)
 }
 
 /*
- * set the verbosity threshold for a child Log.  When a child Log of the
+ * set the importance threshold for a child Log.  When a child Log of the
  * same name is created, it will be assigned this threshold.  Any existing
- * Log object with name that has already explicitly set its verbosity
+ * Log object with name that has already explicitly set its importance
  * threshold will not be affected; however, those that are set to inherit
  * the threshold will be. 
  * @param name       the relative name of the child log.  This cannot be an
  *                      empty string.  
- * @param threshold  the verbosity threshold to set Logs with this name to.
+ * @param threshold  the importance threshold to set Logs with this name to.
  */
 void Log::setThresholdFor(const string& name, int threshold) {
     string fullname(getName());
@@ -217,7 +217,7 @@ int Log::getThresholdFor(const string& name) const {
  *                    name followed by a "." (if the length of the parent's 
  *                    name is non-zero), followed by the given child name. 
  *                    This cannot be an empty string.  
- * @param threshold   the verbosity threshold to set for this Log.  If not 
+ * @param threshold   the importance threshold to set for this Log.  If not 
  *                    provided, it will default to the threshold of this 
  *                    log, its parent.  
  */
@@ -227,17 +227,17 @@ Log *Log::createChildLog(const string& childName, int threshold) const {
 
 /*
  * send a message to the log
- * @param verbosity    how loud the message should be
+ * @param importance    how loud the message should be
  * @param message      a simple bit of text to send in the message
  * @param properties   a list of properties to include in the message.
  */
-void Log::log(int verbosity, const string& message, 
+void Log::log(int importance, const string& message, 
               const PropertySet& properties) 
 {
     int threshold = getThreshold();
-    if (verbosity < threshold)
+    if (importance < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
+    LogRecord rec(threshold, importance, *_preamble, willShowAll());
     rec.addComment(message);
     rec.addProperties(properties);
     send(rec);
@@ -245,14 +245,14 @@ void Log::log(int verbosity, const string& message,
 
 /*
  * send a simple message to the log
- * @param verbosity    how loud the message should be
+ * @param importance    how loud the message should be
  * @param message      a simple bit of text to send in the message
  */
-void Log::log(int verbosity, const string& message) {
+void Log::log(int importance, const string& message) {
     int threshold = getThreshold();
-    if (verbosity < threshold)
+    if (importance < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
+    LogRecord rec(threshold, importance, *_preamble, willShowAll());
     rec.addComment(message);
     send(rec);
 }
@@ -261,12 +261,12 @@ void Log::log(int verbosity, const string& message) {
  * format and send a message using a variable argument list.  This does 
  * not check the Log threshold; it assumes this has already been done.
  */
-void Log::_send(int threshold, int verbosity, const char *fmt, va_list ap) {
+void Log::_send(int threshold, int importance, const char *fmt, va_list ap) {
     const int len = strlen(fmt) + 100;  // guess the length
     char message[len];
     vsnprintf(message, len, fmt, ap);
 
-    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
+    LogRecord rec(threshold, importance, *_preamble, willShowAll());
     rec.addComment(message);
     send(rec);
 }
@@ -276,7 +276,7 @@ void Log::_send(int threshold, int verbosity, const char *fmt, va_list ap) {
  * send a fully formed LogRecord to the log destinations
  */
 void Log::send(const LogRecord& record) {
-    if (record.getVerbosity() < getThreshold()) 
+    if (record.getImportance() < getThreshold()) 
         return;
     list<shared_ptr<LogDestination> >::iterator i;
     for(i = _destinations.begin(); i != _destinations.end(); i++) {
@@ -291,7 +291,7 @@ void Log::send(const LogRecord& record) {
  * unaffected.  The NetLogger format will be used with this new 
  * destination.  
  * @param destination   the stream to send messages to
- * @param threshold     the verbosity threshold to use to filter messages
+ * @param threshold     the importance threshold to use to filter messages
  *                         sent to the stream.
  */
 void Log::addDestination(ostream& destination, int threshold) {
@@ -308,7 +308,7 @@ void Log::addDestination(ostream& destination, int threshold) {
  *                         caller is responsible for ensuring that the 
  *                         stream is neither closed nor its memory freed
  *                         for the life of this Log.  
- * @param threshold     the verbosity threshold to use to filter messages
+ * @param threshold     the importance threshold to use to filter messages
  *                         sent to the stream.
  * @param formatter     the log formatter to use.
  */

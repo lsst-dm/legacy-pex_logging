@@ -32,6 +32,19 @@ namespace logging {
 
 /**
  * a special logger used for recording debugging messages.
+ *
+ * This class provides some added efficiencies for logging debug messages.  In
+ * particular, message filtering can be done at compile time, by setting a 
+ * maximum verboseness level with the LSST_MAX_DEBUG preprocessor define.  
+ * Note that this define must be set \e before including Debug.h.  
+ *
+ * Debug messages are sent through the debug() member functions.  Note that 
+ * verbosity filtering is different than with the Log API.  With Log, messages
+ * are sent with "importance" levels.  However, with the Debug functions, 
+ * messages are tagged with a "verbosity" level--that is, the higher the 
+ * verbosity, the less likely the message will be recorded.  In fact verbosity 
+ * is the inverse of--i.e. the negative of--importance.  The importance 
+ * threshold of a Debug Log is -1*LSST_MAX_DEBUG.  
  */
 class Debug : public Log {
 public:

@@ -23,7 +23,7 @@ using lsst::daf::base::PropertySet;
 
 /*
  * create a Log that will write messages to a given file
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -43,7 +43,7 @@ ScreenLog::ScreenLog(const PropertySet& preamble, bool verbose, int threshold)
 
 /*
  * create a Log that will write messages to a given file
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -93,7 +93,7 @@ ScreenLog& ScreenLog::operator=(const ScreenLog& that) {
  *                         with every recorded message to the Log.  This
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 
@@ -112,7 +112,7 @@ void ScreenLog::createDefaultLog(const PropertySet& preamble,
  *                         with every recorded message to the Log.  This
  *                         constructor will automatically add a property 
  *                         ("LOG") giving the Log name.  
- * @param threshold     the verbosity threshold to set for messages going
+ * @param threshold     the importance threshold to set for messages going
  *                        to the screen.
  * @param verbose     if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 

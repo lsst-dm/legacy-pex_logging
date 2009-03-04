@@ -24,12 +24,12 @@ namespace pexExcept = lsst::pex::exceptions;
 
 /*
  * Create a log record to be sent to a given log.  
- * @param verbosity  the loudness of the record.  If this value is 
- *                     greater than or equal to the Log's verbosity 
+ * @param importance  the loudness of the record.  If this value is 
+ *                     greater than or equal to the Log's importance 
  *                     threshold, the message will be recorded.
  */
-LogRecord::LogRecord(int threshold, int verbosity, bool showAll)
-    : _send(threshold <= verbosity), _showAll(showAll), _vol(verbosity), 
+LogRecord::LogRecord(int threshold, int importance, bool showAll)
+    : _send(threshold <= importance), _showAll(showAll), _vol(importance), 
       _data(new PropertySet())
 { 
     _init();
@@ -38,18 +38,19 @@ LogRecord::LogRecord(int threshold, int verbosity, bool showAll)
 /*
  * Create a log record to be sent to a given log.  The current time is 
  * recorded and set as the DATE property.
- * @param threshold  the verbosity threshold that determines if a message
+ * @param threshold  the importance threshold that determines if a message
  *                     is printed.
- * @param verbosity  the loudness of the record.  If this value is 
- *                     greater than or equal to the given verbosity 
+ * @param importance  the loudness of the record.  If this value is 
+ *                     greater than or equal to the given importance 
  *                     threshold, the message will be recorded.
  * @param preamble   an ordered set of properties that constitute the 
  *                     preamble of this message.  This should not include
  *                     the current time.  
  */
-LogRecord::LogRecord(int threshold, int verbosity, const PropertySet& preamble,
+LogRecord::LogRecord(int threshold, int importance, const PropertySet& preamble,
                      bool showAll) 
-    : _send(threshold <= verbosity), _showAll(showAll), _vol(verbosity),_data()
+    : _send(threshold <= importance), _showAll(showAll), _vol(importance),
+      _data()
 {
     if (_send) {
         _data = preamble.deepCopy();

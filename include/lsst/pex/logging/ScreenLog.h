@@ -24,7 +24,7 @@ public:
 
     /**
      * create a Log that will write messages to a given file
-     * @param threshold     the verbosity threshold to set for messages going
+     * @param threshold     the importance threshold to set for messages going
      *                        to the screen.
      * @param verbose     if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 
@@ -39,7 +39,7 @@ public:
      *                         with every recorded message to the Log.  This
      *                         constructor will automatically add a property 
      *                         ("LOG") giving the Log name.  
-     * @param threshold     the verbosity threshold to set for messages going
+     * @param threshold     the importance threshold to set for messages going
      *                        to the screen.
      * @param verbose     if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 
@@ -67,12 +67,12 @@ public:
     ScreenLog& operator=(const ScreenLog& that);
 
     /**
-     * return the verbosity threshold current set for the screen
+     * return the importance threshold current set for the screen
      */
     int getScreenThreshold() { return _screen->getThreshold(); }
 
     /**
-     * set the verbosity threshold current set for the screen
+     * set the importance threshold current set for the screen
      */
     void setScreenThreshold(int thresh) { _screen->setThreshold(thresh); }
 
@@ -92,7 +92,7 @@ public:
 
     /**
      * create a new log and set it as the default Log
-     * @param threshold     the verbosity threshold to set for messages going
+     * @param threshold     the importance threshold to set for messages going
      *                        to the screen.
      * @param verbose     if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 
@@ -107,7 +107,7 @@ public:
      *                         with every recorded message to the Log.  This
      *                         constructor will automatically add a property 
      *                         ("LOG") giving the Log name.  
-     * @param threshold     the verbosity threshold to set for messages going
+     * @param threshold     the importance threshold to set for messages going
      *                        to the screen.
      * @param verbose     if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 

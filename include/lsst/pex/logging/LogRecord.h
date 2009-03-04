@@ -81,24 +81,24 @@ public:
     /**
      * Create a log record to be sent to a given log.  The current time is 
      * recorded and set as the DATE property.
-     * @param threshold  the verbosity threshold that determines if a message
+     * @param threshold  the importance threshold that determines if a message
      *                     is printed.
-     * @param verbosity  the loudness of the record.  If this value is 
-     *                     greater than or equal to the given verbosity 
+     * @param importance  the loudness of the record.  If this value is 
+     *                     greater than or equal to the given importance 
      *                     threshold, the message will be recorded.
      * @param showAll    if true, prefer showing all properties when 
      *                     rendering this record.  The default is false.
      *                     (See willShow().)
      */
-    LogRecord(int threshold, int verbosity, bool showAll=false);
+    LogRecord(int threshold, int importance, bool showAll=false);
 
     /**
      * Create a log record to be sent to a given log.  The current time is 
      * recorded and set as the DATE property.
-     * @param threshold  the verbosity threshold that determines if a message
+     * @param threshold  the importance threshold that determines if a message
      *                     is printed.
-     * @param verbosity  the loudness of the record.  If this value is 
-     *                     greater than or equal to the given verbosity 
+     * @param importance  the loudness of the record.  If this value is 
+     *                     greater than or equal to the given importance 
      *                     threshold, the message will be recorded.
      * @param preamble   an ordered set of properties that constitute the 
      *                     preamble of this message.  This should not include
@@ -107,7 +107,7 @@ public:
      *                     rendering this record.  The default is false.
      *                     (See willShowAll().)
      */
-    LogRecord(int threshold, int verbosity, 
+    LogRecord(int threshold, int importance, 
               const dafBase::PropertySet& preamble, bool showAll=false);
 
     /**
@@ -223,13 +223,13 @@ public:
     size_t countParamValues() const;
 
     /**
-     * return the verbosity level--a measure of "loudness"--associated with 
+     * return the importance level--a measure of "loudness"--associated with 
      * this record.  
      */
-    int getVerbosity() const { return _vol; }
+    int getImportance() const { return _vol; }
 
     /**
-     * return true if the verbosity level is set loud enough to cause 
+     * return true if the importance level is set loud enough to cause 
      * this record to be actually recorded.  This value is set at
      * construction time only.  
      */
@@ -298,7 +298,7 @@ protected:
 
     bool _send;    // true if this record should be sent to the log
     bool _showAll; // true if there is preference to have all data displayed
-    int _vol;      // the verbosity volume of this message
+    int _vol;      // the importance volume of this message
     dafBase::PropertySet::Ptr _data;
 };
 

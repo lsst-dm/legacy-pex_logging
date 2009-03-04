@@ -25,8 +25,8 @@ using lsst::daf::base::PropertySet;
  * create a Log that will write messages to a given file
  * @param filename      the name of the file to send messages to.  It will 
  *                        be opened in append mode.
- * @param filethresh    the verbosity threshold to set for the log file
- * @param screenthresh  the verbosity threshold to set for messages going
+ * @param filethresh    the importance threshold to set for the log file
+ * @param screenthresh  the importance threshold to set for messages going
  *                        to the screen.
  * @param screenVerbose if true, all message data properties will be printed
  *                        to the screen.  If false, only the Log name 

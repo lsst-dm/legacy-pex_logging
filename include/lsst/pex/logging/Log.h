@@ -35,21 +35,22 @@ namespace dafBase = lsst::daf::base;
  * the application the message originates.  Messages sent to a Log can be 
  * routed to multiple destinations, such as to the terminal screen, to 
  * a file and to the Event system, all simultaneously.  Messages are also 
- * tagged with a verbosity or "loudness" level, and Logs are set with verbosity 
- * thresholds.  If a message's verbosity level is less than the Log's 
- * threshold, it will not be recorded.  This allows applications and modules to 
- * selectively turn on and off, say, debugging messages of which there may be 
- * a great number.  Thresholds are implemented to minimize the impact of 
- * unrecorded messages on overall performance, so debugging messages can 
- * remain permanently compiled into the code.  Finally, the different streams
- * that receive log messages can have their own thresholds set as well; this
- * allows one to, for example, send more messages to a file than to the screen.
+ * tagged with an importance or "loudness" level, and Logs control their 
+ * verbosity via importance thresholds.  If a message's importance level is 
+ * less than the Log's threshold, it will not be recorded.  This allows 
+ * applications and modules to selectively turn on and off, say, debugging 
+ * messages of which there may be a great number.  Thresholds are enforced 
+ * in a way to minimize the impact of unrecorded messages on overall 
+ * performance, so debugging messages can remain permanently compiled into 
+ * the code.  Finally, the different streams that receive log messages can 
+ * have their own thresholds set as well; this allows one to, for example, 
+ * send more messages to a file than to the screen.
  * 
  * Logs used by an application are organized into a hierarchy.  Applications 
  * normally get the root Log via the static method Log::getDefaultLog().  This
  * log by default is configured to print messages to the screen (although
  * a production application will typically replace the default Log with one 
- * that sends messages elsewhere).  Alternatively, an application can configure 
+ * that sends messages elsewhere).  Alternatively, an application can configure
  * its own root Log via the Log constructors, or with the convenience 
  * subclasses, ScreenLog and DualLog (used to send messages to both the screen
  * and a file).  It is possible to have multiple, independently-configured 
@@ -58,7 +59,7 @@ namespace dafBase = lsst::daf::base;
  * 
  * A root Log has an empty string name associated with it.  A module will 
  * usually create a "child" or "descendent" Log object to send its messages 
- * to, giving it a period-delimited name and a verbosity threshold:
+ * to, giving it a period-delimited name and a importance threshold:
  * 
  *     Log mylog(Log::getDefaultLog(), "myapp.mymod", Log::INFO);
  *
@@ -123,15 +124,15 @@ class Log {
 public:
 
     /**
-     * the conventional verbosity level for messages that aid in debugging.  
+     * the conventional importance level for messages that aid in debugging.  
      * This value is set to -10 with the intention that messages with 
-     * negative verbosity levels (or more precisely, >= -10) will be printed 
+     * negative importance levels (or more precisely, >= -10) will be printed 
      * when the threshold is set to this value.  
      */
     static const int DEBUG;
 
     /**
-     * the conventional verbosity level for messages that are informational
+     * the conventional importance level for messages that are informational
      * and which report on normal behavior.  The value is set to 0 with the 
      * intention that this is the default threshold for logs and their 
      * destinations.  
@@ -139,7 +140,7 @@ public:
     static const int INFO;
 
     /**
-     * the conventional verbosity level for messages that warn about 
+     * the conventional importance level for messages that warn about 
      * abnormal but non-fatal behavior.  The value is set to 10.
      */
     static const int WARN;
@@ -151,10 +152,10 @@ public:
     static const int INHERIT_THRESHOLD;
 
     /**
-     * the conventional verbosity level for messages that report on fatal
+     * the conventional importance level for messages that report on fatal
      * behavior.  The value is set to 20.  Note that the logging module 
      * makes no attempt to shutdown execution or other wise affect control 
-     * flow when a message having a verbosity exceeding this level.  
+     * flow when a message having a importance exceeding this level.  
      */
     static const int FATAL;
 
@@ -163,7 +164,7 @@ public:
      * not normally be employed to obtain a Log; the static getDefaultLog() 
      * method should be used instead.  This is provided primarily for 
      * subclasses and containers that require a no-arg constructor.  
-     * @param threshold   the initial verbosity threshold for this log
+     * @param threshold   the initial importance threshold for this log
      * @param name        the initial name for this log.  An empty string 
      *                    (the default) denotes a root log.
      */
@@ -183,8 +184,8 @@ public:
      * @param name           the name to give this log.  By default, the 
      *                         name will be an empty string, signifying a 
      *                         root log.  
-     * @param threshold      the verbosity threshold to assign to this Log.  
-     *                         Messages sent to this log must have a verbosity
+     * @param threshold      the importance threshold to assign to this Log.  
+     *                         Messages sent to this log must have a importance
      *                         level equal to or greater than this value to 
      *                         be recorded.  (Note that thresholds associated
      *                         with destinations have their own thresholds that
@@ -237,8 +238,8 @@ public:
     const std::string& getName() const { return _name; }
 
     /**
-     * return the verbosity threshold for this log.  A message sent to this 
-     * Log will not be recorded if the message verbosity is less than the 
+     * return the importance threshold for this log.  A message sent to this 
+     * Log will not be recorded if the message importance is less than the 
      * threshold. 
      */
     int getThreshold() const { 
@@ -248,8 +249,8 @@ public:
     }
 
     /**
-     * set the verbosity threshold for this log.  A message sent to this 
-     * Log will not be recorded if the message verbosity is less than the 
+     * set the importance threshold for this log.  A message sent to this 
+     * Log will not be recorded if the message importance is less than the 
      * threshold. 
      * @param threshold    the new threshold value
      */
@@ -260,29 +261,29 @@ public:
 
     /**
      * return true if the threshold is low enough to pass messages of a 
-     * given loudness or verbosity.
+     * given loudness or importance.
      */
-    bool sends(int verbosity) const { return (verbosity >= getThreshold()); }
+    bool sends(int importance) const { return (importance >= getThreshold()); }
 
     /**
-     * reset the verbosity threshold of this log to that of its parent 
+     * reset the importance threshold of this log to that of its parent 
      * threshold.  If this is a root Log, the threshold will be set to INFO.
      */
     void resetThreshold() { setThreshold(INHERIT_THRESHOLD); }
 
     /**
-     * set the verbosity threshold for a child Log.  When a child Log of the
+     * set the importance threshold for a child Log.  When a child Log of the
      * same name is created, it will be assigned this threshold.  Any existing
-     * Log object with name that has already explicitly set its verbosity
+     * Log object with name that has already explicitly set its importance
      * threshold will not be affected; however, those that are set to inherit
      * the threshold will be. 
      * @param name       the relative name of the child log
-     * @param threshold  the verbosity threshold to set Logs with this name to.
+     * @param threshold  the importance threshold to set Logs with this name to.
      */
     void setThresholdFor(const std::string& name, int threshold);
 
     /**
-     * get the verbosity threshold for a child Log.  When a child Log of the
+     * get the importance threshold for a child Log.  When a child Log of the
      * same name is created, this is the threshold it will have.  
      * @param name       the relative name of the child log
      */
@@ -306,7 +307,7 @@ public:
      *
      * Note that while this attribute's default value is inherited from 
      * the parent log, it is not persistently associated with the log's 
-     * name like the verbosity threshold.  If this log is destroyed and 
+     * name like the importance threshold.  If this log is destroyed and 
      * then recreated again with the same name, this attribute will revert 
      * to that of the parent log.  
      * @param yesno    the preference for showing all.  willShowAll() will 
@@ -349,79 +350,79 @@ public:
 
     /**
      * send a message to the log
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      * @param properties   a list of properties to include in the message.
      */
-    void log(int verbosity, const std::string& message, 
+    void log(int importance, const std::string& message, 
              const dafBase::PropertySet& properties);
 
     /**
      * send a message to the log
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      * @param name         the name of a property to include in the message.
      * @param val          the value of the property to include
      */
     template <class T>
-    void log(int verbosity, const std::string& message, 
+    void log(int importance, const std::string& message, 
              const std::string& name, const T& val);
 
     /**
      * send a message to the log
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      * @param prop         a property to include in the message.
      */
     template <class T>
-    void log(int verbosity, const std::string& message, 
+    void log(int importance, const std::string& message, 
              const RecordProperty<T>& prop);
 
     /**
      * send a simple message to the log
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      */
-    void log(int verbosity, const std::string& message);
+    void log(int importance, const std::string& message);
 
     /**
      * send a simple, formatted message to the log
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param message      a simple message in the form of a boost::format
      *                       instance
      */
-    void log(int verbosity, const boost::format& message) {
-        log(verbosity, message.str());
+    void log(int importance, const boost::format& message) {
+        log(importance, message.str());
     }
 
     /**
      * send a simple, formatted message.  Use of this function tends to 
      * perform better than log(int, boost::format) as the formatting is 
      * only done if the message will actually get recorded.
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param fmt          a printf-style format string
      * @param ...          the inputs to the formatting.
      */
-    void format(int verbosity, const char *fmt, ...) {
+    void format(int importance, const char *fmt, ...) {
         int threshold = getThreshold();
-        if (verbosity < threshold) return;
+        if (importance < threshold) return;
         va_list ap;
         va_start(ap, fmt);
-        _send(threshold, verbosity, fmt, ap);
+        _send(threshold, importance, fmt, ap);
         va_end(ap);
     }
 
     /**
      * send a simple, formatted message.  This function is not usually 
      * called directly by applications.
-     * @param verbosity    how loud the message should be
+     * @param importance    how loud the message should be
      * @param fmt          a printf-style format string
      * @param ap           the inputs to the formatting.
      */
-    void format(int verbosity, const char *fmt, va_list ap) {
+    void format(int importance, const char *fmt, va_list ap) {
         int threshold = getThreshold();
-        if (verbosity < threshold) return;
-        _send(threshold, verbosity, fmt, ap);
+        if (importance < threshold) return;
+        _send(threshold, importance, fmt, ap);
     }
 
     /**
@@ -436,7 +437,7 @@ public:
      * unaffected.  The NetLogger format will be used with this new 
      * destination.  
      * @param destination   the stream to send messages to
-     * @param threshold     the verbosity threshold to use to filter messages
+     * @param threshold     the importance threshold to use to filter messages
      *                         sent to the stream.
      */
     void addDestination(std::ostream& destination, int threshold);
@@ -450,7 +451,7 @@ public:
      *                         caller is responsible for ensuring that the 
      *                         stream is neither closed nor its memory freed
      *                         for the life of this Log.  
-     * @param threshold     the verbosity threshold to use to filter messages
+     * @param threshold     the importance threshold to use to filter messages
      *                         sent to the stream.
      * @param formatter     the log formatter to use.
      */
@@ -489,8 +490,8 @@ public:
      * @param name           the name to give this log.  By default, the 
      *                         name will be an empty string, signifying a 
      *                         root log.  
-     * @param threshold      the verbosity threshold to assign to this Log.  
-     *                         Messages sent to this log must have a verbosity
+     * @param threshold      the importance threshold to assign to this Log.  
+     *                         Messages sent to this log must have a importance
      *                         level equal to or greater than this value to 
      *                         be recorded.  (Note that thresholds associated
      *                         with destinations have their own thresholds that
@@ -540,7 +541,7 @@ protected:
      * format and send a message using a variable argument list.  This does 
      * not check the Log threshold; it assumes this has already been done.
      */
-    void _send(int threshold, int verbosity, const char *fmt, va_list ap);
+    void _send(int threshold, int importance, const char *fmt, va_list ap);
 
 private:
     void completePreamble();
@@ -551,7 +552,7 @@ private:
 
 protected: 
     /**
-     * the memory of child verbosity thresholds.
+     * the memory of child importance thresholds.
      */
     boost::shared_ptr<threshold::Memory> _thresholds;
 
@@ -578,23 +579,23 @@ void Log::setPreambleProperty(const std::string& name, const T& val) {
 }
         
 template <class T>
-void Log::log(int verbosity, const std::string& message, 
+void Log::log(int importance, const std::string& message, 
               const std::string& name, const T& val) {
 
     int threshold = getThreshold();
-    if (verbosity < threshold)
+    if (importance < threshold)
         return;
-    LogRecord rec(threshold, verbosity, *_preamble, willShowAll());
+    LogRecord rec(threshold, importance, *_preamble, willShowAll());
     rec.addComment(message);
     rec.addProperty(name, val);
     send(rec);
 }
 
 template <class T>
-void Log::log(int verbosity, const std::string& message, 
+void Log::log(int importance, const std::string& message, 
          const RecordProperty<T>& prop) 
 {
-    log(verbosity, message, prop.name, prop.value);
+    log(importance, message, prop.name, prop.value);
 }
 
 
@@ -608,13 +609,13 @@ public:
 
     /**
      * Create a log record to be sent to a given log.  
-     * @param log        the log this record should be written to
-     * @param verbosity  the loudness of the record.  If this value is 
-     *                     greater than or equal to the Log's verbosity 
+     * @param log         the log this record should be written to
+     * @param importance  the urgency of the record.  If this value is 
+     *                     greater than or equal to the Log's importance 
      *                     threshold, the message will be recorded.
      */
-    LogRec(Log& log, int verbosity) 
-        : LogRecord(log.getThreshold(), verbosity, log.getPreamble()), 
+    LogRec(Log& log, int importance) 
+        : LogRecord(log.getThreshold(), importance, log.getPreamble()), 
           _sent(false), _log(&log)
     { }
 

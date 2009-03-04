@@ -36,8 +36,8 @@ public:
      *                         ("LOG") giving the Log name.  
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
-     * @param filethresh    the verbosity threshold to set for the log file
-     * @param screenthresh  the verbosity threshold to set for messages going
+     * @param filethresh    the importance threshold to set for the log file
+     * @param screenthresh  the importance threshold to set for messages going
      *                        to the screen.
      * @param screenVerbose if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 
@@ -51,8 +51,8 @@ public:
      * create a Log that will write messages to a given file
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
-     * @param filethresh    the verbosity threshold to set for the log file
-     * @param screenthresh  the verbosity threshold to set for messages going
+     * @param filethresh    the importance threshold to set for the log file
+     * @param screenthresh  the importance threshold to set for messages going
      *                        to the screen.
      * @param screenVerbose if true, all message data properties will be printed
      *                        to the screen.  If false, only the Log name 
@@ -86,13 +86,13 @@ public:
     }
 
     /**
-     * return the verbosity threshold current set for the log file. 
+     * return the importance threshold current set for the log file. 
      * This applies only to the file stream set at construction time.
      */
     int getFileThreshold() { return _file->getThreshold(); }
 
     /**
-     * set the verbosity threshold current set for the log file.
+     * set the importance threshold current set for the log file.
      * This only affects the file stream set at construction time; other 
      * subsequently added streams are unaffected.
      */
@@ -106,8 +106,8 @@ public:
      *                        ("LOG") giving the Log name.  
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
-     * @param filethresh    the verbosity threshold to set for the log file
-     * @param screenthresh  the verbosity threshold to set for messages going
+     * @param filethresh    the importance threshold to set for the log file
+     * @param screenthresh  the importance threshold to set for messages going
      *                        to the screen.
      * @param screenVerbose if true, all message data properties will be 
      *                        printed to the screen.  If false, only the Log 
@@ -122,8 +122,8 @@ public:
      * create a new log and set it as the default Log
      * @param filename      the name of the file to send messages to.  It will 
      *                        be opened in append mode.
-     * @param filethresh    the verbosity threshold to set for the log file
-     * @param screenthresh  the verbosity threshold to set for messages going
+     * @param filethresh    the importance threshold to set for the log file
+     * @param screenthresh  the importance threshold to set for messages going
      *                        to the screen.
      * @param screenVerbose if true, all message data properties will be 
      *                        printed to the screen.  If false, only the Log 
