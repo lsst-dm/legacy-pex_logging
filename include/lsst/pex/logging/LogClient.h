@@ -24,6 +24,7 @@ namespace logging {
  * parent allows the subclass to control how/where the Log is stored.  
  */
 class LogClient {
+public:
 
     /**
      * initialize the LogClient interface.  This constructor does nothing
@@ -46,7 +47,7 @@ class LogClient {
 };
 
 /**
- * 
+ * an implementation of the LogClient interface suitable for inheriting from
  */
 class LogClientHelper : public LogClient {
 public:
