@@ -79,7 +79,9 @@ long long LogRecord::utcnow() {
 }
 
 void LogRecord::setTimestamp() {
-    _data->set(LSST_LP_TIMESTAMP, lsst::daf::base::DateTime(utcnow()));
+    _data->set(LSST_LP_TIMESTAMP,
+               lsst::daf::base::DateTime(utcnow(),
+                                         lsst::daf::base::DateTime::UTC));
 }
 
 void LogRecord::setDate() {
