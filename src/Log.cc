@@ -3,6 +3,8 @@
  * @author Ray Plante
  */
 
+#include <cstring>
+
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/ScreenLog.h"
 
