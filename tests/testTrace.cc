@@ -19,7 +19,7 @@ void assure(bool mustBeTrue, const string& failureMsg) {
 
 int main(int argc, char* argv[]) {
     long long t0, t1;
-    int verb = 3;
+    int verb = LSST_MAX_TRACE;
 
     cout << "overhead of time call: " 
          << (LogRecord::utcnow() - LogRecord::utcnow())/-1000 << " usecs."

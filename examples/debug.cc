@@ -35,7 +35,13 @@ using lsst::pex::logging::debug;
   */
 int main(int argc, char *argv[]) {
 
-    // any function that wishes to have debug messages should
+    // if you want to set the verbosity limit on a log (and its 
+    // descendents), you can instantiate the debug log with the desired 
+    // limit; otherwise the default will be that of the default log 
+    // (usually 0).  
+    Debug tmp("myapp", LSST_MAX_DEBUG);
+
+    // Later, any function that wishes to have debug messages should
     // declare a log with a given name.
     Debug dblog("myapp");
 
@@ -59,7 +65,7 @@ int main(int argc, char *argv[]) {
                            << Prop<double>("rms", 3.2) << Rec::endr;
 
     // If you want to attach properties but with different verbosity levels,
-    // multiply the verbosity level by -1:
+    // multiply the verbosity level by -1 (see API docs):
     Rec(dblog, -2) << "starting iterations" 
                    << Prop<double>("rms", 3.2) << Rec::endr;
 

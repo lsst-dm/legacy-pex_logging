@@ -94,7 +94,7 @@ public:
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             va_end(ap);
             
-            Debug out(name, LSST_MAX_TRACE);
+            Debug out(name);
             out.debug(verbosity, msg);
         }
     }
@@ -121,7 +121,7 @@ public:
 
             (void)vsnprintf(msg, len, fmt.c_str(), ap);
             
-            Debug out(name, LSST_MAX_TRACE);
+            Debug out(name);
             out.debug(verbosity, msg);
         }
     }
@@ -169,9 +169,9 @@ public:
     }
     static int getVerbosity(const std::string &name) {
         if (name.length() == 0 || name == ".") 
-            return Log::getDefaultLog().getThreshold();
+            return -1*Log::getDefaultLog().getThreshold();
         else 
-            return Log::getDefaultLog().getThresholdFor(name);
+            return -1*Log::getDefaultLog().getThresholdFor(name);
     }
     static void printVerbosity(std::ostream& out) {
         Log::getDefaultLog().printThresholds(out);

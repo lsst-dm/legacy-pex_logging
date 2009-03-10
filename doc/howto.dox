@@ -171,20 +171,40 @@ constructor:
    dbl = log.Debug("harness.slice", 3)
 \endverbatim
 
-This only affects the debug logger for the function where it is
-called.  To set a verbosity level for the entire application, you can
-set a static variable \c Debug.default_max_debug somewhere near the
-start of your application:
+This only affects the named logger.  To set a debug verbosity level
+for the entire application, you can set a static variable \c
+Debug.default_max_debug somewhere near the start of your application: 
 \verbatim
    import lsst.pex.logging as log
    log.Debug.default_max_debug = 3
+   ...
+   // the verbosity limit will be 3
+   dbl = log.Debug("harness.slice")
 \endverbatim
+
+The \c default_max_debug variable only affects debug loggers created
+in python.  A different, but common use case is to set the verbosity
+limit in python to affect Debug calls in C++.  In python, it is
+sufficient to call the Debug constructor for a given name and
+verbosity limit; it is not necessary to actually use it: 
+
+\verbatim
+   import lsst.pex.logging as log
+
+   log.Debug("harness", 3)
+   log.Debug("harness.slice", 5)
+   ...
+\endverbatim
+
+In the above example, the \c harness.slice log and all its descendent
+logs will have a limit of 5, while \c harness and its descendents
+(other than \c harness.slice) will have a limit of 3.  
 
 \subsection secLogHTTrace Trace Messages
 
-The Trace API is only supported in C++ and is provided for backward
-compatibility with DC2.  New code is encouraged to prefer use of the
-Debug API.  Like Debug, to take advantage of compile-time
+The Trace API is supported in both C++ and python and is provided for
+backward compatibility with DC2.  New code is encouraged to prefer use
+of the Debug API.  Like Debug, to take advantage of compile-time
 efficiencies, you should set the \c LSST_MAX_TRACE preprocessor define
 before including \c Trace.h:
 
@@ -199,10 +219,30 @@ using namespace lsst::pex::logging;
     TTrace<3>("foo.bar", "starting iteration #%d", 3);
 
     // this will not be printed because 5 > LSST_MAX_TRACE
-    TTrace<3>("foo.bar", "it's working!");
+    TTrace<5>("foo.bar", "it's working!");
 }
-
 \endverbatim
+
+Tracing can be done with runtime filtering as well.  In the Trace API,
+the verbosity limit for a log is set via a static Trace function call:
+
+\verbatim
+#include "lsst/pex/logging/Trace.h"
+
+using namespace lsst::pex::logging;
+
+{
+    // set the verbosity for a log name anywhere in the app
+    Trace.setVerbosity("foo.bar", 3);
+
+    // create messages anywhere afterward 
+    Trace("foo.bar", 2, "will be printed");
+    Trace("foo.bar", 5, "won't be printed: %i", 5);
+}
+\endverbatim
+
+One common use case is to only set the verbosity limit in python: this
+will effect the Trace calls in C++.
 
 \section secLogHTDetails The Details
 

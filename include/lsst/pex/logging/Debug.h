@@ -27,7 +27,9 @@ namespace logging {
 #endif
 
 #ifndef LSST_DEBUGGING_ON
+#ifndef LSST_MAX_DEBUG
 #define LSST_MAX_DEBUG 0
+#endif
 #endif
 
 /**
@@ -49,11 +51,11 @@ namespace logging {
 class Debug : public Log {
 public:
 
-    Debug(const std::string& name, int verbosity=LSST_MAX_DEBUG) 
+    Debug(const std::string& name, int verbosity=-1*Log::INHERIT_THRESHOLD) 
         : Log(Log::getDefaultLog(), name, -1*verbosity) { }
 
     Debug(const Log& parent, const std::string& name, 
-          int verbosity=LSST_MAX_DEBUG) 
+          int verbosity=-1*Log::INHERIT_THRESHOLD) 
         : Log(parent, name , -1*verbosity) { }
     Debug(const Debug& that) : Log(that) { }
 

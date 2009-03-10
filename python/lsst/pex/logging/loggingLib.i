@@ -11,7 +11,7 @@ Access to the logging classes from the pex library
 %include "lsst/p_lsstSwig.i"
 
 %{
-// #include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
 #include "lsst/pex/logging/Debug.h"
@@ -39,12 +39,15 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
+%ignore lsst::pex::logging::Trace::Trace(const std::string& name, const int verbosity, const std::string& fmt, va_list ap);
+          
 
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/Debug.h"
+%include "lsst/pex/logging/Trace.h"
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
 

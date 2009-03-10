@@ -25,7 +25,7 @@ void assure(bool mustBeTrue, const string& failureMsg) {
 
 int main(int argc, char* argv[]) {
     long long t0, t1;
-    int verb = 3;
+    int verb = LSST_MAX_DEBUG;
 
     cout << "overhead of time call: " 
          << (LogRecord::utcnow() - LogRecord::utcnow())/-1000 << " usecs."
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     }
     if (argc > 2) verb = atoi(argv[2]);
 
-    Debug log("myapp");
+    Debug log("myapp", verb);
 
     t0 = LogRecord::utcnow();
     log.debug(1, "I'm starting this routine");
