@@ -20,16 +20,17 @@ namespace logging {
 
 #ifdef LSST_NO_DEBUG
 #undef LSST_DEBUGGING_ON
-#endif
-
-#ifndef LSST_MAX_DEBUG
-#define LSST_MAX_DEBUG 0
+#undef LSST_MAX_DEBUG
 #endif
 
 #ifndef LSST_DEBUGGING_ON
 #ifndef LSST_MAX_DEBUG
 #define LSST_MAX_DEBUG 0
 #endif
+#endif
+
+#ifndef LSST_MAX_DEBUG
+#define LSST_MAX_DEBUG 0
 #endif
 
 /**
