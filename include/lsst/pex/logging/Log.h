@@ -256,7 +256,7 @@ public:
      */
     void setThreshold(int threshold) { 
         _threshold = threshold;
-        if (_name.length() > 0) _thresholds->setThresholdFor(_name, threshold);
+        _thresholds->setThresholdFor(_name, threshold);
     } 
 
     /**

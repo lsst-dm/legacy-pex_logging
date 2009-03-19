@@ -167,9 +167,13 @@ public:
      * set the threshold value associated with a given name
      */
     void setThresholdFor(const std::string& name, int threshold) {
-        if (name.length() == 0) setRootThreshold(threshold);
-        tokenizer fields(name, _sep);
-        _tree.setThresholdFor(fields.begin(), fields.end(), threshold);
+        if (name.length() == 0) {
+            setRootThreshold(threshold);
+        }
+        else {
+            tokenizer fields(name, _sep);
+            _tree.setThresholdFor(fields.begin(), fields.end(), threshold);
+        }
     }
 
     /**
