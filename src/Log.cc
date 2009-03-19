@@ -161,7 +161,7 @@ Log::Log(const Log& parent, const string& childName, int threshold)
     : _showAll(parent._showAll), _threshold(threshold), 
       _name(parent.getName()), _thresholds(parent._thresholds), 
       _destinations(parent._destinations), 
-      _preamble(parent._preamble)  // Note: share preamble with parent
+      _preamble(parent._preamble->deepCopy())  
 { 
     if (_name.length() > 0) _name += _sep;
     _name += childName;
