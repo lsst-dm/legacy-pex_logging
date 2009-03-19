@@ -333,7 +333,9 @@ Log& Log::getDefaultLog() {
 void Log::setDefaultLog(Log *deflog) {
     if (defaultLog != 0) delete defaultLog;
     defaultLog = deflog;
-    defaultLog->_preamble->markPersistent();
+    if (defaultLog != 0) {
+        defaultLog->_preamble->markPersistent();
+    }
 }
 
 void Log::createDefaultLog(const list<shared_ptr<LogDestination> >& dests, 
