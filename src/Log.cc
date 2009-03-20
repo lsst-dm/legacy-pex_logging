@@ -74,12 +74,13 @@ const int Log::INHERIT_THRESHOLD = threshold::INHERIT;
  *                    (the default) denotes a root log.
  */
 Log::Log(const int threshold, const string& name) 
-    : _showAll(false), _threshold(threshold), _name(name), 
-      _thresholds(new threshold::Memory(Log::_sep)), 
+    : _threshold(threshold), _defShowAll(new bool(false)), _myShowAll(), 
+      _name(name), _thresholds(new threshold::Memory(Log::_sep)), 
       _destinations(), _preamble(new PropertySet())
 {
     _thresholds->setRootThreshold(threshold);
     if (name.length() > 0) _thresholds->setThresholdFor(name, threshold);
+    _myShowAll = _defShowAll;
     completePreamble();
 }
 
@@ -105,9 +106,9 @@ Log::Log(const int threshold, const string& name)
  */
 Log::Log(const list<shared_ptr<LogDestination> > &destinations, 
          const PropertySet &preamble,
-         const string &name, const int threshold)
-    : _showAll(false), _threshold(threshold), _name(name), 
-      _thresholds(new threshold::Memory(Log::_sep)), 
+         const string &name, const int threshold, bool defaultShowAll)
+    : _threshold(threshold), _defShowAll(new bool(defaultShowAll)), 
+      _myShowAll(), _name(name), _thresholds(new threshold::Memory(Log::_sep)),
       _destinations(destinations), _preamble(preamble.deepCopy())
 {  
     _thresholds->setRootThreshold(threshold);
@@ -119,9 +120,10 @@ Log::Log(const list<shared_ptr<LogDestination> > &destinations,
  * create a copy
  */
 Log::Log(const Log& that) 
-    : _showAll(that._showAll), _threshold(that._threshold), _name(that._name), 
-      _thresholds(that._thresholds),
-      _destinations(that._destinations), _preamble(that._preamble->deepCopy())
+    : _threshold(that._threshold), _defShowAll(that._defShowAll), 
+      _myShowAll(that._myShowAll), _name(that._name), 
+      _thresholds(that._thresholds), _destinations(that._destinations), 
+      _preamble(that._preamble->deepCopy())
 { }
 
 /* 
@@ -134,6 +136,8 @@ Log::~Log() { }
  */
 Log& Log::operator=(const Log& that) {
     _threshold = that._threshold; 
+    _defShowAll = that._defShowAll;
+    _myShowAll = that._myShowAll;
     _name = that._name;
     _thresholds = that._thresholds;
     _destinations = that._destinations;
@@ -158,8 +162,8 @@ void Log::completePreamble() {
  *                          it will be set to the threshold of the parent.  
  */
 Log::Log(const Log& parent, const string& childName, int threshold)
-    : _showAll(parent._showAll), _threshold(threshold), 
-      _name(parent.getName()), _thresholds(parent._thresholds), 
+    : _threshold(threshold), _defShowAll(parent._defShowAll), 
+      _myShowAll(), _name(parent.getName()), _thresholds(parent._thresholds), 
       _destinations(parent._destinations), 
       _preamble(parent._preamble->deepCopy())  
 { 

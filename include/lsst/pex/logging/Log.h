@@ -193,7 +193,8 @@ public:
      */
     Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
         const dafBase::PropertySet& preamble,
-        const std::string& name="", const int threshold=INFO);
+        const std::string& name="", const int threshold=INFO,
+        bool defaultShowAll=false);
 
     /**
      * create a child of a given Log.  The child log will be attached 
@@ -296,7 +297,11 @@ public:
      * A LogFormatter may or may not choose to honor this preference when 
      * the LogRecord is rendered.
      */
-    bool willShowAll() const { return _showAll; } 
+    bool willShowAll() const { 
+        return 
+            (_myShowAll.get()) ? *_myShowAll 
+                               : ((_defShowAll.get()) ? *_defShowAll : false);
+    } 
 
     /**
      * set whether all of the properties should be displayed when 
@@ -306,14 +311,30 @@ public:
      * according to the purposes of its implmentation.  
      *
      * Note that while this attribute's default value is inherited from 
-     * the parent log, it is not persistently associated with the log's 
+     * the root log, it is not persistently associated with the log's 
      * name like the importance threshold.  If this log is destroyed and 
      * then recreated again with the same name, this attribute will revert 
-     * to that of the parent log.  
+     * to that of the root log.  
      * @param yesno    the preference for showing all.  willShowAll() will 
      *                    return this value.  
      */
-    void setShowAll(bool yesno) {  _showAll = yesno;  }
+    void setShowAll(bool yesno) {  
+        if (_myShowAll.get()) 
+            *_myShowAll = yesno;
+        else
+            _myShowAll.reset(new bool(yesno));
+    }
+
+    /**
+     * reset whether to all properties are display to what ever the root
+     * log is set to do.
+     */
+    void resetShowAll() {  
+        if (_defShowAll.get() == _myShowAll.get()) 
+            *_myShowAll = false;
+        else
+            _myShowAll.reset();  
+    }
 
     /**
      * add a property to the preamble
@@ -546,8 +567,9 @@ protected:
 private:
     void completePreamble();
 
-    bool _showAll; 
     int _threshold;
+    boost::shared_ptr<bool> _defShowAll;
+    boost::shared_ptr<bool> _myShowAll;
     std::string _name;
 
 protected: 
