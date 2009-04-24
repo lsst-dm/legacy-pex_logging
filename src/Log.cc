@@ -294,14 +294,14 @@ void Log::send(const LogRecord& record) {
  * add a destination to this log.  The destination stream will included
  * in all child Logs created from this log after a call to this function.
  * All previously created logs, including ancestor logs, will be 
- * unaffected.  The NetLogger format will be used with this new 
+ * unaffected.  The IndentedFormatter format will be used with this new 
  * destination.  
  * @param destination   the stream to send messages to
  * @param threshold     the importance threshold to use to filter messages
  *                         sent to the stream.
  */
 void Log::addDestination(ostream& destination, int threshold) {
-    shared_ptr<LogFormatter> frmtr(new NetLoggerFormatter());
+    shared_ptr<LogFormatter> frmtr(new IndentedFormatter());
     addDestination(destination, threshold, frmtr);
 }
 
