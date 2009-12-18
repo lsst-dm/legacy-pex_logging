@@ -4,6 +4,7 @@
  */
 
 #include <cstring>
+#include <cstdio>
 
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/ScreenLog.h"
