@@ -14,6 +14,7 @@
 #include <string>
 #include <sstream>
 #include <cstdarg>
+#include <cstdio>
 #include <boost/format.hpp>
 
 #include "lsst/pex/logging/Debug.h"

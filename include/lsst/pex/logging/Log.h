@@ -190,6 +190,10 @@ public:
      *                         be recorded.  (Note that thresholds associated
      *                         with destinations have their own thresholds that
      *                         will override this one.)
+     * @param defaultShowAll if true, log message properties will be shown
+     *                         by default when the messages are displayed.  
+     *                         The default is false, indicating that their 
+     *                         display must be turned on as needed.  
      */
     Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
         const dafBase::PropertySet& preamble,
