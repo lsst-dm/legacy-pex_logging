@@ -14,6 +14,7 @@ Access to the logging classes from the pex library
 #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
+#include "lsst/pex/logging/FileDestination.h"
 #include "lsst/pex/logging/Debug.h"
 #include "lsst/pex/exceptions.h"
 %}
@@ -34,6 +35,7 @@ SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::
 SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, lsst::pex::logging::IndentedFormatter)
 SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
 SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
+// SWIG_SHARED_PTR_DERIVED(FileDestination, lsst::pex::logging::LogDestination, lsst::pex::logging::FileDestination)
 
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
@@ -45,6 +47,7 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
+// %include "lsst/pex/logging/FileDestination.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/Debug.h"
 %include "lsst/pex/logging/Trace.h"
@@ -79,6 +82,11 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
     %template(logPropertyString) log<std::string>;
 //    %template(logPropertyPropertySet) log<lsst::daf::base::PropertySet>;
 
+    void addDestination(const std::string& filepath, int threshold=0) {
+        boost::shared_ptr<lsst::pex::logging::LogDestination> 
+            fdest(new lsst::pex::logging::FileDestination(filepath, threshold));
+        $self->addDestination(fdest);
+    }
 }
 
 %extend lsst::pex::logging::LogRecord {

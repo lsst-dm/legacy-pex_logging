@@ -2,6 +2,9 @@
 test: I like your hat
   LEVEL: 0
 
+test: I have gloves just like those
+  LEVEL: 0
+
 test: I said, I like your shoes
   LEVEL: 0
 

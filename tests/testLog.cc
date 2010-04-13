@@ -33,6 +33,10 @@ int main() {
     Log *tlog = new Log(log, "test");
     tlog->log(Log::INFO, "I like your hat");
 
+    // test formatting on the fly:
+    char *what = "gloves";
+    tlog->format(Log::INFO, "I have %s just like those", what);
+
     // test threshold filtering
     tlog->setThreshold(Log::WARN);
     tlog->log(Log::INFO, "I like your gloves");  // shouldn't see this 
