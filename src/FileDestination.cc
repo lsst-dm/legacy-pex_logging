@@ -8,6 +8,37 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
+/**
+ * create a file destination.  If the file does not exist, it will 
+ * be created; otherwise, messages will be appended.  The IndentedFormatter
+ * will be used to format the messages
+ * @param filepath    the path to the log file to write messages to.
+ * @param threshold   the minimum volume level required to pass a message
+ *                       to the stream.  If not provided, it would be set
+ *                       to 0.  
+ */
+FileDestination::FileDestination(const fs::path& filepath, bool verbose, 
+                                 int threshold)
+    : LogDestination(new std::ofstream(filepath.string().c_str()), 
+                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     threshold),
+      _path(filepath) 
+{ }
+FileDestination::FileDestination(const std::string& filepath, bool verbose, 
+                                 int threshold)
+    : LogDestination(new std::ofstream(filepath.c_str()), 
+                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     threshold),
+      _path(filepath) 
+{ }
+FileDestination::FileDestination(const char *filepath, bool verbose, 
+                                 int threshold)
+    : LogDestination(new std::ofstream(filepath), 
+                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     threshold),
+      _path(filepath) 
+{ }
+
 /*
  * delete this destination
  */

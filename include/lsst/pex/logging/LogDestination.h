@@ -8,6 +8,7 @@
 #define LSST_PEX_LOGDESTINATION_H
 
 #include "lsst/pex/logging/LogFormatter.h"
+#include "lsst/pex/logging/threshold/enum.h"
 
 #include <string>
 #include <ostream>
@@ -52,7 +53,7 @@ public:
      */
     LogDestination(std::ostream *strm, 
                    const boost::shared_ptr<LogFormatter>& formatter, 
-                   int threshold=0);
+                   int threshold=threshold::PASS_ALL);
 
     /**
      * create a copy

@@ -40,21 +40,23 @@ public:
      */
     FileDestination(const std::string& filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
-                    int threshold=0) 
-        : LogDestination(new std::ofstream(filepath.c_str()), formatter, 0),
+                    int threshold=threshold::PASS_ALL) 
+        : LogDestination(new std::ofstream(filepath.c_str()), formatter, 
+                         threshold),
           _path(filepath) 
     { }
     FileDestination(const char *filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
-                    int threshold=0)
-        : LogDestination(new std::ofstream(filepath), formatter, 0),
+                    int threshold=threshold::PASS_ALL)
+        : LogDestination(new std::ofstream(filepath), formatter, 
+                         threshold),
           _path(filepath) 
     { }
     FileDestination(const fs::path& filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
-                    int threshold=0)
+                    int threshold=threshold::PASS_ALL)
         : LogDestination(new std::ofstream(filepath.string().c_str()), 
-                         formatter, 0),
+                         formatter, threshold),
           _path(filepath) 
     { }
     //@}
@@ -65,25 +67,18 @@ public:
      * be created; otherwise, messages will be appended.  The IndentedFormatter
      * will be used to format the messages
      * @param filepath    the path to the log file to write messages to.
+     * @param verbose     if True, make sure all properties are printed 
+     *                       out to the destination
      * @param threshold   the minimum volume level required to pass a message
      *                       to the stream.  If not provided, it would be set
      *                       to 0.  
      */
-    FileDestination(const fs::path& filepath, int threshold=0)
-        : LogDestination(new std::ofstream(filepath.string().c_str()), 
-                         boost::shared_ptr<LogFormatter>(new IndentedFormatter()), 0),
-          _path(filepath) 
-    { }
-    FileDestination(const std::string& filepath, int threshold=0)
-        : LogDestination(new std::ofstream(filepath.c_str()), 
-                         boost::shared_ptr<LogFormatter>(new IndentedFormatter()), 0),
-          _path(filepath) 
-    { }
-    FileDestination(const char *filepath, int threshold=0)
-        : LogDestination(new std::ofstream(filepath), 
-                         boost::shared_ptr<LogFormatter>(new IndentedFormatter()), 0),
-          _path(filepath) 
-    { }
+    FileDestination(const fs::path& filepath, bool verbose=false, 
+                    int threshold=threshold::PASS_ALL);
+    FileDestination(const std::string& filepath, bool verbose=false, 
+                    int threshold=threshold::PASS_ALL);
+    FileDestination(const char *filepath, bool verbose=false, 
+                    int threshold=threshold::PASS_ALL);
     //@}
 
     virtual ~FileDestination();

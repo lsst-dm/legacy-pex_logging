@@ -82,9 +82,12 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
     %template(logPropertyString) log<std::string>;
 //    %template(logPropertyPropertySet) log<lsst::daf::base::PropertySet>;
 
-    void addDestination(const std::string& filepath, int threshold=0) {
+    void addDestination(const std::string& filepath, bool verbose=false, 
+                        int threshold=lsst::pex::logging::threshold::PASS_ALL) 
+    {
         boost::shared_ptr<lsst::pex::logging::LogDestination> 
-            fdest(new lsst::pex::logging::FileDestination(filepath, threshold));
+            fdest(new lsst::pex::logging::FileDestination(filepath, verbose, 
+                                                          threshold));
         $self->addDestination(fdest);
     }
 }

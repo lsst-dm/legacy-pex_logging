@@ -25,8 +25,11 @@ int main() {
     boost::shared_ptr<LogFormatter> brief(new IndentedFormatter());
 
     boost::shared_ptr<LogDestination> 
-        shy(new FileDestination("tests/testFileDestination-out.txt"));
+        shy(new FileDestination("tests/testFileDestination-out.txt", true));
     Log log;
     log.addDestination(shy);
     log.log(Log::INFO, "hello");
+    log.log(Log::DEBUG, "debugging");
+    log.setThreshold(Log::DEBUG);
+    log.log(Log::DEBUG, "hear this");
 }

@@ -35,14 +35,14 @@ using lsst::daf::base::PropertySet;
  */
 DualLog::DualLog(const PropertySet& preamble, const string& filename, 
                  int filethresh, int screenthresh, bool screenVerbose) 
-    : ScreenLog(preamble, screenthresh, screenVerbose)
+    : ScreenLog(preamble, screenVerbose, screenthresh)
 {
     _init(filename, filethresh);
 }
 
 DualLog::DualLog(const string& filename, 
                  int filethresh, int screenthresh, bool screenVerbose) 
-    : ScreenLog(screenthresh, screenVerbose)
+    : ScreenLog(screenVerbose, screenthresh)
 {
     _init(filename, filethresh);
 }
