@@ -34,7 +34,7 @@ int main() {
     tlog->log(Log::INFO, "I like your hat");
 
     // test formatting on the fly:
-    char *what = "gloves";
+    const char *what = "gloves";
     tlog->format(Log::INFO, "I have %s just like those", what);
 
     // test threshold filtering

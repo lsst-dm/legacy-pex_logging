@@ -35,19 +35,28 @@ SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::
 SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, lsst::pex::logging::IndentedFormatter)
 SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
 SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
-// SWIG_SHARED_PTR_DERIVED(FileDestination, lsst::pex::logging::LogDestination, lsst::pex::logging::FileDestination)
+SWIG_SHARED_PTR_DERIVED(FileDestination, lsst::pex::logging::LogDestination, lsst::pex::logging::FileDestination)
 
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
 %ignore lsst::pex::logging::Trace::Trace(const std::string& name, const int verbosity, const std::string& fmt, va_list ap);
+
+%inline %{
+namespace boost { namespace filesystem {}}
+%}
+
+%ignore lsst::pex::logging::FileDestination::FileDestination(const fs::path& filepath, const boost::shared_ptr<LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, const boost::shared_ptr<LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const fs::path& filepath, bool verbose, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const char *& filepath, bool verbose, int threshold, bool truncate);
           
 
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
 %include "lsst/pex/logging/LogDestination.h"
-// %include "lsst/pex/logging/FileDestination.h"
+%include "lsst/pex/logging/FileDestination.h"
 %include "lsst/pex/logging/Log.h"
 %include "lsst/pex/logging/Debug.h"
 %include "lsst/pex/logging/Trace.h"
@@ -82,9 +91,12 @@ SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
     %template(logPropertyString) log<std::string>;
 //    %template(logPropertyPropertySet) log<lsst::daf::base::PropertySet>;
 
-    void addDestination(const std::string& filepath, int threshold=0) {
+    void addDestination(const std::string& filepath, bool verbose=false, 
+                        int threshold=lsst::pex::logging::threshold::PASS_ALL) 
+    {
         boost::shared_ptr<lsst::pex::logging::LogDestination> 
-            fdest(new lsst::pex::logging::FileDestination(filepath, threshold));
+            fdest(new lsst::pex::logging::FileDestination(filepath, verbose, 
+                                                          threshold));
         $self->addDestination(fdest);
     }
 }

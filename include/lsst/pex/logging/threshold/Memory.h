@@ -4,8 +4,8 @@
  * @brief definition of the Memory class
  * @author Ray Plante
  */
-#ifndef LSST_PEX_LOGGGING_THRESHOLD_MEMORY_H
-#define LSST_PEX_LOG_THRESHOLD_MEMORY_H
+#ifndef LSST_PEX_LOGGING_THRESHOLD_MEMORY_H
+#define LSST_PEX_LOGGING_THRESHOLD_MEMORY_H
 
 #include <string>
 #include <map>
@@ -13,18 +13,14 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/tokenizer.hpp>
 
+#include "lsst/pex/logging/threshold/enum.h"
+
 namespace lsst {
 namespace pex {
 namespace logging {
 namespace threshold {
 
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-
-/**
- * A threshold value that means use the value associated with a parent 
- * Log.
- */
-enum { INHERIT = -9999 };
 
 /**
  * @brief A hierarchical tree structure for holding mappings of names to 
@@ -206,4 +202,4 @@ private:
 
 }}}} // end lsst::pex::logging::threshold
 
-#endif // end LSST_PEX_LOG_THRESHOLDMEMORY_H
+#endif // end LSST_PEX_LOGGING_THRESHOLD_MEMORY_H
