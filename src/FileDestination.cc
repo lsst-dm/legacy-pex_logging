@@ -16,24 +16,29 @@ namespace logging {
  * @param threshold   the minimum volume level required to pass a message
  *                       to the stream.  If not provided, it would be set
  *                       to 0.  
+ * @param truncate    if True, overwrite the previous contents; otherwise,
+ *                       new messages will be appended to the file.
  */
 FileDestination::FileDestination(const fs::path& filepath, bool verbose, 
-                                 int threshold)
-    : LogDestination(new std::ofstream(filepath.string().c_str()), 
+                                 int threshold, bool truncate)
+    : LogDestination(new std::ofstream(filepath.string().c_str(), 
+                                       truncate ? std::ios::out : std::ios::app), 
                      boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
                      threshold),
       _path(filepath) 
 { }
 FileDestination::FileDestination(const std::string& filepath, bool verbose, 
-                                 int threshold)
-    : LogDestination(new std::ofstream(filepath.c_str()), 
+                                 int threshold, bool truncate)
+    : LogDestination(new std::ofstream(filepath.c_str(), 
+                                       truncate ? std::ios::out : std::ios::app), 
                      boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
                      threshold),
       _path(filepath) 
 { }
 FileDestination::FileDestination(const char *filepath, bool verbose, 
-                                 int threshold)
-    : LogDestination(new std::ofstream(filepath), 
+                                 int threshold, bool truncate)
+    : LogDestination(new std::ofstream(filepath, 
+                                       truncate ? std::ios::out : std::ios::app), 
                      boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
                      threshold),
       _path(filepath) 
