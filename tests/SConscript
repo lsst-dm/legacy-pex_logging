@@ -13,6 +13,7 @@ env.Program("testNoDebug", ["testNoDebug.cc"], LIBS=env.libs["boost"] + ["utils"
 env.Program("testTrace", ["testTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 env.Program("testNoTrace", ["testNoTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 env.Program("testDefLog", ["testDefLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testBlockTimingLog", ["testBlockTimingLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
 
 #
 # Tests
