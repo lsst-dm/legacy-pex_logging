@@ -35,6 +35,7 @@ Access to the logging classes from the pex library
 
 %{
 #include "lsst/pex/logging/Trace.h"
+#include "lsst/pex/logging/BlockTimingLog.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include "lsst/pex/logging/DualLog.h"
 #include "lsst/pex/logging/FileDestination.h"
@@ -81,6 +82,7 @@ namespace boost { namespace filesystem {}}
 %include "lsst/pex/logging/LogDestination.h"
 %include "lsst/pex/logging/FileDestination.h"
 %include "lsst/pex/logging/Log.h"
+%include "lsst/pex/logging/BlockTimingLog.h"
 %include "lsst/pex/logging/Debug.h"
 %include "lsst/pex/logging/Trace.h"
 %include "lsst/pex/logging/ScreenLog.h"

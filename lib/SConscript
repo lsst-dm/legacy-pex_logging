@@ -12,6 +12,7 @@ env.SharedLibrary('pex_logging', map(lambda str: "../src/" + str,
                              "Component.cc",
                              "Log.cc",
                              "ScreenLog.cc",
-                             "DualLog.cc"
+                             "DualLog.cc",
+                             "BlockTimingLog.cc"
                             ]), LIBS=env.getlibs("boost utils daf_base pex_exceptions"))
 
