@@ -39,8 +39,10 @@ const std::string BlockTimingLog::START("start");
 const std::string BlockTimingLog::END("end");
 
 BlockTimingLog::BlockTimingLog(const Log& parent, const std::string& name, 
-                               int tracelev, const std::string& funcName) 
-    : Log(parent, name), _tracelev(tracelev), _funcName(funcName)
+                               int tracelev, const std::string& funcName, 
+                               int usageFlags) 
+    : Log(parent, name), _tracelev(tracelev), _usageFlags(usageFlags), 
+      _funcName(funcName), _usage()
 {
     if (_funcName.length() == 0) _funcName = name;
     if (_tracelev == Log::INHERIT_THRESHOLD) {
@@ -55,5 +57,25 @@ BlockTimingLog::BlockTimingLog(const Log& parent, const std::string& name,
 }
 
 BlockTimingLog::~BlockTimingLog() { }
+
+void BlockTimingLog::addUsageProps(LogRecord& rec) {
+    if (! _usage.get()) _usage.reset(new struct rusage());
+
+    if (getrusage(RUSAGE_SELF, _usage.get()) == 0) {
+        double d =  0;
+        if (_usageFlags & UTIME)  {
+            d = _usage->ru_utime.tv_sec + _usage->ru_utime.tv_usec/1.0e6;
+            rec.addProperty("usertime", d);
+        }
+        if (_usageFlags & STIME)  {
+            d = _usage->ru_utime.tv_sec + _usage->ru_utime.tv_usec/1.0e6;
+            rec.addProperty("systemtime", d);
+        }
+        if (_usageFlags & MEMSZ)  rec.addProperty("maxrss", _usage->ru_maxrss);
+        if (_usageFlags & NSWAP)  rec.addProperty("nswap", _usage->ru_nswap);
+        if (_usageFlags & BLKIN)  rec.addProperty("blocksin", _usage->ru_inblock);
+        if (_usageFlags & BLKOUT) rec.addProperty("blocksout", _usage->ru_oublock);
+    }
+}
 
 }}} // end lsst::pex::logging

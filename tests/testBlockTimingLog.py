@@ -12,7 +12,7 @@ import time
 import copy
 import random
 
-from lsst.pex.logging import Log, BlockTimingLog
+from lsst.pex.logging import Log, BlockTimingLog, LogRecord
 
 class BlockTimingLogTestCase(unittest.TestCase):
 
@@ -40,6 +40,31 @@ class BlockTimingLogTestCase(unittest.TestCase):
         btl.done()
         del btl
 
+    def testStart(self):
+        log = BlockTimingLog(self.log, "test")
+        log.setThreshold(BlockTimingLog.INSTRUM)
+        log.start("Test run")
+        log.done()
+
+    def testSysData(self):
+        lr = LogRecord(0, 0, True)
+        self.log.setUsageFlags(self.log.CTIME)
+        self.log.addUsageProps(lr)
+        ps = lr.getProperties();
+        self.assert_(ps.exists("usertime"))
+        self.assert_(ps.exists("systemtime"))
+        self.assert_(not ps.exists("nswap"))
+
+        lr = LogRecord(0, 0, True)
+        self.log.setUsageFlags(self.log.ALLUDATA)
+        self.log.addUsageProps(lr)
+        ps = lr.getProperties();
+        self.assert_(ps.exists("usertime"))
+        self.assert_(ps.exists("systemtime"))
+        self.assert_(ps.exists("maxrss"))
+        self.assert_(ps.exists("nswap"))
+        self.assert_(ps.exists("blocksin"))
+        self.assert_(ps.exists("blocksout"))
 
 __all__ = "BlockTimingLogTestCase".split()
 

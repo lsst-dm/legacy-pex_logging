@@ -33,6 +33,10 @@
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/Log.h"
 
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <boost/scoped_ptr.hpp>
+
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -44,9 +48,74 @@ namespace logging {
  * messages that indicate the start and finish of some section of code.  
  * This makes it easier to locate these records after execution and
  * calculate the time spent in the block of code.  
+ * 
+ * This class can optionally be used to simultaneously capture usage data.
+ * In particular, it can add as properties the following system informtation:
+ * user cpu time, system cpu time, memory usage (as maximum resident size),
+ * the number of swaps, the number of block input operations, and the number 
+ * of output operations.  Which of these are save with the log message 
+ * is controlled by a bit map.  
  */
 class BlockTimingLog : public Log {
 public:
+
+    /**
+     * an enumeration for controlling which usage data to collect
+     */
+    enum usageData { 
+        /**
+         * flag to indicate that no usage data should be captured
+         */
+        NOUDATA = 0,
+
+        /**
+         * flag to enable collecting the usage datum, user time 
+         */
+        UTIME = 1,
+
+        /**
+         * flag to enable collecting the usage datum, system time 
+         */
+        STIME = 2,
+
+        /**
+         * flag to enable collecting the usage datum, user and system time.
+         * This is equal to UTIME|STIME.
+         */
+        CTIME = 3,
+
+        /**
+         * flag to enable collecting the usage datum, memory size (as
+         * max resident size)
+         */
+        MEMSZ = 4,
+
+        /**
+         * flag to enable collecting the usage datum, number of swaps.
+         */
+        NSWAP = 16,
+
+        /**
+         * flag to enable collecting the usage datum, number of block reads.
+         */
+        BLKIN = 32,
+
+        /**
+         * flag to enable collecting the usage datum, number of block writes.
+         */
+        BLKOUT = 64,
+
+        /**
+         * flag to enable collecting the usage data, the number of block 
+         * reads and writes.  This is equal to BLKIN|BLKOUT
+         */
+        BLKIO = 96,
+
+        /**
+         * flag to enable collecting all usage data
+         */
+        ALLUDATA = 127
+    };
 
     /**
      * default message level for messages that instrument execution flow
@@ -81,9 +150,12 @@ public:
      *                      traced.  If empty, the value given by name will 
      *                      be used instead.  This value will be used in the 
      *                      log message only.
+     * @param usageFlags a or-ed list of usageData values that indicate
+     *                      which usage data to capture.
      */
     BlockTimingLog(const Log& parent, const std::string& name, 
-                   int tracelev=BlockTimingLog::INSTRUM, const std::string& funcName="");
+                   int tracelev=BlockTimingLog::INSTRUM, 
+                   const std::string& funcName="", int usageFlags=NOUDATA);
 
     /**
      * create a copy of a BlockTimingLog
@@ -101,6 +173,28 @@ public:
         _funcName = that._funcName;
         return *this;
     }
+
+    /**
+     * return an OR-ed list of flags indicating the usage data this object
+     * is set to collect with each message. 
+     */
+    int getUsageFlags() { return _usageFlags; }
+
+    /**
+     * set the usage data that will be collected.
+     * @param flags   an integer of OR-ed usageData values for the specific 
+     *                   data that should be captured.  Use NOUDATA to turn
+     *                   off the capturing of this data.
+     */
+    void setUsageFlags(int flags) { _usageFlags = flags; }
+
+    /**
+     * add to the list of usage data that will be collected.  Previously 
+     * set values will be preserved.
+     * @param flags   an integer of OR-ed usageData values for the specific 
+     *                   data that should be captured.  
+     */
+    void addUsageFlags(int flags) { _usageFlags |= flags; }
 
     /**
      * create and return a new child that should be used while tracing a 
@@ -149,7 +243,13 @@ public:
         if (sends(_tracelev)) {
             std::string msg("Starting ");
             msg += _funcName;
-            log(_tracelev, msg, STATUS, START);
+
+            LogRecord rec(getThreshold(), _tracelev, getPreamble(), 
+                          willShowAll());
+            rec.addComment(msg);
+            rec.addProperty(STATUS, START);
+            if (_usageFlags) addUsageProps(rec);
+            send(rec);
         }
     }
 
@@ -186,9 +286,17 @@ public:
      */
     const std::string& getFunctionName() const { return _funcName; }
 
+    /**
+     * add usage properties to a given LogRecord according the currently
+     * set usage flags.
+     */
+    void addUsageProps(LogRecord& rec);
+
 private:
     int _tracelev;
+    int _usageFlags;
     std::string _funcName;
+    boost::scoped_ptr<struct rusage> _usage;
 };
 
 }}}     // end lsst::pex::logging
