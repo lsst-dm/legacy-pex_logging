@@ -39,8 +39,8 @@ const std::string BlockTimingLog::START("start");
 const std::string BlockTimingLog::END("end");
 
 BlockTimingLog::BlockTimingLog(const Log& parent, const std::string& name, 
-                               int tracelev, const std::string& funcName, 
-                               int usageFlags) 
+                               int tracelev, int usageFlags, 
+                               const std::string& funcName) 
     : Log(parent, name), _tracelev(tracelev), _pusageFlags(0), 
       _usageFlags(usageFlags), _funcName(funcName), _usage()
       
@@ -76,6 +76,8 @@ void BlockTimingLog::addUsageProps(LogRecord& rec) {
             rec.addProperty("systemtime", d);
         }
         if (_usageFlags & MEMSZ)  rec.addProperty("maxrss", _usage->ru_maxrss);
+        if (_usageFlags & MINFLT) rec.addProperty("minflt", _usage->ru_minflt);
+        if (_usageFlags & MAJFLT) rec.addProperty("majflt", _usage->ru_majflt);
         if (_usageFlags & NSWAP)  rec.addProperty("nswap", _usage->ru_nswap);
         if (_usageFlags & BLKIN)  rec.addProperty("blocksin", _usage->ru_inblock);
         if (_usageFlags & BLKOUT) rec.addProperty("blocksout", _usage->ru_oublock);

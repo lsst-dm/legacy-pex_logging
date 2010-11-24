@@ -112,9 +112,27 @@ public:
         BLKIO = 96,
 
         /**
+         * flag to enable collecting the usage datum, the number of minor 
+         * page faults since the start of the process.
+         */
+        MINFLT = 128, 
+
+        /**
+         * flag to enable collecting the usage datum, the number of major 
+         * page faults since the start of the process.
+         */
+        MAJFLT = 256, 
+
+        /**
+         * flag to enable collecting the usage data supported by Linux
+         * (as of kernal version 2.6):  CTIME|MINFLT|MAJFLT
+         */
+        LINUXUDATA = 387,
+
+        /**
          * flag to enable collecting all usage data
          */
-        ALLUDATA = 127,
+        ALLUDATA = 511,
 
         /**
          * flag to indicate that the usages flags should be inherited from
@@ -161,7 +179,7 @@ public:
      */
     BlockTimingLog(const Log& parent, const std::string& name, 
                    int tracelev=BlockTimingLog::INSTRUM, 
-                   const std::string& funcName="", int usageFlags=PARENTUDATA);
+                   int usageFlags=PARENTUDATA, const std::string& funcName="");
 
     /**
      * create a copy of a BlockTimingLog
@@ -229,7 +247,8 @@ public:
                                    int tracelev=Log::INHERIT_THRESHOLD,
                                    const std::string& funcName="") 
     {
-        BlockTimingLog *out = new BlockTimingLog(*this, name, tracelev, funcName);
+        BlockTimingLog *out = new BlockTimingLog(*this, name, tracelev, 
+                                                 PARENTUDATA, funcName);
         // out->setShowAll(true);
         out->start();
         return out;
@@ -285,7 +304,13 @@ public:
         if (sends(_tracelev)) {
             std::string msg("Ending ");
             msg += _funcName;
-            log(_tracelev, msg, STATUS, END);
+
+            LogRecord rec(getThreshold(), _tracelev, getPreamble(), 
+                          willShowAll());
+            rec.addComment(msg);
+            rec.addProperty(STATUS, END);
+            if (_usageFlags) addUsageProps(rec);
+            send(rec);
         }
     }
 

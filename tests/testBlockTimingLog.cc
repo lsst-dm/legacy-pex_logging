@@ -36,6 +36,7 @@ using lsst::pex::logging::Log;
 BOOST_AUTO_TEST_CASE( test_BlockTimingLog )
 {
     BlockTimingLog rtr = BlockTimingLog(Log::getDefaultLog(), "test");
+    rtr.setUsageFlags(BlockTimingLog::ALLUDATA);
     rtr.setThreshold(BlockTimingLog::INSTRUM);
     BlockTimingLog *tr = rtr.createForBlock("api");
     tr->log(Log::INFO, "message");
