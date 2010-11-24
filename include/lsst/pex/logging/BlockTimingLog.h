@@ -28,7 +28,7 @@
  * @author Ray Plante
  */
 #ifndef LSST_PEX_LOGGING_BLOCKTIMINGLOG_H
-#define LSST_PEX_HARNESS_BLOCKTIMINGLOG_H
+#define LSST_PEX_LOGGING_BLOCKTIMINGLOG_H
 
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/Log.h"
@@ -114,7 +114,13 @@ public:
         /**
          * flag to enable collecting all usage data
          */
-        ALLUDATA = 127
+        ALLUDATA = 127,
+
+        /**
+         * flag to indicate that the usages flags should be inherited from
+         * the parent log.  
+         */
+        PARENTUDATA = 8192
     };
 
     /**
@@ -155,7 +161,7 @@ public:
      */
     BlockTimingLog(const Log& parent, const std::string& name, 
                    int tracelev=BlockTimingLog::INSTRUM, 
-                   const std::string& funcName="", int usageFlags=NOUDATA);
+                   const std::string& funcName="", int usageFlags=PARENTUDATA);
 
     /**
      * create a copy of a BlockTimingLog
@@ -178,23 +184,32 @@ public:
      * return an OR-ed list of flags indicating the usage data this object
      * is set to collect with each message. 
      */
-    int getUsageFlags() { return _usageFlags; }
+    int getUsageFlags() const { return _usageFlags; }
 
     /**
      * set the usage data that will be collected.
      * @param flags   an integer of OR-ed usageData values for the specific 
      *                   data that should be captured.  Use NOUDATA to turn
-     *                   off the capturing of this data.
+     *                   off the capturing of this data.  Use PARENTUDATA 
+     *                   to revert to the parent log's usage data flags.
      */
-    void setUsageFlags(int flags) { _usageFlags = flags; }
+    void setUsageFlags(int flags) { 
+        _usageFlags = flags; 
+        if ((flags & PARENTUDATA) > 0) _usageFlags |= _pusageFlags;
+    }
 
     /**
      * add to the list of usage data that will be collected.  Previously 
      * set values will be preserved.
      * @param flags   an integer of OR-ed usageData values for the specific 
-     *                   data that should be captured.  
+     *                   data that should be captured.  Use PARENTUDATA 
+     *                   to include the parent log's usage data flags (what
+     *                   ever they were when this log was created).
      */
-    void addUsageFlags(int flags) { _usageFlags |= flags; }
+    void addUsageFlags(int flags) { 
+        _usageFlags |= flags; 
+        if ((flags & PARENTUDATA) > 0) _usageFlags |= _pusageFlags;
+    }
 
     /**
      * create and return a new child that should be used while tracing a 
@@ -294,7 +309,7 @@ public:
 
 private:
     int _tracelev;
-    int _usageFlags;
+    int _pusageFlags, _usageFlags;
     std::string _funcName;
     boost::scoped_ptr<struct rusage> _usage;
 };

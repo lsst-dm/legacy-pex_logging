@@ -41,18 +41,22 @@ const std::string BlockTimingLog::END("end");
 BlockTimingLog::BlockTimingLog(const Log& parent, const std::string& name, 
                                int tracelev, const std::string& funcName, 
                                int usageFlags) 
-    : Log(parent, name), _tracelev(tracelev), _usageFlags(usageFlags), 
-      _funcName(funcName), _usage()
+    : Log(parent, name), _tracelev(tracelev), _pusageFlags(0), 
+      _usageFlags(usageFlags), _funcName(funcName), _usage()
+      
 {
     if (_funcName.length() == 0) _funcName = name;
+    const BlockTimingLog *p = dynamic_cast<const BlockTimingLog*>(&parent);
     if (_tracelev == Log::INHERIT_THRESHOLD) {
-        const BlockTimingLog *p = dynamic_cast<const BlockTimingLog*>(&parent);
         if (p) {
             _tracelev = p->getInstrumentationLevel();
         }
         else {
             _tracelev = INSTRUM;
         }
+    }
+    if (_usageFlags == PARENTUDATA) {
+        if (p) addUsageFlags(p->getUsageFlags());
     }
 }
 
