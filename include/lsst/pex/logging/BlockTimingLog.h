@@ -82,7 +82,7 @@ public:
          * flag to enable collecting the usage datum, user and system time.
          * This is equal to UTIME|STIME.
          */
-        CTIME = 3,
+        BTL_CTIME = 3,
 
         /**
          * flag to enable collecting the usage datum, memory size (as
