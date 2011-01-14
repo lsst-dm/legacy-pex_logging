@@ -1,0 +1,44 @@
+# -*- python -*-
+Import("env")
+
+env.Program("testThresholdMemory", ["testThresholdMemory.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testLogRecord",["testLogRecord.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testPropertyPrinter",["testPropertyPrinter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testLogFormatter", ["testLogFormatter.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testLogDestination", ["testLogDestination.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testFileDest", ["testFileDest.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
+env.Program("testLog", ["testLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testDebug", ["testDebug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testNoDebug", ["testNoDebug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testTrace", ["testTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testNoTrace", ["testNoTrace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testDefLog", ["testDefLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("testBlockTimingLog", ["testBlockTimingLog.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+env.Program("timeSyscalls", ["timeSyscalls.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"]  + ["pex_logging"])
+
+#
+# Tests
+#
+import lsst.tests
+import os
+
+tests = lsst.tests.Control(env, verbose = True)
+tests.run("testThresholdMemory.cc")
+tests.run("testLogRecord.cc")
+tests.run("testPropertyPrinter.cc")
+tests.run("testLogFormatter.cc")
+tests.run("testLogDestination.cc")
+tests.run("testFileDest.cc")
+tests.run("testLog.cc")
+tests.run("testDebug.cc")
+tests.run("testNoDebug.cc")
+tests.run("testTrace.cc")
+tests.run("testNoTrace.cc")
+tests.run("testDefLog.cc")
+
+env.CheckSwig("python", ilang="c++")
+env.Append(SWIGFLAGS=" -Ipython")
+
+for target in tests.run("test*.py"):
+    env.Depends(target,
+              "../python/lsst/pex/logging/_loggingLib%s" % (env['LDMODULESUFFIX']))
