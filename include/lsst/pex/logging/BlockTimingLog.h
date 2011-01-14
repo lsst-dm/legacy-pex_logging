@@ -82,7 +82,7 @@ public:
          * flag to enable collecting the usage datum, user and system time.
          * This is equal to UTIME|STIME.
          */
-        CTIME = 3,
+        SUTIME = 3,
 
         /**
          * flag to enable collecting the usage datum, memory size (as
@@ -125,7 +125,7 @@ public:
 
         /**
          * flag to enable collecting the usage data supported by Linux
-         * (as of kernal version 2.6):  CTIME|MINFLT|MAJFLT
+         * (as of kernal version 2.6):  SUTIME|MINFLT|MAJFLT
          */
         LINUXUDATA = 387,
 
