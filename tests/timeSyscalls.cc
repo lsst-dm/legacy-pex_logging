@@ -115,7 +115,7 @@ int main() {
     cout << "addUsageProps(), no sysdata: " << (t - t0)/100.0 << " ms" << endl;
 
     delete lr; lr = new LogRecord(0, 0, true);
-    btlog.setUsageFlags(BlockTimingLog::BTL_CTIME);
+    btlog.setUsageFlags(BlockTimingLog::SUTIME);
     gettimeofday(&tv0, NULL);
     for(i=0; i < 100; i++) 
         btlog.addUsageProps(*lr);
@@ -145,7 +145,7 @@ int main() {
     t0 = (tv0.tv_sec * 1000000L + tv0.tv_usec);
     cout << "start(), no sysdata: " << (t - t0) << " ms" << endl;
 
-    btlog.setUsageFlags(BlockTimingLog::BTL_CTIME);
+    btlog.setUsageFlags(BlockTimingLog::SUTIME);
     gettimeofday(&tv0, NULL);
     btlog.start();
     gettimeofday(&tv, NULL);

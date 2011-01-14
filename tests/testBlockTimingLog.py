@@ -48,7 +48,7 @@ class BlockTimingLogTestCase(unittest.TestCase):
 
     def testSysData(self):
         lr = LogRecord(0, 0, True)
-        self.log.setUsageFlags(self.log.BTL_CTIME)
+        self.log.setUsageFlags(self.log.SUTIME)
         self.log.addUsageProps(lr)
         ps = lr.getProperties();
         self.assert_(ps.exists("usertime"))
