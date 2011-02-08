@@ -287,6 +287,30 @@ void Log::log(int importance, const string& message) {
 }
 
 /*
+ * send a simple, formatted message.  Use of this function tends to 
+ * perform better than log(int, boost::format) as the formatting is 
+ * only done if the message will actually get recorded.
+ * @param importance    how loud the message should be
+ * @param fmt          a printf-style format string
+ * @param ...          the inputs to the formatting.
+ */
+void Log::format(int importance, const char *fmt, ...) {
+    int threshold = getThreshold();
+    if (importance < threshold) return;
+    va_list ap;
+    va_start(ap, fmt);
+    const int len = vsnprintf(NULL, 0, fmt, ap) + 1; // "+ 1" for the '\0'
+    va_end(ap);
+
+    char msg[len];
+    va_start(ap, fmt);
+    (void)vsnprintf(msg, len, fmt, ap);
+    va_end(ap);
+
+    log(importance, msg);
+}
+
+/*
  * format and send a message using a variable argument list.  This does 
  * not check the Log threshold; it assumes this has already been done.
  */

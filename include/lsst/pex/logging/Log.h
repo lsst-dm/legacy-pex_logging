@@ -451,27 +451,7 @@ public:
      * @param fmt          a printf-style format string
      * @param ...          the inputs to the formatting.
      */
-    void format(int importance, const char *fmt, ...) {
-        int threshold = getThreshold();
-        if (importance < threshold) return;
-        va_list ap;
-        va_start(ap, fmt);
-        _send(threshold, importance, fmt, ap);
-        va_end(ap);
-    }
-
-    /**
-     * send a simple, formatted message.  This function is not usually 
-     * called directly by applications.
-     * @param importance    how loud the message should be
-     * @param fmt          a printf-style format string
-     * @param ap           the inputs to the formatting.
-     */
-    void format(int importance, const char *fmt, va_list ap) {
-        int threshold = getThreshold();
-        if (importance < threshold) return;
-        _send(threshold, importance, fmt, ap);
-    }
+    void format(int importance, const char *fmt, ...);
 
     /**
      * send a fully formed LogRecord to the log destinations

@@ -96,5 +96,8 @@ int main(int argc, char* argv[]) {
     t1 = LogRecord::utcnow();
     cout << "TTrace message not printed in " << (t1-t0)/10000 << " usesc" <<endl;
     
-
+    char msg[111];
+    for(int i=0; i < 110; i++) msg[i] = '0' + (i % 10);
+    msg[110] = '\0';
+    lg::TTrace<3>("myapp", "Long message: %s", msg);
 }
