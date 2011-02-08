@@ -123,28 +123,12 @@ public:
         }
     }
 
-    /**
-     * Print fmt if verbosity is high enough for name
-     *
-     * fmt is actually a printf format, so you can specify %d (etc) and provide
-     * the required arguments.  This format will not actually be evaluated if
-     * the trace is not active, so it's more efficient than the boost::format variant
-     *
-     * As this routine indirectly calls va_arg the value of ap is undefined upon
-     * exit;  the caller should however call va_end
-     */
     Trace(const std::string& name,      //!< Name of component
           const int verbosity,          //!< Desired verbosity
-          const std::string& fmt,       //!< Message to write as a printf format
-          va_list ap                    //!< variable arguments
+          const char *msg               //!< Message to write 
           ) 
     {
         if (-1*verbosity >= Log::getDefaultLog().getThresholdFor(name)) {
-            const int len = fmt.size() + 100; // guess; we can't call vsnprintf twice to get length
-            char msg[len];
-
-            (void)vsnprintf(msg, len, fmt.c_str(), ap);
-            
             Debug out(name);
             out.debug(verbosity, msg);
         }
@@ -212,9 +196,18 @@ void TTrace(const char *name,           //!< Name of component
            ) {
     if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {
         va_list ap;
+
+        // first determine the length of the message
         va_start(ap, fmt);
-        Trace(name, VERBOSITY, fmt, ap);
+        const int len = vsnprintf(NULL, 0, fmt, ap) + 1; // "+ 1" for the '\0'
         va_end(ap);
+
+        char msg[len];
+        va_start(ap, fmt);
+        (void)vsnprintf(msg, len, fmt, ap);
+        va_end(ap);
+
+        Trace(name, VERBOSITY, msg);
     }
 }
 
