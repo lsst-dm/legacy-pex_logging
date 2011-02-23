@@ -278,6 +278,49 @@ private:
     std::string _midfix;
 };
 
+/**
+ * \brief a formatter that renders records in a one-line netlogger-like format.  
+ * 
+ * This is the format intended for use with the Event system.  
+ */
+class OneLineFormatter : public BriefFormatter {
+public: 
+    
+    /**
+     * create a formatter for NetLogger-like ouput
+     * @param valueDelim  the string to use as the delimiter between 
+     *                      the name and the value.  The default is ":".
+     */
+    explicit OneLineFormatter(bool verbose=false)
+	  : BriefFormatter(verbose)
+    {}
+
+    /**
+     * create a copy
+     */
+    OneLineFormatter(const OneLineFormatter& that) 
+        : BriefFormatter(that)
+    { }
+
+    /**
+     * delete the formatter
+     */
+    virtual ~OneLineFormatter();
+
+    /**
+     * copy another formatter into this one
+     */
+    OneLineFormatter& operator=(const OneLineFormatter& that);
+
+    /**
+     * write out a log record to a stream
+     * @param strm   the output stream to write the record to
+     * @param rec    the record to write
+     */
+    virtual void write(std::ostream *strm, const LogRecord& rec);
+
+};
+
 }}}     // end lsst::pex::logging
 
 #endif  // end LSST_PEX_LOGFORMATTER_H

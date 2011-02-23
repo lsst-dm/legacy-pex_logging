@@ -56,6 +56,7 @@ using boost::shared_ptr;
 // SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
 SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
 SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::BriefFormatter)
+SWIG_SHARED_PTR_DERIVED(OnelineFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::OneLineFormatter)
 SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, lsst::pex::logging::IndentedFormatter)
 SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
 SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)

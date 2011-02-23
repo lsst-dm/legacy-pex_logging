@@ -122,7 +122,7 @@ void LogRecord::setDate() {
                           "Failed to format time successfully");
     }
     
-    string fulldate(str(format("%s%d") % string(datestr) % tv.tv_usec));
+    string fulldate(str(format("%s%06d") % string(datestr) % tv.tv_usec));
     data().add(LSST_LP_DATE, fulldate);
 }
 

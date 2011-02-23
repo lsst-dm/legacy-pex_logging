@@ -85,7 +85,7 @@ ScreenLog::ScreenLog(bool verbose, int threshold)
 void ScreenLog::configure(bool verbose) {
     // note that the shared_ptr held by the screen LogDestination will 
     // handle the deletion of this pointer.
-    _screenFrmtr = new IndentedFormatter(verbose);
+    _screenFrmtr = new OneLineFormatter(verbose);
     shared_ptr<LogFormatter> fmtr(_screenFrmtr);
 
     // note that the shared_ptr held by LogDestination list will 
