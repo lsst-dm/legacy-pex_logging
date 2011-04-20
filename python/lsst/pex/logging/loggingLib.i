@@ -33,6 +33,8 @@ Access to the logging classes from the pex library
 
 %include "lsst/p_lsstSwig.i"
 
+%newobject lsst::pex::logging::BlockTimingLog::createForBlock;
+%newobject lsst::pex::logging::BlockTimingLog::timeBlock;
 %{
 #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/BlockTimingLog.h"
