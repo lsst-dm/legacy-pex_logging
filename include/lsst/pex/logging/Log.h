@@ -83,14 +83,14 @@ namespace dafBase = lsst::daf::base;
  * A root Log has an empty string name associated with it.  A module will 
  * usually create a "child" or "descendent" Log object to send its messages 
  * to, giving it a period-delimited name and a importance threshold:
- * 
+ * @code
  *     Log mylog(Log::getDefaultLog(), "myapp.mymod", Log::INFO);
- *
+ * @endcode
  * or 
- *
+ * @code
  *     scoped_ptr<Log> 
  *           mylog(getDefaultLog().createChildLog("myapp.mymod", Log::INFO));
- *
+ * @endcode
  * The new log will have the name "myapp.mymod" and allows messages at least 
  * as "loud" as Log::INFO.  The defined levels, FATAL, WARN, INFO, DEBUG (set 
  * to 20, 10, 0, -10, respectively) are conventional notions to encourage 
@@ -102,7 +102,7 @@ namespace dafBase = lsst::daf::base;
  * that of its parents log.  Furthermore, setting the threshold for a parent
  * automatically updates the threshold for all of its descendents that have 
  * not otherwise set the threshold.  For example,
- *
+ * @code
  *   Log root = Log::getDefaultLog();   // the root log; name is an empty string
  *   Log applog(root, "myapp");         // myapp: a child log
  *   Log *modlog = applog.createChildLog("mymod", Log::WARN);
@@ -112,7 +112,7 @@ namespace dafBase = lsst::daf::base;
  *   
  *   root.setThreshold(log::DEBUG);     // root and applog now set to Log::DEBUG
  *   modlog.resetThreshold();           // modlog now also set to Log::DEBUG
- * 
+ * @endcode
  * As you can see in the example, names are set relative to their parent.  
  * That is, when we use a log called "myapp" to create a child called 
  * "mymod", the full name is "myapp.mymod".  This allows a Log to be made 
@@ -122,13 +122,13 @@ namespace dafBase = lsst::daf::base;
  * creating a "grandchild" from the root Log.  
  *
  * Simple text log messages can be recorded with the log() functions:  
- * 
+ * @code
  *     mylog.log(Log::WARN, "Skipping initialization");
  *     mylog.log(Log::WARN, boost::format("Found only %d objects") % nobj);
- *
+ * @endcode
  * For more complex messages that might include named properties, it is usually
  * more convenient to use the streaming method:
- * 
+ * @code
  *     using lsst::pex::logging::Rec;
  *     using lsst::pex::logging::Prop;
  *     Rec(mylog, Log::DEBUG) << "Completed deconvolution"
@@ -139,7 +139,7 @@ namespace dafBase = lsst::daf::base;
  *     Rec(mylog, Log::INFO) << boost::format("applying %s kernel") % kern
  *                           << Prop("width", width);
  *                           << Rec::endr;
- * 
+ * @endcode
  * The manipulator Rec::endr triggers the recording of the message to the log. 
  * Note that Rec is a shorthand typedef for the LogRec class.  
  */

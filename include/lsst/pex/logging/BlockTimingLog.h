@@ -23,8 +23,8 @@
  */
  
 /**
- * @file TracingLog.h
- * @brief definition of the TracingLog class
+ * @file BlockTimingLog.h
+ * @brief definition of the BlockTimingLog class
  * @author Ray Plante
  */
 #ifndef LSST_PEX_LOGGING_BLOCKTIMINGLOG_H
@@ -179,7 +179,8 @@ public:
      */
     BlockTimingLog(const Log& parent, const std::string& name, 
                    int tracelev=BlockTimingLog::INSTRUM, 
-                   int usageFlags=PARENTUDATA, const std::string& funcName="");
+                   int usageFlags=BlockTimingLog::PARENTUDATA, 
+                   const std::string& funcName="");
 
     /**
      * create a copy of a BlockTimingLog

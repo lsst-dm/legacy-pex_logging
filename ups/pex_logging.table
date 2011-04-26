@@ -1,7 +1,8 @@
-setupRequired(pex_exceptions >= 3.2.1)
-setupRequired(daf_base >= 3.2.2)
+setupRequired(pex_exceptions == bp)
+setupRequired(daf_base == bp)
 
 envAppend(LD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
 envAppend(DYLD_LIBRARY_PATH, ${PRODUCT_DIR}/lib)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
+envAppend(BPDOX_PATH, ${PRODUCT_DIR}/doc/xml)

@@ -2,17 +2,5 @@
 Import('env')
 import os
 
-env.SharedLibrary('pex_logging', map(lambda str: "../src/" + str,
-                            ["LogRecord.cc",
-                             "PropertyPrinter.cc",
-                             "LogFormatter.cc",
-                             "LogDestination.cc",
-                             "FileDestination.cc",
-                             "threshold/Memory.cc",
-                             "Component.cc",
-                             "Log.cc",
-                             "ScreenLog.cc",
-                             "DualLog.cc",
-                             "BlockTimingLog.cc"
-                            ]), LIBS=env.getlibs("boost utils daf_base pex_exceptions"))
+env.SharedLibrary('pex_logging', Glob("#src/*.cc") + Glob("#src/threshold/*.cc"), LIBS=env.getLibs("self"))
 
