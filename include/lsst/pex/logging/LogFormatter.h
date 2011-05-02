@@ -233,11 +233,13 @@ public:
      * create a formatter for NetLogger-like ouput
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
+     * @bpdox{label:string}
      */
     explicit NetLoggerFormatter(const std::string& valueDelim = defaultValDelim);
 
     /**
      * create a copy
+     * @bpdox{label:copy}
      */
     NetLoggerFormatter(const NetLoggerFormatter& that) 
         : LogFormatter(that), _tplookup(), _midfix(that._midfix)

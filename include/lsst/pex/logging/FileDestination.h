@@ -63,6 +63,7 @@ public:
      * @param truncate    if True, overwrite the previous contents; otherwise,
      *                       new messages will be appended to the file.
      */
+    /// @bpdox{label:formatter}
     FileDestination(const std::string& filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
@@ -73,6 +74,7 @@ public:
                          formatter, threshold),
           _path(filepath) 
     { }
+    /// @bpdox{ignore}
     FileDestination(const char *filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
@@ -83,6 +85,7 @@ public:
                          formatter, threshold),
           _path(filepath) 
     { }
+    /// @bpdox{ignore}
     FileDestination(const fs::path& filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
@@ -109,11 +112,14 @@ public:
      * @param truncate    if True, overwrite the previous contents; otherwise,
      *                       new messages will be appended to the file.
      */
-    FileDestination(const fs::path& filepath, bool verbose=false, 
-                    int threshold=threshold::PASS_ALL, bool truncate=false);
+    /// @bpdox{label:verbose}
     FileDestination(const std::string& filepath, bool verbose=false, 
                     int threshold=threshold::PASS_ALL, bool truncate=false);
+    /// @bpdox{ignore}
     FileDestination(const char *filepath, bool verbose=false, 
+                    int threshold=threshold::PASS_ALL, bool truncate=false);
+    /// @bpdox{ignore}
+    FileDestination(const fs::path& filepath, bool verbose=false, 
                     int threshold=threshold::PASS_ALL, bool truncate=false);
     //@}
 

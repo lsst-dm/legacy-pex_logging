@@ -170,7 +170,8 @@ public:
 
     /**
      * add a string comment to this record.  This version is provided 
-     * as a convenience and is equivalent to addComment(comment.str()).  
+     * as a convenience and is equivalent to addComment(comment.str()).
+     * @bpdox{ignore}
      */
     void addComment(const boost::format& comment) {
         if (_send) addComment(comment.str());
@@ -184,6 +185,7 @@ public:
 
     /**
      * attach a named item of data to this record.
+     * @bpdox{label:separate}
      */
     template <class T>
     void addProperty(const std::string& name, const T& val);
@@ -199,6 +201,7 @@ public:
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
+     * @bpdox{ignore}
      */
     void addProperties(const dafBase::PropertySet::Ptr& props) {
         addProperties(*props);
@@ -207,24 +210,28 @@ public:
     /**
      * return the read-only data properties that make up this log message.
      * This is a synonym for data().
+     * @bpdox{label:const}
      */
     const dafBase::PropertySet& getProperties() const { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for data().
+     * @bpdox{label:nonconst}
      */
     dafBase::PropertySet& getProperties() { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
+     * @bpdox{label:const}
      */
     const dafBase::PropertySet& data() const { return *_data; }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
+     * @bpdox{label:nonconst}
      */
     dafBase::PropertySet& data() { return *_data; }
 

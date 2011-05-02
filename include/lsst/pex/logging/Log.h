@@ -401,6 +401,8 @@ public:
      * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      * @param properties   a list of properties to include in the message.
+     *
+     * @bpdox{label:properties}
      */
     void log(int importance, const std::string& message, 
              const dafBase::PropertySet& properties);
@@ -411,6 +413,8 @@ public:
      * @param message      a simple bit of text to send in the message
      * @param name         the name of a property to include in the message.
      * @param val          the value of the property to include
+     *
+     * @bpdox{label:template}
      */
     template <class T>
     void log(int importance, const std::string& message, 
@@ -421,6 +425,8 @@ public:
      * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
      * @param prop         a property to include in the message.
+     *
+     * @bpdox{ignore}
      */
     template <class T>
     void log(int importance, const std::string& message, 
@@ -430,6 +436,8 @@ public:
      * send a simple message to the log
      * @param importance    how loud the message should be
      * @param message      a simple bit of text to send in the message
+     *
+     * @bpdox{label:simple}
      */
     void log(int importance, const std::string& message);
 
@@ -438,6 +446,8 @@ public:
      * @param importance    how loud the message should be
      * @param message      a simple message in the form of a boost::format
      *                       instance
+     *
+     * @bpdox{ignore}
      */
     void log(int importance, const boost::format& message) {
         log(importance, message.str());
@@ -467,6 +477,7 @@ public:
      * @param destination   the stream to send messages to
      * @param threshold     the importance threshold to use to filter messages
      *                         sent to the stream.
+     * @bpdox{ignore}
      */
     void addDestination(std::ostream& destination, int threshold);
 
@@ -482,6 +493,8 @@ public:
      * @param threshold     the importance threshold to use to filter messages
      *                         sent to the stream.
      * @param formatter     the log formatter to use.
+     *
+     * @bpdox{ignore}
      */
     void addDestination(std::ostream &destination, int threshold, 
                         const boost::shared_ptr<LogFormatter> &formatter);
@@ -490,7 +503,7 @@ public:
      * add a destination to this log.  The destination stream will included
      * in all child Logs created from this log after a call to this function.
      * All previously created logs, including ancestor logs, will be 
-     * unaffected.  
+     * unaffected.
      */
     void addDestination(const boost::shared_ptr<LogDestination> &destination) {
         _destinations.push_back(destination);

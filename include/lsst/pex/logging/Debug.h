@@ -114,6 +114,7 @@ public:
      * the message.  
      * While debug<n>() is thus normally preferred, this function can be 
      * useful for temporarily overriding the compile-time verbosity limit.
+     * @bpdox{ignore}
      */
     void debug(int verbosity, const boost::format& message) {
         log(-1*verbosity, message);
@@ -124,6 +125,7 @@ public:
      * @param verbosity    the verboseness to associate with this message
      * @param fmt          a printf-style format string
      * @param ...          the inputs to the formatting.
+     * @bpdox{ignore}
      */
     void debug(int verbosity, const char *fmt, ...) {
         va_list ap;
@@ -138,6 +140,7 @@ public:
      * @param verbosity    the verboseness to associate with this message
      * @param fmt          a printf-style format string
      * @param ap           the inputs to the formatting.
+     * @bpdox{ignore}
      */
     void debug(int verbosity, const char *fmt, va_list ap) {
         format(-1*verbosity, fmt, ap);
@@ -147,6 +150,7 @@ public:
      * conditionally print the given debug message if VERBOSITY is less 
      * than or equal to LSST_MAX_DEBUG.  This condition is evaluated at 
      * compile-time; thus, it is more efficient than the debug() functions.
+     * @bpdox{ignore}
      */
     template<int VERBOSITY>
     void debug(const std::string& message) {
@@ -162,6 +166,7 @@ public:
      * @param fmt      the C-style (as in printf) format string.  
      * @param ...      the values to plug into the string.  Any number may 
      *                   be provided, though they must match the format string.
+     * @bpdox{ignore}
      */
     template<int VERBOSITY>
     void debug(const char *fmt, ...) {
@@ -180,6 +185,7 @@ public:
  * if VERBOSITY > LSST_MAX_DEBUG.  This method saves creating a log if the
  * VERBOSITY level is too high to be printed, at the expense of re-creating
  * everytime VERBOSITY is low.  
+     * @bpdox{ignore}
  */
 template <int VERBOSITY>
 void debug(const std::string& name, const std::string& message) {
@@ -193,6 +199,7 @@ void debug(const std::string& name, const std::string& message) {
  * printed if VERBOSITY > LSST_MAX_DEBUG.  This method saves creating a log 
  * if the VERBOSITY level is too high to be printed, at the expense of 
  * re-creating everytime VERBOSITY is low.  
+ * @bpdox{ignore}
  */
 template <int VERBOSITY>
 void debug(const std::string& name, const char *fmt, ...) {

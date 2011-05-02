@@ -28,7 +28,7 @@ struct PyLogRecord {
             ("addProperty" + name).c_str(),
             (void (LogRecord::*)(std::string const &, T const &))&LogRecord::addProperty<T>,
             (bp::arg("name"), bp::arg("val")),
-            %%doc(LogRecord::addProperty[1])%%
+            %%doc(LogRecord::addProperty[separate])%%
         );
     }
 
@@ -37,15 +37,15 @@ struct PyLogRecord {
             %%auto_class<LogRecord>%%
         );
         wrapper.main_class()
-            .%%auto_init[:3]%%
+            .%%auto_init%%
             ;
         wrapper
-            .%%auto_method(addComment[0])%%
-            .%%auto_method(addProperties[0])%%
-            .%%auto_method(getProperties[0], bp::as_const< bp::return_internal_reference<> >())%%
-            .%%auto_method(getProperties[1], bp::return_internal_reference<>())%%
-            .%%auto_method(data[0], bp::as_const< bp::return_internal_reference<> >())%%
-            .%%auto_method(data[1], bp::return_internal_reference<>())%%
+            .%%auto_method(addComment)%%
+            .%%auto_method(addProperties)%%
+            .%%auto_method(getProperties[const], bp::as_const< bp::return_internal_reference<> >())%%
+            .%%auto_method(getProperties[nonconst], bp::return_internal_reference<>())%%
+            .%%auto_method(data[const], bp::as_const< bp::return_internal_reference<> >())%%
+            .%%auto_method(data[nonconst], bp::return_internal_reference<>())%%
             .%%auto_method(countParamNames)%%
             .%%auto_method(countParamValues)%%
             .%%auto_method(getImportance)%%
@@ -122,10 +122,10 @@ struct PyNetLoggerFormatter {
             .def(
                 bp::init<std::string const &>(
                     (bp::arg("valueDelim")=NetLoggerFormatter::defaultValDelim),
-                    %%doc(NetLoggerFormatter::NetLoggerFormatter[0])%%
+                    %%doc(NetLoggerFormatter::NetLoggerFormatter[string])%%
                 )
             )
-            .%%auto_init[1]%%
+            .%%auto_init[copy]%%
             ;
         wrapper
             .%%auto_method(getValueDelimiter, bp::return_value_policy<bp::copy_const_reference>())%%
@@ -142,7 +142,7 @@ struct PyLogDestination {
             %%auto_class<LogDestination>%%
         );
         wrapper.main_class()
-            .%%auto_init[1]%%
+            .%%auto_init%%
             ;
         wrapper
             .%%auto_method(getThreshold)%%
@@ -171,14 +171,14 @@ struct PyFileDestination {
                  bp::init< const std::string &, const boost::shared_ptr< LogFormatter > &, int, bool >(
                      (bp::arg("filepath"), bp::arg("formatter"), 
                       bp::arg("threshold")=int(threshold::PASS_ALL), bp::arg("truncate")=false),
-                     %%doc(FileDestination::FileDestination[0])%%
+                     %%doc(FileDestination::FileDestination[formatter])%%
                  )
              )
             .def(
                  bp::init< const std::string &, bool, int, bool >(
                      (bp::arg("filepath"), bp::arg("verbose")=false, 
                       bp::arg("threshold")=int(threshold::PASS_ALL), bp::arg("truncate")=false),
-                     %%doc(FileDestination::FileDestination[4])%%
+                     %%doc(FileDestination::FileDestination[verbose])%%
                  )
              )
             ;
@@ -216,7 +216,7 @@ struct PyLog {
             ("logProperty" + name).c_str(),
             (void (Log::*)(int, std::string const &, std::string const &, T const &))&Log::log<T>,
             (bp::arg("importance"), bp::arg("message"), bp::arg("name"), bp::arg("val")),
-            %%doc(Log::log[1])%%
+            %%doc(Log::log[template])%%
         );
     }
 
@@ -249,10 +249,10 @@ struct PyLog {
                 bp::return_value_policy< bp::manage_new_object >(),
                 %%doc(Log::createChildLog)%%
             )
-            .%%auto_method(log[0])%%
-            .%%auto_method(log[3])%%
+            .%%auto_method(log[properties])%%
+            .%%auto_method(log[simple])%%
             .%%auto_method(send)%%
-            .%%auto_method(addDestination[2])%%
+            .%%auto_method(addDestination)%%
             .def(
                 "addDestination", &addDestination,
                 (bp::arg("filepath"), bp::arg("verbose")=false, bp::arg("threshold")=int(threshold::PASS_ALL))
@@ -374,7 +374,7 @@ struct PyDebug {
             .%%auto_init%%
             ;
         wrapper
-            .%%auto_method(debug[0])%%
+            .%%auto_method(debug)%%
             .enable_shared_ptr()
             ;
     }

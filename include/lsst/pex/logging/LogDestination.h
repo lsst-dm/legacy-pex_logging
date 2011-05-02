@@ -73,6 +73,7 @@ public:
      * @param threshold  the minimum volume level required to pass a message
      *                       to the stream.  If not provided, it would be set
      *                       to 0.  
+     * @bpdox{ignore}
      */
     LogDestination(std::ostream *strm, 
                    const boost::shared_ptr<LogFormatter>& formatter, 
@@ -80,6 +81,7 @@ public:
 
     /**
      * create a copy
+     * @bpdox{label:copy}
      */
     LogDestination(const LogDestination& that);
 
