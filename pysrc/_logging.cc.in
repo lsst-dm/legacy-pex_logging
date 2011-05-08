@@ -1,7 +1,4 @@
-#include "boost/python.hpp"
-#include "boost/python/const_aware.hpp"
-#include "boost/python/to_python/copy_to_tuple.hpp"
-#include "boost/python/from_python/container.hpp"
+#include "lsst/bputils.h"
 
 #include "lsst/pex/logging/LogRecord.h"
 #include "lsst/pex/logging/LogFormatter.h"
@@ -22,6 +19,29 @@ namespace {
 
 struct PyLogRecord {
 
+    static void declare() {
+        auto wrapper = bp::make_const_aware(
+            %%auto_class<LogRecord>%%
+        );
+        %%ignore_members(getProperties, data, addProperty)%%;
+        wrapper
+            .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
+            .%%auto_method(getProperties[const], bp::as_const< bp::return_internal_reference<> >())%%
+            .%%auto_method(getProperties[nonconst], bp::return_internal_reference<>())%%
+            .%%auto_method(data[const], bp::as_const< bp::return_internal_reference<> >())%%
+            .%%auto_method(data[nonconst], bp::return_internal_reference<>())%%
+            ;
+        declareTemplates<bool>(wrapper, "Bool");
+        declareTemplates<int>(wrapper, "Int");
+        declareTemplates<long>(wrapper, "Long");
+        declareTemplates<long long>(wrapper, "LongLong");
+        declareTemplates<float>(wrapper, "Float");
+        declareTemplates<double>(wrapper, "Double");
+        declareTemplates<std::string>(wrapper, "String");
+        %%finish_class%%;
+    }
+
     template <typename T, typename Wrapper>
     static void declareTemplates(Wrapper & wrapper, std::string const & name) {
         wrapper.def(
@@ -32,48 +52,20 @@ struct PyLogRecord {
         );
     }
 
-    static void declare() {
-        auto wrapper = bp::make_const_aware(
-            %%auto_class<LogRecord>%%
-        );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
-        wrapper
-            .%%auto_method(addComment)%%
-            .%%auto_method(addProperties)%%
-            .%%auto_method(getProperties[const], bp::as_const< bp::return_internal_reference<> >())%%
-            .%%auto_method(getProperties[nonconst], bp::return_internal_reference<>())%%
-            .%%auto_method(data[const], bp::as_const< bp::return_internal_reference<> >())%%
-            .%%auto_method(data[nonconst], bp::return_internal_reference<>())%%
-            .%%auto_method(countParamNames)%%
-            .%%auto_method(countParamValues)%%
-            .%%auto_method(getImportance)%%
-            .%%auto_method(willRecord)%%
-            .%%auto_method(willShowAll)%%
-            .%%auto_method(setShowAll)%%
-            .%%auto_method(setTimestamp)%%
-            .%%auto_method(setDate)%%
-            .%%auto_method(utcnow)%%
-            .enable_shared_ptr()
-            ;
-        declareTemplates<bool>(wrapper, "Bool");
-        declareTemplates<int>(wrapper, "Int");
-        declareTemplates<long>(wrapper, "Long");
-        declareTemplates<long long>(wrapper, "LongLong");
-        declareTemplates<float>(wrapper, "Float");
-        declareTemplates<double>(wrapper, "Double");
-        declareTemplates<std::string>(wrapper, "String");
-    }
-
 };
 
 struct PyLogFormatter {
 
     static void declare() {
-        bp::make_const_aware(
+        auto wrapper = bp::make_const_aware(
             %%auto_class<LogFormatter,noncopyable>%%
-        ).enable_shared_ptr();
+        );
+        %%ignore_members(LogFormatter)%%;
+        wrapper
+            .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
+            ;
+        %%finish_class%%;
     }
 
 };
@@ -84,14 +76,11 @@ struct PyBriefFormatter {
         auto wrapper = bp::make_const_aware(
             %%auto_class<BriefFormatter>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
-            .%%auto_method(isVerbose)%%
-            .%%auto_method(setVerbose)%%
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
@@ -102,12 +91,11 @@ struct PyIndentedFormatter {
         auto wrapper = bp::make_const_aware(
             %%auto_class<IndentedFormatter>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
@@ -118,19 +106,18 @@ struct PyNetLoggerFormatter {
         auto wrapper = bp::make_const_aware(
             %%auto_class<NetLoggerFormatter>%%
         );
-        wrapper.main_class()
+        %%ignore_members(NetLoggerFormatter,defaultValDelim)%%;
+        wrapper
+            .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             .def(
                 bp::init<std::string const &>(
                     (bp::arg("valueDelim")=NetLoggerFormatter::defaultValDelim),
                     %%doc(NetLoggerFormatter::NetLoggerFormatter[string])%%
                 )
             )
-            .%%auto_init[copy]%%
             ;
-        wrapper
-            .%%auto_method(getValueDelimiter, bp::return_value_policy<bp::copy_const_reference>())%%
-            .enable_shared_ptr()
-            ;
+        %%finish_class)%%;
     }
 
 };
@@ -141,32 +128,24 @@ struct PyLogDestination {
         auto wrapper = bp::make_const_aware(
             %%auto_class<LogDestination>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
-            .%%auto_method(getThreshold)%%
-            .%%auto_method(setThreshold)%%
-            .%%auto_method(write)%%
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
 
 struct PyFileDestination {
 
-    static std::string getPath(FileDestination const & self) {
-        std::ostringstream os;
-        os << self.getPath();
-        return os.str();
-    }
-
     static void declare() {
         auto wrapper = bp::make_const_aware(
             %%auto_class<FileDestination>%%
         );
-        wrapper.main_class() // only the std::string ctor overloads
+        %%ignore_members(FileDestination, getPath)%%;
+        wrapper
+            .enable_shared_ptr()
             .def(
                  bp::init< const std::string &, const boost::shared_ptr< LogFormatter > &, int, bool >(
                      (bp::arg("filepath"), bp::arg("formatter"), 
@@ -181,16 +160,56 @@ struct PyFileDestination {
                      %%doc(FileDestination::FileDestination[verbose])%%
                  )
              )
-            ;
-        wrapper
             .def("getPath", &getPath)
-            .enable_shared_ptr()
             ;
+        %%finish_class%%;
+    }
+
+    static std::string getPath(FileDestination const & self) {
+        std::ostringstream os;
+        os << self.getPath();
+        return os.str();
     }
 
 };
 
 struct PyLog {
+
+    static void declare() {
+        auto wrapper = bp::make_const_aware(
+            %%auto_class<Log>%%
+        );
+        %%ignore_members(createChildLog, addDestination, getPreamble, getDefaultLog)%%;
+        %%ignore_members(log, format, setPreambleProperty, addPreambleProperty)%%;
+        wrapper
+            .enable_shared_ptr()
+            .def(
+                "createChildLog", &Log::createChildLog,
+                (bp::arg("childName"), bp::arg("threshold")=Log::INHERIT_THRESHOLD),
+                bp::return_value_policy< bp::manage_new_object >(),
+                %%doc(Log::createChildLog)%%
+            )
+            .%%auto_method(log[properties])%%
+            .%%auto_method(log[simple])%%
+            .%%auto_method(addDestination)%%
+            .def(
+                "addDestination", &addDestination,
+                (bp::arg("filepath"), bp::arg("verbose")=false, bp::arg("threshold")=int(threshold::PASS_ALL))
+            )
+            .%%auto_method(getPreamble, bp::as_const< bp::return_internal_reference<> >())%%
+            .%%auto_method(getDefaultLog, bp::return_value_policy< bp::reference_existing_object >())%%
+            .%%auto_members_regex(.*)%%
+            ;
+        declareTemplates<bool>(wrapper, "Bool");
+        declareTemplates<int>(wrapper, "Int");
+        declareTemplates<long>(wrapper, "Long");
+        declareTemplates<long long>(wrapper, "LongLong");
+        declareTemplates<float>(wrapper, "Float");
+        declareTemplates<double>(wrapper, "Double");
+        declareTemplates<std::string>(wrapper, "String");
+        bp::container_from_python_sequence< std::list< boost::shared_ptr< LogDestination > > >();
+        %%finish_class%%;
+    }
 
     static void addDestination(Log & self, const std::string& filepath, bool verbose, int threshold_) {
         boost::shared_ptr<LogDestination> 
@@ -220,61 +239,6 @@ struct PyLog {
         );
     }
 
-    static void declare() {
-        auto wrapper = bp::make_const_aware(
-            %%auto_class<Log>%%
-        );
-        wrapper.main_class()
-            .setattr("DEBUG", Log::DEBUG)
-            .setattr("INFO", Log::INFO)
-            .setattr("WARN", Log::WARN)
-            .setattr("INHERIT_THRESHOLD", Log::INHERIT_THRESHOLD)
-            .setattr("FATAL", Log::FATAL)
-            .%%auto_init%%
-            ;
-        wrapper
-            .%%auto_method(getName, bp::return_value_policy<bp::copy_const_reference>())%%
-            .%%auto_method(getThreshold)%%
-            .%%auto_method(setThreshold)%%
-            .%%auto_method(sends)%%
-            .%%auto_method(resetThreshold)%%
-            .%%auto_method(setThresholdFor)%%
-            .%%auto_method(getThresholdFor)%%
-            .%%auto_method(willShowAll)%%
-            .%%auto_method(setShowAll)%%
-            .%%auto_method(resetShowAll)%%
-            .def(
-                "createChildLog", &Log::createChildLog,
-                (bp::arg("childName"), bp::arg("threshold")=Log::INHERIT_THRESHOLD),
-                bp::return_value_policy< bp::manage_new_object >(),
-                %%doc(Log::createChildLog)%%
-            )
-            .%%auto_method(log[properties])%%
-            .%%auto_method(log[simple])%%
-            .%%auto_method(send)%%
-            .%%auto_method(addDestination)%%
-            .def(
-                "addDestination", &addDestination,
-                (bp::arg("filepath"), bp::arg("verbose")=false, bp::arg("threshold")=int(threshold::PASS_ALL))
-            )
-            .%%auto_method(getPreamble, bp::as_const< bp::return_internal_reference<> >())%%
-            .%%auto_method(getDefaultLog, bp::return_value_policy< bp::reference_existing_object >())%%
-            .%%auto_method(createDefaultLog)%%
-            .%%auto_method(closeDefaultLog)%%
-            .%%auto_method(printThresholds)%%
-            .%%auto_method(reset)%%
-            .enable_shared_ptr()
-            ;
-        declareTemplates<bool>(wrapper, "Bool");
-        declareTemplates<int>(wrapper, "Int");
-        declareTemplates<long>(wrapper, "Long");
-        declareTemplates<long long>(wrapper, "LongLong");
-        declareTemplates<float>(wrapper, "Float");
-        declareTemplates<double>(wrapper, "Double");
-        declareTemplates<std::string>(wrapper, "String");
-        bp::container_from_python_sequence< std::list< boost::shared_ptr< LogDestination > > >();
-    }
-
 };
 
 struct PyLogRec {
@@ -283,7 +247,7 @@ struct PyLogRec {
         auto wrapper = bp::make_const_aware(
             %%auto_class<LogRec>%%
         );
-        wrapper.main_class()
+        wrapper
             .%%auto_init%%
             .def(
                 "_lshift_cpp", (LogRec & (LogRec::*)(LogRec::Manip))&LogRec::operator<<, 
@@ -293,13 +257,13 @@ struct PyLogRec {
                 "_lshift_cpp", (LogRec & (LogRec::*)(std::string const &))&LogRec::operator<<, 
                 bp::return_self<>()
             )
+            .enable_shared_ptr();
             ;
         {
             bp::scope inLogRec(wrapper.main_class());
             %%auto_enum(LogRec::Manip)%%
                   .export_values();
         }
-        wrapper.enable_shared_ptr();
     }
 
 };
@@ -310,20 +274,18 @@ struct PyTrace {
         auto wrapper = bp::make_const_aware(
             %%auto_class<Trace>%%
         );
+        wrapper
+            .enable_shared_ptr()
 #if !LSST_NO_TRACE
-        wrapper.main_class()
             .def(
                 bp::init<std::string const &, int const, std::string const &>(
                     (bp::arg("name"), bp::arg("verbosity"), bp::arg("msg"))
                 )
             )
-            ;
 #endif
-        wrapper
             .%%auto_method(setVerbosity)%%
             .%%auto_method(getVerbosity)%%
             .%%auto_method(reset)%%
-            .enable_shared_ptr()
             ;
     }
 
@@ -341,26 +303,14 @@ struct PyBlockTimingLog {
                   .export_values()
                   ;
         }
-        wrapper.main_class()
-            .setattr("INSTRUM", BlockTimingLog::INSTRUM)
-            .setattr("STATUS", BlockTimingLog::STATUS)
-            .setattr("START", BlockTimingLog::START)
-            .setattr("END", BlockTimingLog::END)
-            .%%auto_init%%
-            ;
+        %%ignore_members(createForBlock, timeBlock)%%;
         wrapper
-            .%%auto_method(getUsageFlags)%%
-            .%%auto_method(setUsageFlags)%%
-            .%%auto_method(addUsageFlags)%%
+            .enable_shared_ptr()
             .%%auto_method(createForBlock, bp::return_value_policy< bp::manage_new_object >())%%
             .%%auto_method(timeBlock, bp::return_value_policy< bp::manage_new_object >())%%
-            .%%auto_method(start)%%
-            .%%auto_method(done)%%
-            .%%auto_method(getInstrumentationLevel)%%
-            .%%auto_method(getFunctionName, bp::return_value_policy< bp::copy_const_reference >())%%
-            .%%auto_method(addUsageProps)%%
-            .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 };
 
@@ -370,13 +320,11 @@ struct PyDebug {
         auto wrapper = bp::make_const_aware(
             %%auto_class<Debug>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
-            .%%auto_method(debug)%%
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
@@ -387,17 +335,11 @@ struct PyScreenLog {
         auto wrapper = bp::make_const_aware(
             %%auto_class<ScreenLog>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
-            .%%auto_method(getScreenThreshold)%%
-            .%%auto_method(setScreenThreshold)%%
-            .%%auto_method(setScreenVerbose)%%
-            .%%auto_method(isScreenVerbose)%%
-            .%%auto_method(createDefaultLog)%%
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
@@ -408,15 +350,11 @@ struct PyDualLog {
         auto wrapper = bp::make_const_aware(
             %%auto_class<DualLog>%%
         );
-        wrapper.main_class()
-            .%%auto_init%%
-            ;
         wrapper
-            .%%auto_method(getFileThreshold)%%
-            .%%auto_method(setFileThreshold)%%
-            .%%auto_method(createDefaultLog)%%
             .enable_shared_ptr()
+            .%%auto_members_regex(.*)%%
             ;
+        %%finish_class%%;
     }
 
 };
@@ -442,6 +380,7 @@ void declareLogging() {
 }}} // namespace lsst::pex::logging
 
 BOOST_PYTHON_MODULE(_logging) {
+    lsst::bputils::registerConversions();
     bp::import("lsst.daf.base");
     lsst::pex::logging::declareLogging();
 }
