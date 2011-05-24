@@ -170,6 +170,11 @@ Log& Log::operator=(const Log& that) {
 
 void Log::completePreamble() {
     _preamble->set<string>("LOG", _name);
+    int const hostLength = 128;         // Maximum length of host name
+    char hostName[hostLength] = "unknownHost";
+    if (::gethostname(hostName, hostLength) == 0) {
+        _preamble->set<string>("HOST", hostName);
+    }
 }
 
 /*

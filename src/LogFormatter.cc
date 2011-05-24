@@ -162,14 +162,22 @@ void OneLineFormatter::write(std::ostream *strm, const LogRecord& rec) {
 
 	// date first
     try { 
-	  string ts = rec.data().get<string>(LSST_LP_DATE);
-	  (*strm) << ts;
+        string ts = rec.data().get<string>(LSST_LP_DATE);
+        (*strm) << ts;
     } catch (pexExcept::NotFoundException ex) { }
-	(*strm) << " " << levstr << log; 
+    (*strm) << " ";
 
-	for(vi = comments.begin(); vi != comments.end(); ++vi) {
-	  (*strm) << " " << *vi;
-	}
+    try {
+        string host = rec.data().get<string>("HOST");
+        (*strm) << host;
+    } catch (pexExcept::NotFoundException ex) {
+        (*strm) << "<unknown host>";
+    }
+    (*strm) << " " << levstr << log;     
+
+    for(vi = comments.begin(); vi != comments.end(); ++vi) {
+        (*strm) << " " << *vi;
+    }
 
     if (rec.willShowAll()) {
         std::vector<std::string> names = rec.data().paramNames(false);
