@@ -175,6 +175,8 @@ void Log::completePreamble() {
     if (::gethostname(hostName, hostLength) == 0) {
         _preamble->set<string>("HOST", hostName);
     }
+    int pid = static_cast<int>(::getpid());
+    _preamble->set<int>("PID", pid);
 }
 
 /*

@@ -171,8 +171,16 @@ void OneLineFormatter::write(std::ostream *strm, const LogRecord& rec) {
         string host = rec.data().get<string>("HOST");
         (*strm) << host;
     } catch (pexExcept::NotFoundException ex) {
-        (*strm) << "<unknown host>";
+        (*strm) << "<host>";
     }
+    (*strm) << ",";
+    try {
+        int pid = rec.data().get<int>("PID");
+        (*strm) << pid;
+    } catch (pexExcept::NotFoundException ex) {
+        (*strm) << "<pid>";
+    }
+
     (*strm) << " " << levstr << log;     
 
     for(vi = comments.begin(); vi != comments.end(); ++vi) {
