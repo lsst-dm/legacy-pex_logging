@@ -193,7 +193,7 @@ void OneLineFormatter::write(std::ostream *strm, const LogRecord& rec) {
             }
         }
     }
-	(*strm) << std::endl;
+    (*strm) << std::endl << std::flush;
 }
 ///////////////////////////////////////////////////////////
 //  IndentedFormatter
