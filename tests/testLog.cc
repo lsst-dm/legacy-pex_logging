@@ -20,7 +20,7 @@
  * see <http://www.lsstcorp.org/LegalNotices/>.
  */
  
-#include "lsst/pex/logging/Log.h"
+#include "lsst/pex/logging.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include <iostream>
 #include <boost/shared_ptr.hpp>

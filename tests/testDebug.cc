@@ -29,7 +29,7 @@
 // verbosity level greater than this will not be printed.
 #define LSST_MAX_DEBUG 3
 
-#include "lsst/pex/logging/Debug.h"
+#include "lsst/pex/logging.h"
 #include "lsst/pex/logging/DualLog.h"
 #include <iostream>
 #include <time.h>
