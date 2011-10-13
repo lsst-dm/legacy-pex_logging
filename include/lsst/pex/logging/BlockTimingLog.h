@@ -23,8 +23,8 @@
  */
  
 /**
- * @file TracingLog.h
- * @brief definition of the TracingLog class
+ * @file BlockTimingLog.h
+ * @brief definition of the BlockTimingLog class
  * @author Ray Plante
  */
 #ifndef LSST_PEX_LOGGING_BLOCKTIMINGLOG_H

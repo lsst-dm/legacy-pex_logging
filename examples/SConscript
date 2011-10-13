@@ -1,15 +1,3 @@
 # -*- python -*-
-Import('env')
-
-env.Program("trace", ["trace.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
-env.Program("log", ["log.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
-env.Program("debug", ["debug.cc"], LIBS=env.libs["boost"] + ["utils"] + ["daf_base"] + ["pex_logging"])
-
-#
-# Tests
-#
-import lsst.tests
-tests = lsst.tests.Control(env, verbose=True)
-
-if tests.runExamples:
-    tests.run("*.cc")
+from lsst.sconsUtils import scripts
+scripts.BasicSConscript.examples()
