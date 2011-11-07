@@ -38,8 +38,6 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-namespace defBase = lsst::daf::base;
-
 /**
  * @brief a Log that sends message to both the screen and a file. 
  *
@@ -67,7 +65,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    DualLog(const dafBase::PropertySet& preamble, const std::string& filename, 
+    DualLog(const lsst::daf::base::PropertySet& preamble, const std::string& filename, 
             int filethresh=0, int screenthresh=0, bool screenVerbose=false);
             
     /**
@@ -137,7 +135,7 @@ public:
      *                        name ("LOG") and the text comment ("COMMENT") 
      *                        will be printed.
      */
-    static void createDefaultLog(const dafBase::PropertySet& preamble,
+    static void createDefaultLog(const lsst::daf::base::PropertySet& preamble,
                                  const std::string& filename, 
                                  int filethresh=Log::INHERIT_THRESHOLD, 
                                  int screenthresh=0, bool screenVerbose=false);

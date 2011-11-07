@@ -31,11 +31,8 @@ Access to the logging classes from the pex library
 %feature("autodoc", "1");
 %module(package="lsst.pex.logging", docstring=logging_DOCSTRING) loggingLib
 
-%include "lsst/p_lsstSwig.i"
-
-%newobject lsst::pex::logging::BlockTimingLog::createForBlock;
-%newobject lsst::pex::logging::BlockTimingLog::timeBlock;
 %{
+#include "lsst/daf/base.h"
 #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/BlockTimingLog.h"
 #include "lsst/pex/logging/ScreenLog.h"
@@ -45,23 +42,19 @@ Access to the logging classes from the pex library
 #include "lsst/pex/exceptions.h"
 %}
 
-%inline %{
-using std::list;
-using std::vector;
-using boost::shared_ptr;
-%}
+%include "lsst/p_lsstSwig.i"
 
-
-%import  "lsst/daf/base/baseLib.i"                // for PropertySet
+%lsst_exceptions()
 %import  "lsst/pex/exceptions/exceptionsLib.i"    // for Exceptions
+%import  "lsst/daf/base/baseLib.i"                // for PropertySet
 
-// SWIG_SHARED_PTR macro invocations must precede the corresponding type declarations
-SWIG_SHARED_PTR(LogFormatter, lsst::pex::logging::LogFormatter)
-SWIG_SHARED_PTR_DERIVED(BriefFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::BriefFormatter)
-SWIG_SHARED_PTR_DERIVED(IndentedFormatter, lsst::pex::logging::BriefFormatter, lsst::pex::logging::IndentedFormatter)
-SWIG_SHARED_PTR_DERIVED(NetLoggerFormatter, lsst::pex::logging::LogFormatter, lsst::pex::logging::NetLoggerFormatter)
-SWIG_SHARED_PTR(LogDestination, lsst::pex::logging::LogDestination)
-SWIG_SHARED_PTR_DERIVED(FileDestination, lsst::pex::logging::LogDestination, lsst::pex::logging::FileDestination)
+// shared_ptr macro invocations must precede the corresponding type declarations
+%shared_ptr(lsst::pex::logging::LogFormatter);
+%shared_ptr(lsst::pex::logging::BriefFormatter);
+%shared_ptr(lsst::pex::logging::IndentedFormatter);
+%shared_ptr(lsst::pex::logging::NetLoggerFormatter);
+%shared_ptr(lsst::pex::logging::LogDestination);
+%shared_ptr(lsst::pex::logging::FileDestination);
 
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
@@ -69,15 +62,27 @@ SWIG_SHARED_PTR_DERIVED(FileDestination, lsst::pex::logging::LogDestination, lss
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
 %ignore lsst::pex::logging::Trace::Trace(const std::string& name, const int verbosity, const std::string& fmt, va_list ap);
 
+%ignore lsst::pex::logging::LogRecord::operator=;
+%ignore lsst::pex::logging::LogFormatter::operator=;
+%ignore lsst::pex::logging::LogDestination::operator=;
+%ignore lsst::pex::logging::Log::operator=;
+%ignore lsst::pex::logging::BlockTimingLog::operator=;
+%ignore lsst::pex::logging::Debug::operator=;
+%ignore lsst::pex::logging::ScreenLog::operator=;
+%ignore lsst::pex::logging::DualLog::operator=;
+
+%newobject lsst::pex::logging::BlockTimingLog::createForBlock;
+%newobject lsst::pex::logging::BlockTimingLog::timeBlock;
+
 %inline %{
 namespace boost { namespace filesystem {}}
 %}
 
-%ignore lsst::pex::logging::FileDestination::FileDestination(const fs::path& filepath, const boost::shared_ptr<LogFormatter>& formatter, int threshold, bool truncate);
-%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, const boost::shared_ptr<LogFormatter>& formatter, int threshold, bool truncate);
-%ignore lsst::pex::logging::FileDestination::FileDestination(const fs::path& filepath, bool verbose, int threshold, bool truncate);
-%ignore lsst::pex::logging::FileDestination::FileDestination(const char *& filepath, bool verbose, int threshold, bool truncate);
-          
+%ignore lsst::pex::logging::FileDestination::FileDestination(const boost::filesystem::path& filepath, const boost::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, const boost::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const boost::filesystem::path& filepath, bool verbose, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, bool verbose, int threshold, bool truncate);
+
 
 %include "lsst/pex/logging/LogRecord.h"
 %include "lsst/pex/logging/LogFormatter.h"
@@ -90,34 +95,25 @@ namespace boost { namespace filesystem {}}
 %include "lsst/pex/logging/ScreenLog.h"
 %include "lsst/pex/logging/DualLog.h"
 
+%define LoggingAddType(type, typeName)
+    %template(addPreambleProperty ## typeName) lsst::pex::logging::Log::addPreambleProperty<type>;
+    %template(setPreambleProperty ## typeName) lsst::pex::logging::Log::setPreambleProperty<type>;
+    %template(logProperty ## typeName) lsst::pex::logging::Log::log<type>;
+    %extend lsst::pex::logging::LogRecord {
+        void addProperty ## typeName (const std::string& name, const type val) { $self->addProperty<type>(name, val); }
+    }
+%enddef
+
+LoggingAddType(int, Int)
+LoggingAddType(long, Long)
+LoggingAddType(long long, LongLong)
+LoggingAddType(float, Float)
+LoggingAddType(double, Double)
+LoggingAddType(bool, Bool)
+LoggingAddType(std::string, String)
+// LoggingAddType(lsst::daf::base::PropertySet::Ptr, PropertySetPtr)
+
 %extend lsst::pex::logging::Log {
-    %template(addPreamblePropertyInt) addPreambleProperty<int>;
-    %template(addPreamblePropertyLong) addPreambleProperty<long>;
-    %template(addPreamblePropertyLongLong) addPreambleProperty<long long>;
-    %template(addPreamblePropertyFloat) addPreambleProperty<float>;
-    %template(addPreamblePropertyDouble) addPreambleProperty<double>;
-    %template(addPreamblePropertyBool) addPreambleProperty<bool>;
-    %template(addPreamblePropertyString) addPreambleProperty<std::string>;
-//    %template(addPreamblePropertyPropertySetPtr) addPreambleProperty<lsst::daf::base::PropertySet::Ptr>;
-
-    %template(setPreamblePropertyInt) setPreambleProperty<int>;
-    %template(setPreamblePropertyLong) setPreambleProperty<long>;
-    %template(setPreamblePropertyLongLong) setPreambleProperty<long long>;
-    %template(setPreamblePropertyFloat) setPreambleProperty<float>;
-    %template(setPreamblePropertyDouble) setPreambleProperty<double>;
-    %template(setPreamblePropertyBool) setPreambleProperty<bool>;
-    %template(setPreamblePropertyString) setPreambleProperty<std::string>;
-//    %template(setPreamblePropertyPropertySetPtr) setPreambleProperty<lsst::daf::base::PropertySet::Ptr>;
-
-    %template(logPropertyInt) log<int>;
-    %template(logPropertyLong) log<long>;
-    %template(logPropertyLongLong) log<long long>;
-    %template(logPropertyFloat) log<float>;
-    %template(logPropertyDouble) log<double>;
-    %template(logPropertyBool) log<bool>;
-    %template(logPropertyString) log<std::string>;
-//    %template(logPropertyPropertySet) log<lsst::daf::base::PropertySet>;
-
     void addDestination(const std::string& filepath, bool verbose=false, 
                         int threshold=lsst::pex::logging::threshold::PASS_ALL) 
     {
@@ -126,16 +122,6 @@ namespace boost { namespace filesystem {}}
                                                           threshold));
         $self->addDestination(fdest);
     }
-}
-
-%extend lsst::pex::logging::LogRecord {
-    void addPropertyBool(const std::string& name, const bool val) { $self->addProperty<bool>(name, val); }
-    void addPropertyInt(const std::string& name, const int val) { $self->addProperty<int>(name, val); }
-    void addPropertyLong(const std::string& name, const long val) { $self->addProperty<long>(name, val); }
-    void addPropertyLongLong(const std::string& name, const long long val) { $self->addProperty<long long>(name, val); }
-    void addPropertyFloat(const std::string& name, const float val) { $self->addProperty<float>(name, val); }
-    void addPropertyDouble(const std::string& name, const double val) { $self->addProperty<double>(name, val); }
-    void addPropertyString(const std::string& name, const std::string& val) { $self->addProperty<std::string>(name, val); }
 }
 
 %inline %{
@@ -197,7 +183,7 @@ def _LogRecord_addProperty(self, name, val):
     @param val     that value to set for the property
     @exception LsstException   if the value is of an unsupported type.
     """
-    if isinstance(val, int):
+    if isinstance(val, (int, long)):
         if val > 2147483648 or val <= -2147483648:
             return self.addPropertyLongLong(name, val)
         else:
@@ -209,7 +195,7 @@ def _LogRecord_addProperty(self, name, val):
     elif isinstance(val, str):
         return self.addPropertyString(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
-#        return self.addPropertyPropertySetPtr(name, val)
+#         return self.addPropertyPropertySetPtr(name, val)
         raise lsst.pex.exceptions.LsstException("PropertySet type temporarily unsupported")
     elif isinstance(val, list):
         for v in val:
@@ -234,7 +220,7 @@ def _LogRecord_setProperty(self, name, val):
     @param val     that value to set for the property
     @exception LsstException   if the value is of an unsupported type.
     """
-    if isinstance(val, int):
+    if isinstance(val, (int, long)):
         if val > 2147483648 or val <= -2147483648:
             return self.setPropertyLongLong(name, val)
         else:

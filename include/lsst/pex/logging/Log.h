@@ -44,8 +44,6 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-namespace dafBase = lsst::daf::base;
-
 /**
  * @brief a place to record messages and descriptions of the state of 
  * processing. 
@@ -219,7 +217,7 @@ public:
      *                         display must be turned on as needed.  
      */
     Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
-        const dafBase::PropertySet& preamble,
+        const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO,
         bool defaultShowAll=false);
 
@@ -403,7 +401,7 @@ public:
      * @param properties   a list of properties to include in the message.
      */
     void log(int importance, const std::string& message, 
-             const dafBase::PropertySet& properties);
+             const lsst::daf::base::PropertySet& properties);
 
     /**
      * send a message to the log
@@ -499,7 +497,7 @@ public:
     /** 
      * return the current set of preamble properties
      */
-    const dafBase::PropertySet& getPreamble() { return *_preamble; }
+    const lsst::daf::base::PropertySet& getPreamble() { return *_preamble; }
 
     /**
      * obtain the default root Log instance.
@@ -527,7 +525,7 @@ public:
      */
     static void createDefaultLog(
         const std::list<boost::shared_ptr<LogDestination> >& destinations, 
-        const dafBase::PropertySet& preamble,
+        const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO);
 
     /**
@@ -594,7 +592,7 @@ protected:
      * the list preamble data properties that are included with every 
      * log record.
      */
-    dafBase::PropertySet::Ptr _preamble;
+    lsst::daf::base::PropertySet::Ptr _preamble;
 };
 
 template <class T>
@@ -709,7 +707,7 @@ public:
     /**
      * record a data property into this message
      */
-    LogRec& operator<<(const dafBase::PropertySet& props) {
+    LogRec& operator<<(const lsst::daf::base::PropertySet& props) {
         addProperties(props);
         return *this;
     }
