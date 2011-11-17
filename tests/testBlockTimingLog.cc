@@ -28,7 +28,7 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE test_BlockTimingLog
-#include <boost/test/unit_test.hpp>
+#include "boost/test/included/unit_test.hpp"
 
 using lsst::pex::logging::BlockTimingLog;
 using lsst::pex::logging::Log;
