@@ -1,36 +1,12 @@
-
-# /
-/.*
-/anexample.log
-/config.log
-/example.log
-
-# /doc/
-/doc/htmlDir
-
-# /examples/
-/examples/.tests
-/examples/debug
-/examples/log
-/examples/trace
-
-# /lib/
-/lib/*.dylib
-/lib/*.so
-
-# /python/lsst/pex/logging/
-/python/lsst/pex/logging/*.pyc
-/python/lsst/pex/logging/*.so
-/python/lsst/pex/logging/loggingLib.py
-/python/lsst/pex/logging/loggingLib_wrap.*
-
-# /src/
-/src/*.os
-
-# /src/threshold/
-/src/threshold/*.os
-
-# /tests/
+.sconf_temp
+.sconsign.dblite
+config.log
+doc/htmlDir
+*.dylib
+*.o
+*.os
+*.pyc
+*.so
 /tests/.tests
 /tests/testDebug
 /tests/testDebug_results.txt
@@ -47,3 +23,15 @@
 /tests/testPropertyPrinter
 /tests/testThresholdMemory
 /tests/testTrace
+doc/htmlDir
+examples/debug
+examples/log
+examples/trace
+python/lsst/pex/logging/loggingLib.py
+python/lsst/pex/logging/loggingLib_wrap.*
+python/lsst/pex/logging/version.py
+tests/testBlockTimingLog
+tests/testFileDest
+tests/testFileDestination-out.txt
+tests/timeSyscalls
+ups/*.cfgc
