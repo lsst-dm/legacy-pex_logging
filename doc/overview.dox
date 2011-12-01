@@ -123,8 +123,8 @@ associated with it.  This allows one to, for example, send only
 informational messages and warnings to the screen while sending all
 messages, including debugging messages to a file.  
 
-A Log instance can also be configured with what is called a \em
-preamble.  The preamble is a set of properties that will be included
+A Log instance can also be configured with what is called a \em preamble.
+The preamble is a set of properties that will be included
 with every LogRecord delivered to the destinations.  At a minimum, this
 will include the Log name (with the property name "LOG") and the
 verbosity level ("LEVEL").  Applications may add others.  For example,
