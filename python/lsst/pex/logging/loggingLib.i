@@ -35,6 +35,8 @@ Access to the logging classes from the pex library
 
 %newobject lsst::pex::logging::BlockTimingLog::createForBlock;
 %newobject lsst::pex::logging::BlockTimingLog::timeBlock;
+%newobject lsst::pex::logging::Log::createChildLog;
+
 %{
 #include "lsst/pex/logging/Trace.h"
 #include "lsst/pex/logging/BlockTimingLog.h"
