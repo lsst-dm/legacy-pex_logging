@@ -47,8 +47,6 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-namespace dafBase = lsst::daf::base;
-
 /**
  * @brief a container for a named data property for a LogRecord
  *
@@ -76,7 +74,7 @@ public:
     /**
      * add the name-value pair to a PropertySet
      */
-    void addTo(dafBase::PropertySet& set) { set.add(this->name, this->value); }
+    void addTo(lsst::daf::base::PropertySet& set) { set.add(this->name, this->value); }
 
     const std::string name;
     const T& value;
@@ -131,7 +129,7 @@ public:
      *                     (See willShowAll().)
      */
     LogRecord(int threshold, int importance, 
-              const dafBase::PropertySet& preamble, bool showAll=false);
+              const lsst::daf::base::PropertySet& preamble, bool showAll=false);
 
     /**
      * create a copy of a record
@@ -193,14 +191,14 @@ public:
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
      */
-    void addProperties(const dafBase::PropertySet& props);
+    void addProperties(const lsst::daf::base::PropertySet& props);
 
     /**
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
      * LEVEL, LOG, TIMESTAMP, and DATE.  
      */
-    void addProperties(const dafBase::PropertySet::Ptr& props) {
+    void addProperties(const lsst::daf::base::PropertySet::Ptr& props) {
         addProperties(*props);
     }
 
@@ -208,25 +206,25 @@ public:
      * return the read-only data properties that make up this log message.
      * This is a synonym for data().
      */
-    const dafBase::PropertySet& getProperties() const { return data(); }
+    const lsst::daf::base::PropertySet& getProperties() const { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for data().
      */
-    dafBase::PropertySet& getProperties() { return data(); }
+    lsst::daf::base::PropertySet& getProperties() { return data(); }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
      */
-    const dafBase::PropertySet& data() const { return *_data; }
+    const lsst::daf::base::PropertySet& data() const { return *_data; }
 
     /**
      * return the data properties that make up this log message.  
      * This is a synonym for getProperties().
      */
-    dafBase::PropertySet& data() { return *_data; }
+    lsst::daf::base::PropertySet& data() { return *_data; }
 
     /**
      * return the number available property parameter names (i.e. ones 
@@ -307,7 +305,7 @@ public:
     static long long utcnow();
 
 protected: 
-    LogRecord() : _send(false), _vol(10), _data(new dafBase::PropertySet()) { }
+    LogRecord() : _send(false), _vol(10), _data(new lsst::daf::base::PropertySet()) { }
 
     /**
      * initialize this record with the DATE and LEVEL properties
@@ -322,7 +320,7 @@ protected:
     bool _send;    // true if this record should be sent to the log
     bool _showAll; // true if there is preference to have all data displayed
     int _vol;      // the importance volume of this message
-    dafBase::PropertySet::Ptr _data;
+    lsst::daf::base::PropertySet::Ptr _data;
 };
 
 template <class T>

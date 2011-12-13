@@ -36,8 +36,6 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-namespace dafBase = lsst::daf::base;
-
 /**
  * @brief  a Log configured to send messages to the screen.  The 
  * BriefFormatter is used to format the messages.
@@ -69,7 +67,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    ScreenLog(const dafBase::PropertySet& preamble, 
+    ScreenLog(const lsst::daf::base::PropertySet& preamble, 
               bool verbose=false, int threshold=Log::INFO);
 
     /**
@@ -137,7 +135,7 @@ public:
      *                        ("LOG") and the text comment ("COMMENT") will be
      *                        printed.
      */
-    static void createDefaultLog(const dafBase::PropertySet& preamble,
+    static void createDefaultLog(const lsst::daf::base::PropertySet& preamble,
                                  bool verbose=false, int threshold=Log::INFO);
 
 private:

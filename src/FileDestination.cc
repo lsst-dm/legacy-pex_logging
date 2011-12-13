@@ -41,8 +41,8 @@ namespace logging {
  * @param truncate    if True, overwrite the previous contents; otherwise,
  *                       new messages will be appended to the file.
  */
-FileDestination::FileDestination(const fs::path& filepath, bool verbose, 
-                                 int threshold, bool truncate)
+FileDestination::FileDestination(const boost::filesystem::path& filepath,
+                                 bool verbose, int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath.string().c_str(), 
                                        truncate ? std::ios::out : std::ios::app), 
                      boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 

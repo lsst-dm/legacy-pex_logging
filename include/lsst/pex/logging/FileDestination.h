@@ -36,8 +36,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <fstream>
 
-namespace fs = boost::filesystem;
-
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -83,7 +81,7 @@ public:
                          formatter, threshold),
           _path(filepath) 
     { }
-    FileDestination(const fs::path& filepath,
+    FileDestination(const boost::filesystem::path& filepath,
                     const boost::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
                     bool truncate=false)
@@ -109,7 +107,7 @@ public:
      * @param truncate    if True, overwrite the previous contents; otherwise,
      *                       new messages will be appended to the file.
      */
-    FileDestination(const fs::path& filepath, bool verbose=false, 
+    FileDestination(const boost::filesystem::path& filepath, bool verbose=false, 
                     int threshold=threshold::PASS_ALL, bool truncate=false);
     FileDestination(const std::string& filepath, bool verbose=false, 
                     int threshold=threshold::PASS_ALL, bool truncate=false);
@@ -119,10 +117,10 @@ public:
 
     virtual ~FileDestination();
 
-    const fs::path& getPath() const { return _path; }
+    const boost::filesystem::path& getPath() const { return _path; }
 
 protected:
-    fs::path _path;
+    boost::filesystem::path _path;
 };
 
 }}}     // end lsst::pex::logging
