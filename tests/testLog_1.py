@@ -38,7 +38,7 @@ if __name__ == "__main__":
     dlog.log(log.Log.WARN, "this is a warning")
 
     # now let's create our own root log
-    logger = log.ScreenLog(1)
+    logger = log.ScreenLog(True)
 
     # test creation of child log
     tlog = log.Log(logger, "test")
