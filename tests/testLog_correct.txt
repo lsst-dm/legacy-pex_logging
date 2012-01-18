@@ -14,6 +14,36 @@ test WARNING: I have warn gloves just like those
 test FATAL: I have fatal gloves just like those
   LEVEL: 20
 
+test: Info test message 1
+  LEVEL: 0
+
+test: Info test message 2
+  LEVEL: 0
+
+test: Info test message 3
+  number: 3
+  LEVEL: 0
+
+test WARNING: Warn test message 1
+  LEVEL: 10
+
+test WARNING: Warn test message 2
+  LEVEL: 10
+
+test WARNING: Warn test message 3
+  number: 3
+  LEVEL: 10
+
+test FATAL: Fatal test message 1
+  LEVEL: 20
+
+test FATAL: Fatal test message 2
+  LEVEL: 20
+
+test FATAL: Fatal test message 3
+  number: 3
+  LEVEL: 20
+
 test: I said, I like your shoes
   LEVEL: 0
 

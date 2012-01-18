@@ -442,6 +442,50 @@ public:
     }
 
     /**
+     * Shortcut versions of each of the log() methods above:
+     *
+     *   void logdebug(const std::string& message);
+     *   void logdebug(const boost::format& message);
+     *   template<T> void logdebug(const std::string& message, 
+     *                             const RecordProperty<T>& prop);
+     *   template<T> void logdebug(const std::string& message, 
+     *                             const std::string& name, const T& val);
+     *   void logdebug(const std::string& message, 
+     *                 const lsst::daf::base::PropertySet& properties);
+     *
+     * And likewise for:
+     *   void info(const std::string& message);
+     *   void warn(const std::string& message);
+     *   void fatal(const std::string& message);
+     */
+#define LEVELF(fname, lev)                                          \
+    void fname(const std::string& message,                          \
+               const lsst::daf::base::PropertySet& properties) {    \
+        log(lev, message, properties);                              \
+    }                                                               \
+    template <class T>                                              \
+    void fname(const std::string& message,                          \
+               const std::string& name, const T& val) {             \
+        log<T>(lev, message, name, val);                            \
+    }                                                               \
+    template <class T>                                              \
+    void fname(const std::string& message,                          \
+               const RecordProperty<T>& prop) {                     \
+        log<T>(lev, message, prop);                                 \
+    }                                                               \
+    void fname(const std::string& message) {                        \
+        log(lev, message);                                          \
+    }                                                               \
+    void fname(const boost::format& message) {                      \
+        log(lev, message);                                          \
+    }
+    LEVELF(logdebug, DEBUG)
+    LEVELF(info    , INFO )
+    LEVELF(warn    , WARN )
+    LEVELF(fatal   , FATAL)
+#undef LEVELF
+
+    /**
      * send a simple, formatted message.  Use of this function tends to 
      * perform better than log(int, boost::format) as the formatting is 
      * only done if the message will actually get recorded.
@@ -459,7 +503,8 @@ public:
      void fatalf(const char* fmt, ...);
 
      */
-#define LEVELF(fname, lev) void fname(const char* fmt, ...) {  \
+#define LEVELF(fname, lev)                                     \
+    void fname(const char* fmt, ...) {                         \
         if (lev < getThreshold()) return;                      \
         va_list ap;                                            \
         va_start(ap, fmt);                                     \

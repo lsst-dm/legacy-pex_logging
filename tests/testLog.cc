@@ -65,6 +65,20 @@ int main() {
     tlog->warnf("I have warn %s just like those", what);
     tlog->fatalf("I have fatal %s just like those", what);
 
+	// test shortcut logging:
+	tlog->logdebug("Debug test message 1");
+	tlog->logdebug(boost::format("Debug test message %i") % 2);
+	tlog->logdebug("Debug test message", "number", 3);
+	tlog->info("Info test message 1");
+	tlog->info(boost::format("Info test message %i") % 2);
+	tlog->info("Info test message 3", "number", 3);
+	tlog->warn("Warn test message 1");
+	tlog->warn(boost::format("Warn test message %i") % 2);
+	tlog->warn("Warn test message 3", "number", 3);
+	tlog->fatal("Fatal test message 1");
+	tlog->fatal(boost::format("Fatal test message %i") % 2);
+	tlog->fatal("Fatal test message 3", "number", 3);
+
     // test threshold filtering
     tlog->setThreshold(Log::WARN);
     tlog->log(Log::INFO, "I like your gloves");  // shouldn't see this 

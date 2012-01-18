@@ -51,6 +51,12 @@ if __name__ == "__main__":
     assert(not hasattr(tlog, 'warnf'))
     assert(not hasattr(tlog, 'fatalf'))
 
+    # test shortcut methods
+    tlog.logdebug("Shortcut debug")
+    tlog.info("Shortcut info")
+    tlog.warn("Shortcut warn")
+    tlog.fatal("Shortcut fatal")
+
     # test threshold filtering
     tlog.setThreshold(log.Log.WARN)
     tlog.log(log.Log.INFO, "I like your gloves") #  // shouldn't see this 
