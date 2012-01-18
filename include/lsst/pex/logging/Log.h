@@ -451,6 +451,29 @@ public:
      */
     void format(int importance, const char *fmt, ...);
 
+    /** Define the following functions:
+
+     void debugf(const char* fmt, ...);
+     void infof(const char* fmt, ...);
+     void warnf(const char* fmt, ...);
+     void fatalf(const char* fmt, ...);
+
+     */
+#define LEVELF(fname, lev) void fname(const char* fmt, ...) {  \
+        if (lev < getThreshold()) return;                      \
+        va_list ap;                                            \
+        va_start(ap, fmt);                                     \
+        _format(lev, fmt, ap);                                 \
+        va_end(ap);                                            \
+    }
+
+    LEVELF(debugf , DEBUG)
+    LEVELF(infof  , INFO )
+    LEVELF(warnf  , WARN )
+    LEVELF(fatalf , FATAL)
+
+#undef LEVELF
+
     /**
      * send a fully formed LogRecord to the log destinations
      */
@@ -568,6 +591,12 @@ protected:
      * not check the Log threshold; it assumes this has already been done.
      */
     void _send(int threshold, int importance, const char *fmt, va_list ap);
+
+    /**
+     Format and call log().  Used by format(), debugf(), etc.
+     Does not check the importance.
+     */
+    void _format(int importance, const char* fmt, va_list ap);
 
 private:
     void completePreamble();

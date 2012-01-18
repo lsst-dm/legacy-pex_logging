@@ -299,14 +299,20 @@ void Log::format(int importance, const char *fmt, ...) {
     if (importance < threshold) return;
     va_list ap;
     va_start(ap, fmt);
+	_format(importance, fmt, ap);
+    va_end(ap);
+}
+
+void Log::_format(int importance, const char* fmt, va_list ap) {
+	va_list aq;
+	va_copy(aq, ap);
+	// find out how long the formatted string will be
     const int len = vsnprintf(NULL, 0, fmt, ap) + 1; // "+ 1" for the '\0'
     va_end(ap);
-
+	// allocate a string of the appropriate length
     char msg[len];
-    va_start(ap, fmt);
-    (void)vsnprintf(msg, len, fmt, ap);
-    va_end(ap);
-
+    (void)vsnprintf(msg, len, fmt, aq);
+    va_end(aq);
     log(importance, msg);
 }
 

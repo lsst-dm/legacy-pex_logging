@@ -59,6 +59,12 @@ int main() {
     const char *what = "gloves";
     tlog->format(Log::INFO, "I have %s just like those", what);
 
+	// test shortcut formatting:
+    tlog->debugf("I have debug %s just like those", what);
+    tlog->infof("I have info %s just like those", what);
+    tlog->warnf("I have warn %s just like those", what);
+    tlog->fatalf("I have fatal %s just like those", what);
+
     // test threshold filtering
     tlog->setThreshold(Log::WARN);
     tlog->log(Log::INFO, "I like your gloves");  // shouldn't see this 

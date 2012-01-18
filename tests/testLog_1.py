@@ -44,6 +44,13 @@ if __name__ == "__main__":
     tlog = log.Log(logger, "test")
     tlog.log(log.Log.INFO, "I like your hat")
 
+    # test that "format", "infof", etc are ignored by swig.
+    assert(not hasattr(tlog, 'format'))
+    assert(not hasattr(tlog, 'debugf'))
+    assert(not hasattr(tlog, 'infof'))
+    assert(not hasattr(tlog, 'warnf'))
+    assert(not hasattr(tlog, 'fatalf'))
+
     # test threshold filtering
     tlog.setThreshold(log.Log.WARN)
     tlog.log(log.Log.INFO, "I like your gloves") #  // shouldn't see this 

@@ -56,8 +56,12 @@ Access to the logging classes from the pex library
 %shared_ptr(lsst::pex::logging::LogDestination);
 %shared_ptr(lsst::pex::logging::FileDestination);
 
-%ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Log::format(int verbosity, const char *fmt, ...);
+%ignore lsst::pex::logging::Log::debugf(const char *fmt, ...);
+%ignore lsst::pex::logging::Log::infof (const char *fmt, ...);
+%ignore lsst::pex::logging::Log::warnf (const char *fmt, ...);
+%ignore lsst::pex::logging::Log::fatalf(const char *fmt, ...);
+
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, va_list ap);
 %ignore lsst::pex::logging::Debug::debug(int verbosity, const char *fmt, ...);
 %ignore lsst::pex::logging::Trace::Trace(const std::string& name, const int verbosity, const std::string& fmt, va_list ap);
