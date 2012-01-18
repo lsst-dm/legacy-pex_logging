@@ -40,6 +40,16 @@
 #include <cstdarg>
 #include <boost/shared_ptr.hpp>
 
+// If the compiler does not support attributes, disable them
+#ifndef __GNUC__
+#   define  __attribute__(x)
+#endif
+// Tell the compiler that a function takes a printf-style format string
+// and varargs; it can then warn if the args don't match the format string.
+// The "fmt" and "start" args are the positions of the format string and
+// the start of the varargs; +1 for C++ member functions.
+#define ATTRIB_FORMAT(fmt,start) __attribute__ ((format(printf,fmt,start)))
+
 namespace lsst {
 namespace pex {
 namespace logging {
@@ -493,7 +503,8 @@ public:
      * @param fmt          a printf-style format string
      * @param ...          the inputs to the formatting.
      */
-    void format(int importance, const char *fmt, ...);
+    void format(int importance, const char *fmt, ...)
+    ATTRIB_FORMAT(3, 4);
 
     /** Define the following functions:
 
@@ -504,7 +515,8 @@ public:
 
      */
 #define LEVELF(fname, lev)                                     \
-    void fname(const char* fmt, ...) {                         \
+    void fname(const char* fmt, ...)                           \
+        ATTRIB_FORMAT(2, 3) {                                  \
         if (lev < getThreshold()) return;                      \
         va_list ap;                                            \
         va_start(ap, fmt);                                     \

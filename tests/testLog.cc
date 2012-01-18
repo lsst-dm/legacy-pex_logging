@@ -65,6 +65,12 @@ int main() {
     tlog->warnf("I have warn %s just like those", what);
     tlog->fatalf("I have fatal %s just like those", what);
 
+	// test compiler warning on bad format string.
+	//tlog->infof("I have %i elephants in my pocket", "42");
+	// should produce:
+	//tests/testLog.cc: In function 'int main()':
+	//tests/testLog.cc:69: warning: format '%i' expects type 'int', but argument 3 has type 'const char*'
+
 	// test shortcut logging:
 	tlog->logdebug("Debug test message 1");
 	tlog->logdebug(boost::format("Debug test message %i") % 2);
