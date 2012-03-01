@@ -5,12 +5,51 @@ test: I like your hat
 test: I have gloves just like those
   LEVEL: 0
 
+test: I have info gloves just like those
+  LEVEL: 0
+
+test WARNING: I have warn gloves just like those
+  LEVEL: 10
+
+test FATAL: I have fatal gloves just like those
+  LEVEL: 20
+
+test: Info test message 1
+  LEVEL: 0
+
+test: Info test message 2
+  LEVEL: 0
+
+test: Info test message 3
+  number: 3
+  LEVEL: 0
+
+test WARNING: Warn test message 1
+  LEVEL: 10
+
+test WARNING: Warn test message 2
+  LEVEL: 10
+
+test WARNING: Warn test message 3
+  number: 3
+  LEVEL: 10
+
+test FATAL: Fatal test message 1
+  LEVEL: 20
+
+test FATAL: Fatal test message 2
+  LEVEL: 20
+
+test FATAL: Fatal test message 3
+  number: 3
+  LEVEL: 20
+
 test: I said, I like your shoes
   LEVEL: 0
 
 test.grand.child: Let's play
-  LEVEL: 0
   STATUS: now
+  LEVEL: 0
 
 Non-default Thresholds:
 (root)               0
@@ -18,11 +57,11 @@ Non-default Thresholds:
 
 test.grand.child FATAL: help: I've fallen
 test.grand.child FATAL: & I can't get up
+  RUNID: testRun
   LEVEL: 20
   NODE: 5
-  RUNID: testRun
 
 test.grand.child FATAL: never mind
-  LEVEL: 20
   RUNID: testRun
+  LEVEL: 20
 

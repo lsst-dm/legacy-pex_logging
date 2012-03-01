@@ -38,11 +38,24 @@ if __name__ == "__main__":
     dlog.log(log.Log.WARN, "this is a warning")
 
     # now let's create our own root log
-    logger = log.ScreenLog(1)
+    logger = log.ScreenLog(True)
 
     # test creation of child log
     tlog = log.Log(logger, "test")
     tlog.log(log.Log.INFO, "I like your hat")
+
+    # test that "format", "infof", etc are ignored by swig.
+    assert(not hasattr(tlog, 'format'))
+    assert(not hasattr(tlog, 'debugf'))
+    assert(not hasattr(tlog, 'infof'))
+    assert(not hasattr(tlog, 'warnf'))
+    assert(not hasattr(tlog, 'fatalf'))
+
+    # test shortcut methods
+    tlog.logdebug("Shortcut debug")
+    tlog.info("Shortcut info")
+    tlog.warn("Shortcut warn")
+    tlog.fatal("Shortcut fatal")
 
     # test threshold filtering
     tlog.setThreshold(log.Log.WARN)

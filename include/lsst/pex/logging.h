@@ -22,4 +22,4 @@
  
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/Debug.h"
-
+#include "lsst/pex/logging/FileDestination.h"

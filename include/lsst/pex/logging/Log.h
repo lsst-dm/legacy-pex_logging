@@ -40,11 +40,19 @@
 #include <cstdarg>
 #include <boost/shared_ptr.hpp>
 
+// If the compiler does not support attributes, disable them
+#ifndef __GNUC__
+#   define  __attribute__(x)
+#endif
+// Tell the compiler that a function takes a printf-style format string
+// and varargs; it can then warn if the args don't match the format string.
+// The "fmt" and "start" args are the positions of the format string and
+// the start of the varargs; +1 for C++ member functions.
+#define ATTRIB_FORMAT(fmt,start) __attribute__ ((format(printf,fmt,start)))
+
 namespace lsst {
 namespace pex {
 namespace logging {
-
-namespace dafBase = lsst::daf::base;
 
 /**
  * @brief a place to record messages and descriptions of the state of 
@@ -219,7 +227,7 @@ public:
      *                         display must be turned on as needed.  
      */
     Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
-        const dafBase::PropertySet& preamble,
+        const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO,
         bool defaultShowAll=false);
 
@@ -403,7 +411,7 @@ public:
      * @param properties   a list of properties to include in the message.
      */
     void log(int importance, const std::string& message, 
-             const dafBase::PropertySet& properties);
+             const lsst::daf::base::PropertySet& properties);
 
     /**
      * send a message to the log
@@ -444,6 +452,50 @@ public:
     }
 
     /**
+     * Shortcut versions of each of the log() methods above:
+     *
+     *   void logdebug(const std::string& message);
+     *   void logdebug(const boost::format& message);
+     *   template<T> void logdebug(const std::string& message, 
+     *                             const RecordProperty<T>& prop);
+     *   template<T> void logdebug(const std::string& message, 
+     *                             const std::string& name, const T& val);
+     *   void logdebug(const std::string& message, 
+     *                 const lsst::daf::base::PropertySet& properties);
+     *
+     * And likewise for:
+     *   void info(const std::string& message);
+     *   void warn(const std::string& message);
+     *   void fatal(const std::string& message);
+     */
+#define LEVELF(fname, lev)                                          \
+    void fname(const std::string& message,                          \
+               const lsst::daf::base::PropertySet& properties) {    \
+        log(lev, message, properties);                              \
+    }                                                               \
+    template <class T>                                              \
+    void fname(const std::string& message,                          \
+               const std::string& name, const T& val) {             \
+        log<T>(lev, message, name, val);                            \
+    }                                                               \
+    template <class T>                                              \
+    void fname(const std::string& message,                          \
+               const RecordProperty<T>& prop) {                     \
+        log<T>(lev, message, prop);                                 \
+    }                                                               \
+    void fname(const std::string& message) {                        \
+        log(lev, message);                                          \
+    }                                                               \
+    void fname(const boost::format& message) {                      \
+        log(lev, message);                                          \
+    }
+    LEVELF(logdebug, DEBUG)
+    LEVELF(info    , INFO )
+    LEVELF(warn    , WARN )
+    LEVELF(fatal   , FATAL)
+#undef LEVELF
+
+    /**
      * send a simple, formatted message.  Use of this function tends to 
      * perform better than log(int, boost::format) as the formatting is 
      * only done if the message will actually get recorded.
@@ -451,7 +503,33 @@ public:
      * @param fmt          a printf-style format string
      * @param ...          the inputs to the formatting.
      */
-    void format(int importance, const char *fmt, ...);
+    void format(int importance, const char *fmt, ...)
+    ATTRIB_FORMAT(3, 4);
+
+    /** Define the following functions:
+
+     void debugf(const char* fmt, ...);
+     void infof(const char* fmt, ...);
+     void warnf(const char* fmt, ...);
+     void fatalf(const char* fmt, ...);
+
+     */
+#define LEVELF(fname, lev)                                     \
+    void fname(const char* fmt, ...)                           \
+        ATTRIB_FORMAT(2, 3) {                                  \
+        if (lev < getThreshold()) return;                      \
+        va_list ap;                                            \
+        va_start(ap, fmt);                                     \
+        _format(lev, fmt, ap);                                 \
+        va_end(ap);                                            \
+    }
+
+    LEVELF(debugf , DEBUG)
+    LEVELF(infof  , INFO )
+    LEVELF(warnf  , WARN )
+    LEVELF(fatalf , FATAL)
+
+#undef LEVELF
 
     /**
      * send a fully formed LogRecord to the log destinations
@@ -499,7 +577,7 @@ public:
     /** 
      * return the current set of preamble properties
      */
-    const dafBase::PropertySet& getPreamble() { return *_preamble; }
+    const lsst::daf::base::PropertySet& getPreamble() { return *_preamble; }
 
     /**
      * obtain the default root Log instance.
@@ -527,7 +605,7 @@ public:
      */
     static void createDefaultLog(
         const std::list<boost::shared_ptr<LogDestination> >& destinations, 
-        const dafBase::PropertySet& preamble,
+        const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO);
 
     /**
@@ -571,6 +649,12 @@ protected:
      */
     void _send(int threshold, int importance, const char *fmt, va_list ap);
 
+    /**
+     Format and call log().  Used by format(), debugf(), etc.
+     Does not check the importance.
+     */
+    void _format(int importance, const char* fmt, va_list ap);
+
 private:
     void completePreamble();
 
@@ -594,7 +678,7 @@ protected:
      * the list preamble data properties that are included with every 
      * log record.
      */
-    dafBase::PropertySet::Ptr _preamble;
+    lsst::daf::base::PropertySet::Ptr _preamble;
 };
 
 template <class T>
@@ -709,7 +793,7 @@ public:
     /**
      * record a data property into this message
      */
-    LogRec& operator<<(const dafBase::PropertySet& props) {
+    LogRec& operator<<(const lsst::daf::base::PropertySet& props) {
         addProperties(props);
         return *this;
     }

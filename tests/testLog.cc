@@ -59,6 +59,32 @@ int main() {
     const char *what = "gloves";
     tlog->format(Log::INFO, "I have %s just like those", what);
 
+	// test shortcut formatting:
+    tlog->debugf("I have debug %s just like those", what);
+    tlog->infof("I have info %s just like those", what);
+    tlog->warnf("I have warn %s just like those", what);
+    tlog->fatalf("I have fatal %s just like those", what);
+
+	// test compiler warning on bad format string.
+	//tlog->infof("I have %i elephants in my pocket", "42");
+	// should produce:
+	//tests/testLog.cc: In function 'int main()':
+	//tests/testLog.cc:69: warning: format '%i' expects type 'int', but argument 3 has type 'const char*'
+
+	// test shortcut logging:
+	tlog->logdebug("Debug test message 1");
+	tlog->logdebug(boost::format("Debug test message %i") % 2);
+	tlog->logdebug("Debug test message", "number", 3);
+	tlog->info("Info test message 1");
+	tlog->info(boost::format("Info test message %i") % 2);
+	tlog->info("Info test message 3", "number", 3);
+	tlog->warn("Warn test message 1");
+	tlog->warn(boost::format("Warn test message %i") % 2);
+	tlog->warn("Warn test message 3", "number", 3);
+	tlog->fatal("Fatal test message 1");
+	tlog->fatal(boost::format("Fatal test message %i") % 2);
+	tlog->fatal("Fatal test message 3", "number", 3);
+
     // test threshold filtering
     tlog->setThreshold(Log::WARN);
     tlog->log(Log::INFO, "I like your gloves");  // shouldn't see this 
