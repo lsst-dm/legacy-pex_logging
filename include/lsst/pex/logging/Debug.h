@@ -140,6 +140,7 @@ public:
      * @param ap           the inputs to the formatting.
      */
     void debug(int verbosity, const char *fmt, va_list ap) {
+        if (-1 * verbosity < getThreshold()) return;
         _format(-1*verbosity, fmt, ap);
     }
 
