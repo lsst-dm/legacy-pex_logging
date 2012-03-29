@@ -61,7 +61,7 @@ def compareOutput(test, canon, showdiff=True):
 
     fields = {}
     list = []
-    pat = re.compile(r'^  ([A-Z\._]*):(.*)')
+    pat = re.compile(r'^  ([A-Za-z\._]*):(.*)')
 
     for line in corr:
         match = pat.match(line)
