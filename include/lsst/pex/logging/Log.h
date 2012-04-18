@@ -830,4 +830,6 @@ typedef LogRec Rec;
 
 }}}     // end lsst::pex::logging
 
+#undef ATTRIB_FORMAT
+
 #endif  // end LSST_PEX_LOG_H
