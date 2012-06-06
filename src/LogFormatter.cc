@@ -258,6 +258,13 @@ PrependedFormatter::~PrependedFormatter() {}
  * @param rec    the record to write
  */
 void PrependedFormatter::write(std::ostream *strm, LogRecord const& rec) {
+    string date;
+    try {
+        date = rec.data().get<string>(LSST_LP_DATE) + ": ";
+    } catch (...) {
+        date = "(failed to get timestamp): ";
+    }
+
     int level = 0;
     string levstr(": ");
     try {
@@ -290,7 +297,7 @@ void PrependedFormatter::write(std::ostream *strm, LogRecord const& rec) {
     } catch (pexExcept::NotFoundError const & ex) {}
 
     for (auto const& vi : comments) {
-        (*strm) << label << ": " << log << levstr << vi << std::endl;
+        (*strm) << date << label << ": " << log << levstr << vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
