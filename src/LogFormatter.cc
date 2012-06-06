@@ -134,10 +134,17 @@ IndentedFormatter::~IndentedFormatter() { }
  */
 void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
     string log;
+    string date;
     int level=0;
     string levstr(": ");
     std::vector<std::string> comments;
     std::vector<std::string>::iterator vi;
+
+    try {
+        date = rec.data().get<string>(LSST_LP_DATE) + ": ";
+    } catch (...) {
+        date = "(failed to get timestamp): ";
+    }
 
     try {
         level = rec.data().get<int>(LSST_LP_LEVEL);
@@ -169,7 +176,7 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
     string indent(indentstr.str());
 
     for(vi = comments.begin(); vi != comments.end(); ++vi) {
-        (*strm) << indent << log << levstr << *vi << std::endl;
+        (*strm) << indent << date << log << levstr << *vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
