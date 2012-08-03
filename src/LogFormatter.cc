@@ -33,6 +33,7 @@
 #include "lsst/pex/logging/PropertyPrinter.h"
 #include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/PropertySet.h"
+#include "lsst/daf/base/DateTime.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
@@ -40,6 +41,7 @@
 #include <sstream>
 
 using std::string;
+using lsst::daf::base::DateTime;
 
 namespace lsst {
 namespace pex {
@@ -141,7 +143,15 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
     std::vector<std::string>::iterator vi;
 
     try {
-        date = rec.data().get<string>(LSST_LP_DATE) + ": ";
+        char datestr[100];
+        struct timeval tv = rec.data().get<DateTime>(LSST_LP_TIMESTAMP).timeval();
+        struct tm timeinfo;
+        time_t secs = (time_t) tv.tv_sec;
+        gmtime_r(&secs, &timeinfo);
+        if (0 == strftime(datestr, sizeof(datestr) - 1, "%Y-%m-%dT%H:%M:%S: ", &timeinfo)) {
+            throw LSST_EXCEPT(pexExcept::RuntimeErrorException, "Failed to format time successfully");
+        }
+        date = datestr;
     } catch (...) {
         date = "(failed to get timestamp): ";
     }
