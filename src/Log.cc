@@ -391,7 +391,7 @@ void Log::setDefaultLog(Log *deflog) {
     if (defaultLog != 0) delete defaultLog;
     defaultLog = deflog;
     if (defaultLog != 0) {
-        defaultLog->_preamble->markPersistent();
+        defaultLog->markPersistent();
     }
 }
 

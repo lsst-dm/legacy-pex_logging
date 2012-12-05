@@ -580,6 +580,15 @@ public:
     const lsst::daf::base::PropertySet& getPreamble() { return *_preamble; }
 
     /**
+     * Mark this Log as persistent in the Citizen framework.  This should
+     * be called when storing Log objects in the global scope or when they
+     * are otherwise long-lived.  When this function is not called on a
+     * global instance, the Citizen framework may complain about a leaked
+     * PropertySet.
+     */
+    void markPersistent() { _preamble->markPersistent(); }
+
+    /**
      * obtain the default root Log instance.
      */
     static Log& getDefaultLog();
