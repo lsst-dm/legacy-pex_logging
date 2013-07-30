@@ -135,8 +135,8 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-const ScreenLog _getDefaultAsScreenLog() {
-    return ScreenLog(dynamic_cast<const ScreenLog&>(Log::getDefaultLog()));
+const ScreenLog& _getDefaultAsScreenLog() {
+    return dynamic_cast<const ScreenLog&>(Log::getDefaultLog());
 }
 bool _DefaultLogIsScreenLog() {
     return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0);
