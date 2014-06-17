@@ -83,20 +83,20 @@ void BriefFormatter::write(std::ostream *strm, const LogRecord& rec) {
         if (level >= Log::FATAL) levstr = " FATAL: ";
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
-    } catch (dafBase::TypeMismatchException ex) { 
-    } catch (pexExcept::NotFoundException ex) { }
+    } catch (pexExcept::TypeError ex) { 
+    } catch (pexExcept::NotFoundError ex) { }
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
-    } catch (dafBase::TypeMismatchException ex) {
+    } catch (pexExcept::TypeError ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundException ex) { }
+    } catch (pexExcept::NotFoundError ex) { }
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
-    } catch (dafBase::TypeMismatchException ex) { 
+    } catch (pexExcept::TypeError ex) { 
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundException ex) { } 
+    } catch (pexExcept::NotFoundError ex) { } 
 
     for(vi = comments.begin(); vi != comments.end(); ++vi) {
         (*strm) << log << levstr << *vi << std::endl;
@@ -144,20 +144,20 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
         if (level >= Log::FATAL) levstr = " FATAL: ";
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
-    } catch (dafBase::TypeMismatchException ex) { 
-    } catch (pexExcept::NotFoundException ex) { }
+    } catch (pexExcept::TypeError ex) { 
+    } catch (pexExcept::NotFoundError ex) { }
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
-    } catch (dafBase::TypeMismatchException ex) {
+    } catch (pexExcept::TypeError ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundException ex) { }
+    } catch (pexExcept::NotFoundError ex) { }
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
-    } catch (dafBase::TypeMismatchException ex) { 
+    } catch (pexExcept::TypeError ex) { 
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundException ex) { } 
+    } catch (pexExcept::NotFoundError ex) { } 
 
     std::ostringstream indentstr;
     if (level < 0) {

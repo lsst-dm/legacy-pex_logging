@@ -430,7 +430,7 @@ private:
  *
  * A PropertyPrinter is constructed for a particular name found in the 
  * PropertySet.  (If a property with that name doesn't exist, a
- * pex::exceptions::NotFoundException is thrown.)  The PropertyPrinter is 
+ * pex::exceptions::NotFoundError is thrown.)  The PropertyPrinter is 
  * wrapped around the array of values associated with the name.  One can 
  * get an Iterator for the values and send each one to a stream.
  *

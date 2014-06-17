@@ -118,7 +118,7 @@ void LogRecord::setDate() {
     gmtime_r(&secs, &timeinfo);
 
     if ( 0 == strftime(datestr,39,"%Y-%m-%dT%H:%M:%S.", &timeinfo) ) {
-        throw LSST_EXCEPT(pexExcept::RuntimeErrorException, 
+        throw LSST_EXCEPT(pexExcept::RuntimeError, 
                           "Failed to format time successfully");
     }
     
