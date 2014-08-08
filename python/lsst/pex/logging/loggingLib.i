@@ -186,7 +186,7 @@ def _LogRecord_addProperty(self, name, val):
 
     @param name    the name of the property
     @param val     that value to set for the property
-    @exception LsstException   if the value is of an unsupported type.
+    @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
     if isinstance(val, (int, long)):
         if val > 2147483648 or val <= -2147483648:
@@ -201,7 +201,7 @@ def _LogRecord_addProperty(self, name, val):
         return self.addPropertyString(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
 #         return self.addPropertyPropertySetPtr(name, val)
-        raise lsst.pex.exceptions.LsstException("PropertySet type temporarily unsupported")
+        raise lsst.pex.exceptions.TypeError("PropertySet type temporarily unsupported")
     elif isinstance(val, list):
         for v in val:
             self.addProperty(name, v)
@@ -209,7 +209,7 @@ def _LogRecord_addProperty(self, name, val):
         for k in val.keys():
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
-        raise lsst.pex.exceptions.LsstException("unsupported property type for logging: %s(%s)" % (name, type(val)))
+        raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
 
 def _LogRecord_setProperty(self, name, val):
     """add a property with a default type.
@@ -223,7 +223,7 @@ def _LogRecord_setProperty(self, name, val):
 
     @param name    the name of the property
     @param val     that value to set for the property
-    @exception LsstException   if the value is of an unsupported type.
+    @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
     if isinstance(val, (int, long)):
         if val > 2147483648 or val <= -2147483648:
@@ -238,7 +238,7 @@ def _LogRecord_setProperty(self, name, val):
         return self.setPropertyBool(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
 #        return self.setPropertyPropertySet(name, val)
-        raise lsst.pex.exceptions.LsstException("PropertySet type temporarily unsupported")
+        raise lsst.pex.exceptions.TypeError("PropertySet type temporarily unsupported")
     elif isinstance(val, list):
         v = val.pop(0)
         self.setProperty(name, v)
@@ -249,7 +249,7 @@ def _LogRecord_setProperty(self, name, val):
         for k in val.keys():
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
-        raise lsst.pex.exceptions.LsstException("unsupported property type for logging: %s(%s)" % (name, type(val)))
+        raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
 
 LogRecord.addProperty = _LogRecord_addProperty
 LogRecord.setProperty = _LogRecord_setProperty
