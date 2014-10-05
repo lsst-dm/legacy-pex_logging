@@ -27,11 +27,13 @@
 using lsst::pex::logging::LogRecord;
 using lsst::daf::base::PropertySet;
 using lsst::daf::base::DateTime;
-using namespace std;
+using std::string;
+using std::cout;
+using std::endl;
 
 void assure(bool mustBeTrue, const string& failureMsg) {
     if (! mustBeTrue)
-        throw runtime_error(failureMsg);
+        throw std::runtime_error(failureMsg);
 }
 
 int main() {
