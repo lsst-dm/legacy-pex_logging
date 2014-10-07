@@ -103,7 +103,7 @@ public:
      */
     Trace(const std::string& name,      //!< Name of component
           const int verbosity,          //!< Desired verbosity
-          const std::string& fmt,       //!< Message to write as a printf format
+          const std::string fmt,       //!< Message to write as a printf format
           ...
           ) 
     {
@@ -212,8 +212,8 @@ void TTrace(const char *name,           //!< Name of component
 }
 
 template<int VERBOSITY>
-void TTrace(const std::string& name,      //!< Name of component
-            const std::string& fmt,       //!< Message to write as a printf form at
+void TTrace(const std::string name,      //!< Name of component
+            const std::string fmt,       //!< Message to write as a printf form at
             ...
            ) {
     if (LSST_MAX_TRACE < 0 || VERBOSITY <= LSST_MAX_TRACE) {

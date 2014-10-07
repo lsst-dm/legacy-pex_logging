@@ -33,8 +33,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-using namespace std;
-
 namespace lsst {
 namespace pex {
 namespace logging {
