@@ -35,6 +35,8 @@
 #define LSST_PEX_UTILS_COMPONENT 1
 
 #include <map>
+#include <string>
+#include <ostream>
 #include <boost/tokenizer.hpp>
 
 namespace lsst {
