@@ -2,6 +2,10 @@ namespace lsst { namespace pex { namespace logging {
 /**
 \mainpage lsst::pex::logging:  writing messages to logs
 
+\note This package is slated for replacement by `lsst::log`. However, until that package has been approved,
+development on LSST science pipelines should continue to use `lsst::pex::logging`. See <a
+href="https://jira.lsstcorp.org/browse/RFC-29">RFC-29</a> for further discussion.
+
  - \ref secLogIntro "Introduction"
  - \ref secLogFw "The Logging Framework"
  - \ref pgLogHowto "The Logging How-To"
