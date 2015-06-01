@@ -367,14 +367,6 @@ def _Debug__init__(s, name, maxverb=None):
     _Debug_wrapped_ctr(s, name, maxverb)
 
 Debug.__init__ = _Debug__init__
-
-def version():
-    """
-    Return the version of this product (extracted from an internal HeadURL string).
-    If a different version is setup according to eups, include it in the return string.
-    """
-    HeadURL = r"$HeadURL$"
-    return lsst.utils.version(HeadURL)
 %}
 
 
