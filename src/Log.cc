@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -345,14 +345,14 @@ void Log::send(const LogRecord& record) {
  * add a destination to this log.  The destination stream will included
  * in all child Logs created from this log after a call to this function.
  * All previously created logs, including ancestor logs, will be 
- * unaffected.  The IndentedFormatter format will be used with this new 
+ * unaffected.  The PrependedFormatter format will be used with this new
  * destination.  
  * @param destination   the stream to send messages to
  * @param threshold     the importance threshold to use to filter messages
  *                         sent to the stream.
  */
 void Log::addDestination(ostream& destination, int threshold) {
-    shared_ptr<LogFormatter> frmtr(new IndentedFormatter());
+    shared_ptr<LogFormatter> frmtr(new PrependedFormatter());
     addDestination(destination, threshold, frmtr);
 }
 
