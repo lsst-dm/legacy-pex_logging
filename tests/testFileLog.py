@@ -2,7 +2,7 @@
 
 # 
 # LSST Data Management System
-# Copyright 2008, 2009, 2010 LSST Corporation.
+# Copyright 2008-2016 LSST Corporation.
 # 
 # This product includes software developed by the
 # LSST Project (http://www.lsst.org/).
@@ -39,20 +39,6 @@ class TestCase(unittest.TestCase):
         if os.path.exists(self.file):
             os.remove(self.file)
 
-    def testAddFile(self):
-        self.logger.addDestination(self.file)
-        self.logger.log(Log.INFO, "in file")
-
-        self.root.log(Log.INFO, "in bit bucket")
-
-        fd = open(self.file)
-        try:
-            lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file")>=0,lines)), 1)
-            self.assertEquals(len(filter(lambda l: l.find("bucket")>=0,lines)), 0)
-        finally:
-            fd.close()
-        
     def testAddFile(self):
         self.logger.addDestination(self.file)
         self.logger.log(Log.INFO, "in file")
