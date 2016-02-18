@@ -2,7 +2,7 @@
 
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -53,6 +53,7 @@ Access to the logging classes from the pex library
 %shared_ptr(lsst::pex::logging::BriefFormatter);
 %shared_ptr(lsst::pex::logging::IndentedFormatter);
 %shared_ptr(lsst::pex::logging::NetLoggerFormatter);
+%shared_ptr(lsst::pex::logging::PrependedFormatter);
 %shared_ptr(lsst::pex::logging::LogDestination);
 %shared_ptr(lsst::pex::logging::FileDestination);
 

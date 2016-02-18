@@ -2,7 +2,7 @@
 
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -41,6 +41,7 @@
 #define LSST_LP_TIMESTAMP   "TIMESTAMP"
 #define LSST_LP_DATE        "DATE"
 #define LSST_LP_LOG         "LOG"
+#define LSST_LP_LABEL       "LABEL"
 #define LSST_LP_LEVEL       "LEVEL"
 
 namespace lsst {
@@ -189,14 +190,14 @@ public:
     /**
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
-     * LEVEL, LOG, TIMESTAMP, and DATE.  
+     * LEVEL, LOG, LABEL, TIMESTAMP, and DATE.
      */
     void addProperties(const lsst::daf::base::PropertySet& props);
 
     /**
      * add all of the properties found in the given PropertySet.  
      * This will make sure not to overwrite critical properties, 
-     * LEVEL, LOG, TIMESTAMP, and DATE.  
+     * LEVEL, LOG, LABEL, TIMESTAMP, and DATE.
      */
     void addProperties(const lsst::daf::base::PropertySet::Ptr& props) {
         addProperties(*props);

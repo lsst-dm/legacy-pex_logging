@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -34,6 +34,7 @@ using lsst::pex::logging::LogRecord;
 using lsst::pex::logging::LogFormatter;
 using lsst::pex::logging::BriefFormatter;
 using lsst::pex::logging::NetLoggerFormatter;
+using lsst::pex::logging::PrependedFormatter;
 using lsst::daf::base::PropertySet;
 using namespace std;
 
@@ -77,6 +78,7 @@ int main() {
     LogFormatter *brief = new BriefFormatter();
     LogFormatter *notsobrief = new BriefFormatter(true);
     LogFormatter *nl = new NetLoggerFormatter();
+    LogFormatter *prependedFormatter = new PrependedFormatter();
 
     cap.reset(new ostringstream());
     brief->write(cap.get(), lr1);
@@ -145,8 +147,23 @@ int main() {
     lr4.addProperty("LOG", string("tester"));
     brief->write(&cout, lr4); 
 
+    LogRecord lr5(1, 5);
+    lr5.addComment("formatter test");
+    lr5.addProperty("LOG", string("tester5"));
+    lr5.addProperty("LABEL", string("{'patch': 0}"));
+    cap.reset(new ostringstream());
+    prependedFormatter->write(cap.get(), lr5);
+    msg = cap->str();
+    cout << "[" << msg << "]" << endl;
+    Assert(msg.find("{'patch': 0}") != string::npos,
+           "Prepended formatting miswrote label");
+    Assert(msg.find("tester5: formatter test\n") != string::npos,
+           "Prepended formatting miswrote log message");
+    cout << "-------------" << endl;
+
     delete notsobrief;
     delete brief;
     delete nl;
+    delete prependedFormatter;
 
 }

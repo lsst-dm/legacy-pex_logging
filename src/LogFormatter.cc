@@ -246,6 +246,68 @@ void NetLoggerFormatter::write(std::ostream *strm, LogRecord const& rec) {
     if (wrote) (*strm) << std::endl;
 }
 
+///////////////////////////////////////////////////////////
+//  PrependedFormatter
+///////////////////////////////////////////////////////////
+
+PrependedFormatter::~PrependedFormatter() {}
+
+/*
+ * write out a log record to a stream
+ * @param strm   the output stream to write the record to
+ * @param rec    the record to write
+ */
+void PrependedFormatter::write(std::ostream *strm, LogRecord const& rec) {
+    int level = 0;
+    string levstr(": ");
+    try {
+        level = rec.data().get<int>(LSST_LP_LEVEL);
+        if (level >= Log::FATAL) levstr = " FATAL: ";
+        else if (level >= Log::WARN) levstr = " WARNING: ";
+        else if (level < Log::INFO) levstr = " DEBUG: ";
+    } catch (pexExcept::TypeError const & ex) {
+    } catch (pexExcept::NotFoundError const & ex) {}
+
+    string log;
+    try {
+        log = rec.data().get<string>(LSST_LP_LOG);
+    } catch (pexExcept::TypeError const & ex) {
+        log = "mis-specified_log_name";
+    } catch (pexExcept::NotFoundError const & ex) {}
+
+    std::vector<std::string> comments;
+    try {
+        comments = rec.data().getArray<string>(LSST_LP_COMMENT);
+    } catch (pexExcept::TypeError const & ex) {
+        comments.push_back("(mis-specified_comment)");
+    } catch (pexExcept::NotFoundError const & ex) {}
+
+    string label;
+    try {
+        label = rec.data().get<string>(LSST_LP_LABEL);
+    } catch (pexExcept::TypeError const & ex) {
+        label = "mis-specified_label";
+    } catch (pexExcept::NotFoundError const & ex) {}
+
+    for (auto const& vi : comments) {
+        (*strm) << label << ": " << log << levstr << vi << std::endl;
+    }
+
+    if (isVerbose() || rec.willShowAll()) {
+        std::vector<std::string> names = rec.data().paramNames(false);
+        for (auto const& vi : names) {
+            if (vi == LSST_LP_COMMENT || vi == LSST_LP_LOG || vi == LSST_LP_LABEL) continue;
+
+            PropertyPrinter pp(rec.data(), vi);
+            for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
+                (*strm) << "  " << vi << ": ";
+                pi.write(strm) << std::endl;
+            }
+        }
+        (*strm) << std::endl;
+    }
+}
+
 //@endcond
 }}} // end lsst::pex::logging
 

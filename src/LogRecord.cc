@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -139,6 +139,7 @@ size_t LogRecord::countParamValues() const {
 void LogRecord::addProperties(const PropertySet& props) {
     PropertySet::Ptr temp(props.deepCopy());
     if (temp->exists("LEVEL")) temp->remove("LEVEL");
+    if (temp->exists("LABEL")) temp->remove("LABEL");
     if (temp->exists("LOG")) temp->remove("LOG");
     if (temp->exists("TIMESTAMP")) temp->remove("TIMESTAMP");
     if (temp->exists("DATE")) temp->remove("DATE");

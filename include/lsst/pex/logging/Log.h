@@ -2,7 +2,7 @@
 
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -369,6 +369,14 @@ public:
             *_myShowAll = false;
         else
             _myShowAll.reset();  
+    }
+
+    /**
+     * add a label to the preamble property of this Log.  The label will
+     * be stored in the preamble property under the key name "LABEL".
+     */
+    void addLabel(const std::string& val) {
+        _preamble->add(LSST_LP_LABEL, val);
     }
 
     /**

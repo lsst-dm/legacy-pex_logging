@@ -57,6 +57,7 @@ class LogRecord;
  *
  *   Name        type      meaning 
  *    LOG        string    the name of the Log producing the message
+ *    LABEL      string    extra information associated with a Log
  *    COMMENT    string    a simple text message
  *    TIMESTAMP  DateTime  the timestamp when the message was recorded
  *    DATE       string    the value of TIMESTAMP in ISO format
@@ -236,6 +237,44 @@ private:
     TypeSymbolMap _tplookup;
     std::string _midfix;
 };
+
+/**
+ * \brief a formatter that prepends some preamble properties with each
+ * log record to help disentangle the messages from multiprocessing.
+ *
+ * This formatter has a normal mode and a verbose mode.  In normal mode,
+ * only the log name (LOG) and text messages (COMMENT) are printed, and
+ * prepended by the log label (LABEL) in each log record.  In verbose mode,
+ * all other properties are printed as well.
+ */
+class PrependedFormatter : public BriefFormatter {
+public:
+
+    explicit PrependedFormatter(bool verbose=false)
+        : BriefFormatter(verbose)
+    {}
+
+    PrependedFormatter(PrependedFormatter const& that)
+        : BriefFormatter(that)
+    {}
+
+    virtual ~PrependedFormatter();
+
+    PrependedFormatter& operator=(PrependedFormatter const& that) {
+        if (this == &that) return *this;
+
+        dynamic_cast<BriefFormatter*>(this)->operator=(that);
+        return *this;
+    }
+
+    /**
+     * write out a log record to a stream
+     * @param strm   the output stream to write the record to
+     * @param rec    the record to write
+     */
+    virtual void write(std::ostream *strm, LogRecord const& rec);
+};
+
 
 }}}     // end lsst::pex::logging
 
