@@ -77,20 +77,20 @@ void BriefFormatter::write(std::ostream *strm, LogRecord const& rec) {
         if (level >= Log::FATAL) levstr = " FATAL: ";
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
-    } catch (pexExcept::TypeError ex) { 
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::TypeError const & ex) {
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
-    } catch (pexExcept::TypeError ex) {
+    } catch (pexExcept::TypeError const & ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
-    } catch (pexExcept::TypeError ex) { 
+    } catch (pexExcept::TypeError const & ex) {
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     for (vi = comments.begin(); vi != comments.end(); ++vi) {
         (*strm) << log << levstr << *vi << std::endl;
@@ -134,20 +134,20 @@ void IndentedFormatter::write(std::ostream *strm, LogRecord const& rec) {
         if (level >= Log::FATAL) levstr = " FATAL: ";
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
-    } catch (pexExcept::TypeError ex) { 
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::TypeError const & ex) {
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
-    } catch (pexExcept::TypeError ex) {
+    } catch (pexExcept::TypeError const & ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
-    } catch (pexExcept::TypeError ex) { 
+    } catch (pexExcept::TypeError const & ex) {
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundError ex) {}
+    } catch (pexExcept::NotFoundError const & ex) {}
 
     std::ostringstream indentstr;
     if (level < 0) {
