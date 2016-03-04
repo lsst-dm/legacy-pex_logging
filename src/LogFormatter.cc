@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -52,26 +52,20 @@ namespace pexExcept = lsst::pex::exceptions;
 //  LogFormatter
 ///////////////////////////////////////////////////////////
 
-/**
- * delete a base LogFormatter
- */
-LogFormatter::~LogFormatter() { }
+LogFormatter::~LogFormatter() {}
 
 ///////////////////////////////////////////////////////////
 //  BriefFormatter
 ///////////////////////////////////////////////////////////
 
-/*
- * delete the formatter.  
- */
-BriefFormatter::~BriefFormatter() { }
+BriefFormatter::~BriefFormatter() {}
 
 /*
  * write out a log record to a stream
  * @param strm   the output stream to write the record to
  * @param rec    the record to write
  */
-void BriefFormatter::write(std::ostream *strm, const LogRecord& rec) {
+void BriefFormatter::write(std::ostream *strm, LogRecord const& rec) {
     string log;
     int level=0;
     string levstr(": ");
@@ -84,32 +78,31 @@ void BriefFormatter::write(std::ostream *strm, const LogRecord& rec) {
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
     } catch (pexExcept::TypeError ex) { 
-    } catch (pexExcept::NotFoundError ex) { }
+    } catch (pexExcept::NotFoundError ex) {}
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
     } catch (pexExcept::TypeError ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundError ex) { }
+    } catch (pexExcept::NotFoundError ex) {}
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
     } catch (pexExcept::TypeError ex) { 
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundError ex) { } 
+    } catch (pexExcept::NotFoundError ex) {}
 
-    for(vi = comments.begin(); vi != comments.end(); ++vi) {
+    for (vi = comments.begin(); vi != comments.end(); ++vi) {
         (*strm) << log << levstr << *vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
         std::vector<std::string> names = rec.data().paramNames(false);
-        for(vi = names.begin(); vi != names.end(); ++vi) {
-            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG)
-                continue;
+        for (vi = names.begin(); vi != names.end(); ++vi) {
+            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG) continue;
 
             PropertyPrinter pp(rec.data(), *vi);
-            for(PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
+            for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
                 (*strm) << "  " << *vi << ": ";
                 pi.write(strm) << std::endl;
             }
@@ -122,17 +115,14 @@ void BriefFormatter::write(std::ostream *strm, const LogRecord& rec) {
 //  IndentedFormatter
 ///////////////////////////////////////////////////////////
 
-/*
- * delete the formatter.  
- */
-IndentedFormatter::~IndentedFormatter() { }
+IndentedFormatter::~IndentedFormatter() {}
 
 /*
  * write out a log record to a stream
  * @param strm   the output stream to write the record to
  * @param rec    the record to write
  */
-void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
+void IndentedFormatter::write(std::ostream *strm, LogRecord const& rec) {
     string log;
     int level=0;
     string levstr(": ");
@@ -145,41 +135,40 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
         else if (level >= Log::WARN) levstr = " WARNING: ";
         else if (level < Log::INFO) levstr = " DEBUG: ";
     } catch (pexExcept::TypeError ex) { 
-    } catch (pexExcept::NotFoundError ex) { }
+    } catch (pexExcept::NotFoundError ex) {}
 
     try { 
         log = rec.data().get<string>(LSST_LP_LOG);
     } catch (pexExcept::TypeError ex) {
         log = "mis-specified_log_name";
-    } catch (pexExcept::NotFoundError ex) { }
+    } catch (pexExcept::NotFoundError ex) {}
 
     try {
         comments = rec.data().getArray<string>(LSST_LP_COMMENT);
     } catch (pexExcept::TypeError ex) { 
         comments.push_back("(mis-specified_comment)");
-    } catch (pexExcept::NotFoundError ex) { } 
+    } catch (pexExcept::NotFoundError ex) {}
 
     std::ostringstream indentstr;
     if (level < 0) {
         // indent the message
-        for(int i=level; i < 0; ++i) {
+        for (int i=level; i < 0; ++i) {
             indentstr << ' ';
         }
     }
     string indent(indentstr.str());
 
-    for(vi = comments.begin(); vi != comments.end(); ++vi) {
+    for (vi = comments.begin(); vi != comments.end(); ++vi) {
         (*strm) << indent << log << levstr << *vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
         std::vector<std::string> names = rec.data().paramNames(false);
-        for(vi = names.begin(); vi != names.end(); ++vi) {
-            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG)
-                continue;
+        for (vi = names.begin(); vi != names.end(); ++vi) {
+            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG) continue;
 
             PropertyPrinter pp(rec.data(), *vi);
-            for(PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
+            for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
                 (*strm) << indent << "  " << *vi << ": ";
                 pi.write(strm) << std::endl;
             }
@@ -195,13 +184,13 @@ void IndentedFormatter::write(std::ostream *strm, const LogRecord& rec) {
 
 const string NetLoggerFormatter::defaultValDelim(": ");
 
-NetLoggerFormatter::NetLoggerFormatter(const string& valueDelim) 
+NetLoggerFormatter::NetLoggerFormatter(string const& valueDelim)
     : LogFormatter(), _tplookup(), _midfix(valueDelim)
 { 
     loadTypeLookup();
 } 
 
-NetLoggerFormatter::~NetLoggerFormatter() { } 
+NetLoggerFormatter::~NetLoggerFormatter() {}
 
 #define LSST_TL_ADD(T, C) _tplookup[typeid(T).name()] = C
 
@@ -220,7 +209,7 @@ void NetLoggerFormatter::loadTypeLookup() {
 /**
  * copy another formatter into this one
  */
-NetLoggerFormatter& NetLoggerFormatter::operator=(const NetLoggerFormatter& that)
+NetLoggerFormatter& NetLoggerFormatter::operator=(NetLoggerFormatter const& that)
 {
     if (this == &that) return *this;
 
@@ -234,14 +223,14 @@ NetLoggerFormatter& NetLoggerFormatter::operator=(const NetLoggerFormatter& that
  * @param strm   the output stream to write the record to
  * @param rec    the record to write
  */
-void NetLoggerFormatter::write(std::ostream *strm, const LogRecord& rec) {
+void NetLoggerFormatter::write(std::ostream *strm, LogRecord const& rec) {
     string newl("\n");
     bool wrote = false;
     std::vector<std::string> comments;
     std::vector<std::string>::iterator vi;
 
     std::vector<std::string> names = rec.data().paramNames(false);
-    for(vi = names.begin(); vi != names.end(); ++vi) {
+    for (vi = names.begin(); vi != names.end(); ++vi) {
         char tp = _tplookup[rec.data().typeOf(*vi).name()];
         if (*vi == "DATE") 
             tp = 't';
@@ -250,7 +239,7 @@ void NetLoggerFormatter::write(std::ostream *strm, const LogRecord& rec) {
         
 
         PropertyPrinter pp(rec.data(), *vi);
-        for(PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
+        for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
             (*strm) << tp << " " << *vi << _midfix;
             pi.write(strm) << newl;
             if (!wrote) wrote = true;

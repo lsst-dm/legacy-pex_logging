@@ -2,7 +2,7 @@
 
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -73,25 +73,13 @@ class LogRecord;
 class LogFormatter {
 public:
 
-    /**
-     * create a base LogFormatter
-     */
-    LogFormatter() { }
+    LogFormatter() {}
 
-    /**
-     * create a copy of a LogFormatter
-     */ 
-    LogFormatter(const LogFormatter& that) { }
+    LogFormatter(LogFormatter const& that) {}
 
-    /**
-     * delete the formatter
-     */
     virtual ~LogFormatter();  
 
-    /**
-     * copy another formatter into this one
-     */
-    LogFormatter& operator=(const LogFormatter& that) { return *this; }
+    LogFormatter& operator=(LogFormatter const& that) { return *this; }
 
     /**
      * write out a log record to a stream
@@ -99,7 +87,7 @@ public:
      *                 the pointer is null, nothing is written.  
      * @param rec    the record to write
      */
-    virtual void write(std::ostream *strm, const LogRecord &rec) = 0;
+    virtual void write(std::ostream *strm, LogRecord const& rec) = 0;
 
 };
 
@@ -115,29 +103,19 @@ class BriefFormatter : public LogFormatter {
 public:
 
     /**
-     * create the formatter. 
      * @param verbose    all data property values will be printed.
      */
     explicit BriefFormatter(bool verbose=false) 
         : LogFormatter(), _doAll(verbose) 
-    { }
+    {}
 
-    /**
-     * create a copy of a LogFormatter
-     */ 
-    BriefFormatter(const BriefFormatter& that) 
+    BriefFormatter(BriefFormatter const& that)
         : LogFormatter(that), _doAll(that._doAll) 
-    { }
+    {}
 
-    /**
-     * delete the formatter
-     */
     virtual ~BriefFormatter();
 
-    /**
-     * copy another formatter into this one
-     */
-    BriefFormatter& operator=(const BriefFormatter& that) { 
+    BriefFormatter& operator=(BriefFormatter const& that) {
         if (this == &that) return *this;
 
         dynamic_cast<LogFormatter*>(this)->operator=(that);
@@ -167,7 +145,7 @@ public:
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
-    virtual void write(std::ostream *strm, const LogRecord& rec);
+    virtual void write(std::ostream *strm, LogRecord const& rec);
 
 private:
 
@@ -184,29 +162,19 @@ class IndentedFormatter : public BriefFormatter {
 public: 
 
     /**
-     * create the formatter. 
      * @param verbose    all data property values will be printed.
      */
     explicit IndentedFormatter(bool verbose=false) 
         : BriefFormatter(verbose)
-    { }
+    {}
 
-    /**
-     * create a copy of a LogFormatter
-     */ 
-    IndentedFormatter(const IndentedFormatter& that) 
+    IndentedFormatter(IndentedFormatter const& that)
         : BriefFormatter(that)
-    { }
+    {}
 
-    /**
-     * delete the formatter
-     */
     virtual ~IndentedFormatter();
 
-    /**
-     * copy another formatter into this one
-     */
-    IndentedFormatter& operator=(const IndentedFormatter& that) { 
+    IndentedFormatter& operator=(IndentedFormatter const& that) {
         if (this == &that) return *this;
 
         dynamic_cast<BriefFormatter*>(this)->operator=(that);
@@ -218,7 +186,7 @@ public:
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
-    virtual void write(std::ostream *strm, const LogRecord& rec);
+    virtual void write(std::ostream *strm, LogRecord const& rec);
 };
 
 /**
@@ -234,26 +202,17 @@ public:
      * @param valueDelim  the string to use as the delimiter between 
      *                      the name and the value.  The default is ":".
      */
-    explicit NetLoggerFormatter(const std::string& valueDelim = defaultValDelim);
+    explicit NetLoggerFormatter(std::string const& valueDelim = defaultValDelim);
 
-    /**
-     * create a copy
-     */
-    NetLoggerFormatter(const NetLoggerFormatter& that) 
+    NetLoggerFormatter(NetLoggerFormatter const& that)
         : LogFormatter(that), _tplookup(), _midfix(that._midfix)
     { 
         loadTypeLookup();
     }
 
-    /**
-     * delete the formatter
-     */
     virtual ~NetLoggerFormatter();
 
-    /**
-     * copy another formatter into this one
-     */
-    NetLoggerFormatter& operator=(const NetLoggerFormatter& that);
+    NetLoggerFormatter& operator=(NetLoggerFormatter const& that);
 
     /**
      * return the string used to separate a property name and its value 
@@ -266,7 +225,7 @@ public:
      * @param strm   the output stream to write the record to
      * @param rec    the record to write
      */
-    virtual void write(std::ostream *strm, const LogRecord& rec);
+    virtual void write(std::ostream *strm, LogRecord const& rec);
 
     static const std::string defaultValDelim;
 
