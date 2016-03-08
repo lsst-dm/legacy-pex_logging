@@ -70,7 +70,6 @@ void BriefFormatter::write(std::ostream *strm, LogRecord const& rec) {
     int level=0;
     string levstr(": ");
     std::vector<std::string> comments;
-    std::vector<std::string>::iterator vi;
 
     try {
         level = rec.data().get<int>(LSST_LP_LEVEL);
@@ -92,18 +91,18 @@ void BriefFormatter::write(std::ostream *strm, LogRecord const& rec) {
         comments.push_back("(mis-specified_comment)");
     } catch (pexExcept::NotFoundError const & ex) {}
 
-    for (vi = comments.begin(); vi != comments.end(); ++vi) {
-        (*strm) << log << levstr << *vi << std::endl;
+    for (auto const& vi : comments) {
+        (*strm) << log << levstr << vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
         std::vector<std::string> names = rec.data().paramNames(false);
-        for (vi = names.begin(); vi != names.end(); ++vi) {
-            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG) continue;
+        for (auto const& vi : names) {
+            if (vi == LSST_LP_COMMENT || vi == LSST_LP_LOG) continue;
 
-            PropertyPrinter pp(rec.data(), *vi);
+            PropertyPrinter pp(rec.data(), vi);
             for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
-                (*strm) << "  " << *vi << ": ";
+                (*strm) << "  " << vi << ": ";
                 pi.write(strm) << std::endl;
             }
         }
@@ -127,7 +126,6 @@ void IndentedFormatter::write(std::ostream *strm, LogRecord const& rec) {
     int level=0;
     string levstr(": ");
     std::vector<std::string> comments;
-    std::vector<std::string>::iterator vi;
 
     try {
         level = rec.data().get<int>(LSST_LP_LEVEL);
@@ -158,18 +156,18 @@ void IndentedFormatter::write(std::ostream *strm, LogRecord const& rec) {
     }
     string indent(indentstr.str());
 
-    for (vi = comments.begin(); vi != comments.end(); ++vi) {
-        (*strm) << indent << log << levstr << *vi << std::endl;
+    for (auto const& vi : comments) {
+        (*strm) << indent << log << levstr << vi << std::endl;
     }
 
     if (isVerbose() || rec.willShowAll()) {
         std::vector<std::string> names = rec.data().paramNames(false);
-        for (vi = names.begin(); vi != names.end(); ++vi) {
-            if (*vi == LSST_LP_COMMENT || *vi == LSST_LP_LOG) continue;
+        for (auto const& vi : names) {
+            if (vi == LSST_LP_COMMENT || vi == LSST_LP_LOG) continue;
 
-            PropertyPrinter pp(rec.data(), *vi);
+            PropertyPrinter pp(rec.data(), vi);
             for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
-                (*strm) << indent << "  " << *vi << ": ";
+                (*strm) << indent << "  " << vi << ": ";
                 pi.write(strm) << std::endl;
             }
         }
@@ -227,20 +225,19 @@ void NetLoggerFormatter::write(std::ostream *strm, LogRecord const& rec) {
     string newl("\n");
     bool wrote = false;
     std::vector<std::string> comments;
-    std::vector<std::string>::iterator vi;
 
     std::vector<std::string> names = rec.data().paramNames(false);
-    for (vi = names.begin(); vi != names.end(); ++vi) {
-        char tp = _tplookup[rec.data().typeOf(*vi).name()];
-        if (*vi == "DATE") 
+    for (auto const& vi : names) {
+        char tp = _tplookup[rec.data().typeOf(vi).name()];
+        if (vi == "DATE")
             tp = 't';
         else if (tp == 0) 
             tp = '?';
         
 
-        PropertyPrinter pp(rec.data(), *vi);
+        PropertyPrinter pp(rec.data(), vi);
         for (PropertyPrinter::iterator pi=pp.begin(); pi.notAtEnd(); ++pi) {
-            (*strm) << tp << " " << *vi << _midfix;
+            (*strm) << tp << " " << vi << _midfix;
             pi.write(strm) << newl;
             if (!wrote) wrote = true;
         }
