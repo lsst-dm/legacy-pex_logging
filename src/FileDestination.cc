@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -32,7 +32,7 @@ namespace logging {
 
 /**
  * create a file destination.  If the file does not exist, it will 
- * be created; otherwise, messages will be appended.  The IndentedFormatter
+ * be created; otherwise, messages will be appended.  The PrependedFormatter
  * will be used to format the messages
  * @param filepath    the path to the log file to write messages to.
  * @param threshold   the minimum volume level required to pass a message
@@ -45,7 +45,7 @@ FileDestination::FileDestination(const boost::filesystem::path& filepath,
                                  bool verbose, int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath.string().c_str(), 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }
@@ -53,7 +53,7 @@ FileDestination::FileDestination(const std::string& filepath, bool verbose,
                                  int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath.c_str(), 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }
@@ -61,7 +61,7 @@ FileDestination::FileDestination(const char *filepath, bool verbose,
                                  int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath, 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new IndentedFormatter(verbose)), 
+                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }

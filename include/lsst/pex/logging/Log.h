@@ -2,7 +2,7 @@
 
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -372,6 +372,14 @@ public:
     }
 
     /**
+     * add a label to the preamble property of this Log.  The label will
+     * be stored in the preamble property under the key name "LABEL".
+     */
+    void addLabel(const std::string& val) {
+        _preamble->add(LSST_LP_LABEL, val);
+    }
+
+    /**
      * add a property to the preamble
      */
     template <class T>
@@ -540,7 +548,7 @@ public:
      * add a destination to this log.  The destination stream will included
      * in all child Logs created from this log after a call to this function.
      * All previously created logs, including ancestor logs, will be 
-     * unaffected.  The IndentedFormatter format will be used with this new 
+     * unaffected.  The PrependedFormatter format will be used with this new
      * destination.  
      * @param destination   the stream to send messages to
      * @param threshold     the importance threshold to use to filter messages

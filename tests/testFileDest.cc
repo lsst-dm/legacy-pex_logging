@@ -1,6 +1,6 @@
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016 LSST Corporation.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -29,7 +29,7 @@ using lsst::pex::logging::Log;
 using lsst::pex::logging::FileDestination;
 using lsst::pex::logging::LogDestination;
 using lsst::pex::logging::LogFormatter;
-using lsst::pex::logging::IndentedFormatter;
+using lsst::pex::logging::PrependedFormatter;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {
@@ -44,7 +44,7 @@ int main() {
     lsst::pex::logging::LogDestination *ld = new lsst::pex::logging::FileDestination(filepath, threshold);
     delete ld;
 
-    boost::shared_ptr<LogFormatter> brief(new IndentedFormatter());
+    boost::shared_ptr<LogFormatter> brief(new PrependedFormatter());
 
     boost::shared_ptr<LogDestination> 
         shy(new FileDestination("tests/testFileDestination-out.txt", true));
