@@ -34,7 +34,7 @@
 #include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/PropertySet.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/any.hpp>
 #include <string>
 #include <sstream>

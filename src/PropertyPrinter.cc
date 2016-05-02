@@ -76,12 +76,12 @@ DateTimePrinterList::~DateTimePrinterList() { }
 DateTimePrinterList::iterator DateTimePrinterList::begin() const { 
     PrinterIter *it = new DateTimePrinterIter(_list.begin(), 
                                               _list.begin(), _list.end());
-    return iterator(boost::shared_ptr<PrinterIter>(it));
+    return iterator(std::shared_ptr<PrinterIter>(it));
 }
 DateTimePrinterList::iterator DateTimePrinterList::last() const { 
     PrinterIter *it = new DateTimePrinterIter(_list.end()-1, 
                                               _list.begin(), _list.end());
-    return iterator(boost::shared_ptr<PrinterIter>(it));
+    return iterator(std::shared_ptr<PrinterIter>(it));
 }
 
 PrinterList* makeDateTimePrinter(const PropertySet& prop, 
@@ -102,12 +102,12 @@ BoolPrinterList::~BoolPrinterList() { }
 BoolPrinterList::iterator BoolPrinterList::begin() const { 
     PrinterIter *it = new BoolPrinterIter(_list.begin(), 
                                           _list.begin(), _list.end());
-    return iterator(boost::shared_ptr<PrinterIter>(it));
+    return iterator(std::shared_ptr<PrinterIter>(it));
 }
 BoolPrinterList::iterator BoolPrinterList::last() const { 
     PrinterIter *it = new BoolPrinterIter(_list.end()-1, 
                                           _list.begin(), _list.end());
-    return iterator(boost::shared_ptr<PrinterIter>(it));
+    return iterator(std::shared_ptr<PrinterIter>(it));
 }
 
 PrinterList* makeBoolPrinter(const PropertySet& prop, 
@@ -143,7 +143,7 @@ PropertyPrinter::PropertyPrinter(const PropertySet& prop,
     if (_list.get() == 0) {
         PropertySet tmp;
         tmp.set(name, "<unprintable>");
-        _list = boost::shared_ptr<PrinterList>(fact.makePrinter(tmp, name));
+        _list = std::shared_ptr<PrinterList>(fact.makePrinter(tmp, name));
     }
 }
  

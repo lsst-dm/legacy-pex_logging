@@ -38,7 +38,7 @@
 #include <vector>
 #include <list>
 #include <cstdarg>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // If the compiler does not support attributes, disable them
 #ifndef __GNUC__
@@ -226,7 +226,7 @@ public:
      *                         The default is false, indicating that their 
      *                         display must be turned on as needed.  
      */
-    Log(const std::list<boost::shared_ptr<LogDestination> >& destinations, 
+    Log(const std::list<std::shared_ptr<LogDestination> >& destinations, 
         const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO,
         bool defaultShowAll=false);
@@ -570,7 +570,7 @@ public:
      * @param formatter     the log formatter to use.
      */
     void addDestination(std::ostream &destination, int threshold, 
-                        const boost::shared_ptr<LogFormatter> &formatter);
+                        const std::shared_ptr<LogFormatter> &formatter);
 
     /**
      * add a destination to this log.  The destination stream will included
@@ -578,7 +578,7 @@ public:
      * All previously created logs, including ancestor logs, will be 
      * unaffected.  
      */
-    void addDestination(const boost::shared_ptr<LogDestination> &destination) {
+    void addDestination(const std::shared_ptr<LogDestination> &destination) {
         _destinations.push_back(destination);
     }
 
@@ -621,7 +621,7 @@ public:
      *                         will override this one.)
      */
     static void createDefaultLog(
-        const std::list<boost::shared_ptr<LogDestination> >& destinations, 
+        const std::list<std::shared_ptr<LogDestination> >& destinations, 
         const lsst::daf::base::PropertySet& preamble,
         const std::string& name="", const int threshold=INFO);
 
@@ -676,20 +676,20 @@ private:
     void completePreamble();
 
     int _threshold;
-    boost::shared_ptr<bool> _defShowAll;
-    boost::shared_ptr<bool> _myShowAll;
+    std::shared_ptr<bool> _defShowAll;
+    std::shared_ptr<bool> _myShowAll;
     std::string _name;
 
 protected: 
     /**
      * the memory of child importance thresholds.
      */
-    boost::shared_ptr<threshold::Memory> _thresholds;
+    std::shared_ptr<threshold::Memory> _thresholds;
 
     /**
      * the list of destinations to send messages to
      */
-    std::list<boost::shared_ptr<LogDestination> > _destinations;
+    std::list<std::shared_ptr<LogDestination> > _destinations;
 
     /**
      * the list preamble data properties that are included with every 

@@ -23,7 +23,7 @@
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/FileDestination.h"
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using lsst::pex::logging::Log;
 using lsst::pex::logging::FileDestination;
@@ -44,9 +44,9 @@ int main() {
     lsst::pex::logging::LogDestination *ld = new lsst::pex::logging::FileDestination(filepath, threshold);
     delete ld;
 
-    boost::shared_ptr<LogFormatter> brief(new PrependedFormatter());
+    std::shared_ptr<LogFormatter> brief(new PrependedFormatter());
 
-    boost::shared_ptr<LogDestination> 
+    std::shared_ptr<LogDestination> 
         shy(new FileDestination("tests/testFileDestination-out.txt", true));
     Log log;
     log.addDestination(shy);

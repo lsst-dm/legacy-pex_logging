@@ -84,8 +84,8 @@ Access to the logging classes from the pex library
 namespace boost { namespace filesystem {}}
 %}
 
-%ignore lsst::pex::logging::FileDestination::FileDestination(const boost::filesystem::path& filepath, const boost::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
-%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, const boost::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const boost::filesystem::path& filepath, const std::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
+%ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, const std::shared_ptr<lsst::pex::logging::LogFormatter>& formatter, int threshold, bool truncate);
 %ignore lsst::pex::logging::FileDestination::FileDestination(const boost::filesystem::path& filepath, bool verbose, int threshold, bool truncate);
 %ignore lsst::pex::logging::FileDestination::FileDestination(const char *filepath, bool verbose, int threshold, bool truncate);
 
@@ -123,7 +123,7 @@ LoggingAddType(std::string, String)
     void addDestination(const std::string& filepath, bool verbose=false, 
                         int threshold=lsst::pex::logging::threshold::PASS_ALL) 
     {
-        boost::shared_ptr<lsst::pex::logging::LogDestination> 
+        std::shared_ptr<lsst::pex::logging::LogDestination> 
             fdest(new lsst::pex::logging::FileDestination(filepath, verbose, 
                                                           threshold));
         $self->addDestination(fdest);

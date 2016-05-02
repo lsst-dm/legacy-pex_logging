@@ -35,7 +35,7 @@
 
 #include <string>
 #include <ostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace lsst {
 namespace pex {
@@ -75,7 +75,7 @@ public:
      *                       to 0.  
      */
     LogDestination(std::ostream *strm, 
-                   const boost::shared_ptr<LogFormatter>& formatter, 
+                   const std::shared_ptr<LogFormatter>& formatter, 
                    int threshold=threshold::PASS_ALL);
 
     /**
@@ -120,7 +120,7 @@ public:
 protected:
     int _threshold;   // the stream's threshold
     std::ostream *_strm;   // the output stream
-    boost::shared_ptr<LogFormatter> _frmtr;    // the formatter to use
+    std::shared_ptr<LogFormatter> _frmtr;    // the formatter to use
 };
 
 }}}     // end lsst::pex::logging

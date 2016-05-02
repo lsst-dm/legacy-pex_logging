@@ -33,7 +33,7 @@
 #include <string>
 #include <map>
 #include <ostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/tokenizer.hpp>
 
 #include "lsst/pex/logging/threshold/enum.h"

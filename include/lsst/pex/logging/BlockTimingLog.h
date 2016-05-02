@@ -35,7 +35,6 @@
 
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <boost/scoped_ptr.hpp>
 
 namespace lsst {
 namespace pex {
