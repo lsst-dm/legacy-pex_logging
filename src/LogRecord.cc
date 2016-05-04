@@ -28,7 +28,7 @@
 #include "lsst/pex/exceptions.h"
 #include "lsst/daf/base/DateTime.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <stdexcept>
 #include <time.h>
 
@@ -78,7 +78,7 @@ LogRecord::LogRecord(int threshold, int importance, const PropertySet& preamble,
         _data = preamble.deepCopy();
     }
     else {
-        _data = boost::shared_ptr<PropertySet>(new PropertySet());
+        _data = std::shared_ptr<PropertySet>(new PropertySet());
     }
     _init();
 }

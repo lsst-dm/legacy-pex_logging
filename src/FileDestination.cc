@@ -45,7 +45,7 @@ FileDestination::FileDestination(const boost::filesystem::path& filepath,
                                  bool verbose, int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath.string().c_str(), 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
+                     std::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }
@@ -53,7 +53,7 @@ FileDestination::FileDestination(const std::string& filepath, bool verbose,
                                  int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath.c_str(), 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
+                     std::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }
@@ -61,7 +61,7 @@ FileDestination::FileDestination(const char *filepath, bool verbose,
                                  int threshold, bool truncate)
     : LogDestination(new std::ofstream(filepath, 
                                        truncate ? std::ios::out : std::ios::app), 
-                     boost::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
+                     std::shared_ptr<LogFormatter>(new PrependedFormatter(verbose)),
                      threshold),
       _path(filepath) 
 { }

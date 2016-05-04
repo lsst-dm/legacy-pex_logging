@@ -27,7 +27,7 @@
 #include "lsst/pex/logging/DualLog.h"
 
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace lsst {
 namespace pex {
@@ -36,7 +36,7 @@ namespace logging {
 //@cond
 
 using namespace std;
-using boost::shared_ptr;
+using std::shared_ptr;
 using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////

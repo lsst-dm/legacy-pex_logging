@@ -27,7 +27,7 @@
 #include "lsst/pex/logging/ScreenLog.h"
 
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using namespace std;
 
@@ -36,7 +36,7 @@ namespace pex {
 namespace logging {
 
 //@cond
-using boost::shared_ptr;
+using std::shared_ptr;
 using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////

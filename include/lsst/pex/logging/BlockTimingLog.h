@@ -35,7 +35,9 @@
 
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <boost/scoped_ptr.hpp>
+
+#include <memory>
+#include <string>
 
 namespace lsst {
 namespace pex {
@@ -336,7 +338,7 @@ private:
     int _tracelev;
     int _pusageFlags, _usageFlags;
     std::string _funcName;
-    boost::scoped_ptr<struct rusage> _usage;
+    std::unique_ptr<struct rusage> _usage;
 };
 
 }}}     // end lsst::pex::logging

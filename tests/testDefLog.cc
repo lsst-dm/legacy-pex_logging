@@ -24,7 +24,7 @@
 #include "lsst/pex/logging/ScreenLog.h"
 #include <iostream>
 #include <exception>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using lsst::pex::logging::Log;
 using lsst::daf::base::Citizen;

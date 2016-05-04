@@ -62,7 +62,7 @@ public:
      *                       new messages will be appended to the file.
      */
     FileDestination(const std::string& filepath,
-                    const boost::shared_ptr<LogFormatter>& formatter, 
+                    const std::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
                     bool truncate=false) 
         : LogDestination(new std::ofstream(filepath.c_str(),
@@ -72,7 +72,7 @@ public:
           _path(filepath) 
     { }
     FileDestination(const char *filepath,
-                    const boost::shared_ptr<LogFormatter>& formatter, 
+                    const std::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
                     bool truncate=false)
         : LogDestination(new std::ofstream(filepath,
@@ -82,7 +82,7 @@ public:
           _path(filepath) 
     { }
     FileDestination(const boost::filesystem::path& filepath,
-                    const boost::shared_ptr<LogFormatter>& formatter, 
+                    const std::shared_ptr<LogFormatter>& formatter, 
                     int threshold=threshold::PASS_ALL,
                     bool truncate=false)
         : LogDestination(new std::ofstream(filepath.string().c_str(),

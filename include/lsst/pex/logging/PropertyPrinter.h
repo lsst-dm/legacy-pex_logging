@@ -185,7 +185,7 @@ std::ostream& TmplPrinterIter<T>::write(std::ostream *strm) const {
  */
 class WrappedPrinterIter : public PrinterIter {
 public:
-    WrappedPrinterIter(boost::shared_ptr<PrinterIter> iter) : _it(iter) { }
+    WrappedPrinterIter(std::shared_ptr<PrinterIter> iter) : _it(iter) { }
     virtual ~WrappedPrinterIter();
     virtual std::ostream& write(std::ostream *strm) const;
     virtual PrinterIter& operator++();
@@ -195,7 +195,7 @@ public:
     virtual bool notAtEnd() const;
     virtual bool notLTBegin() const;
 private:
-    boost::shared_ptr<PrinterIter> _it;
+    std::shared_ptr<PrinterIter> _it;
 };
 
 /**
@@ -283,14 +283,14 @@ typename PrinterList::iterator TmplPrinterList<T>::begin() const {
     PrinterIter *it = new delegateIter(BaseTmplPrinterList<T>::_list.begin(), 
                                        BaseTmplPrinterList<T>::_list.begin(), 
                                        BaseTmplPrinterList<T>::_list.end());
-    return PrinterList::iterator(boost::shared_ptr<PrinterIter>(it));
+    return PrinterList::iterator(std::shared_ptr<PrinterIter>(it));
 }
 template <class T>
 typename PrinterList::iterator TmplPrinterList<T>::last() const { 
     PrinterIter *it = new delegateIter(BaseTmplPrinterList<T>::_list.end()-1, 
                                        BaseTmplPrinterList<T>::_list.begin(), 
                                        BaseTmplPrinterList<T>::_list.end());
-    return PrinterList::iterator(boost::shared_ptr<PrinterIter>(it));
+    return PrinterList::iterator(std::shared_ptr<PrinterIter>(it));
 }
 
 /**
@@ -486,7 +486,7 @@ public:
 
 
 private:
-    boost::shared_ptr<PrinterList> _list;
+    std::shared_ptr<PrinterList> _list;
 };
 
 }}}     // end lsst::pex::logging

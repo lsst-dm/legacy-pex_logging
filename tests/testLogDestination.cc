@@ -23,7 +23,7 @@
 #include "lsst/pex/logging/LogDestination.h"
 #include "lsst/pex/logging/LogRecord.h"
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using lsst::pex::logging::LogRecord;
 using lsst::pex::logging::LogFormatter;
@@ -50,7 +50,7 @@ int main() {
     lr1.addComment("This is a test");
     lr2.addComment("This is a test");
 
-    boost::shared_ptr<LogFormatter> brief(new BriefFormatter());
+    std::shared_ptr<LogFormatter> brief(new BriefFormatter());
 
     LogDestination shy(&cerr, brief, 10);
     cerr << "Shy: " << endl;

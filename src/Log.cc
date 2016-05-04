@@ -31,7 +31,7 @@
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/ScreenLog.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace lsst {
 namespace pex {
@@ -42,7 +42,7 @@ namespace logging {
 using std::string;
 using std::list;
 using std::ostream;
-using boost::shared_ptr;
+using std::shared_ptr;
 using lsst::daf::base::PropertySet;
 
 ///////////////////////////////////////////////////////////

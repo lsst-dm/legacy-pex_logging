@@ -23,7 +23,7 @@
 #include "lsst/pex/logging.h"
 #include "lsst/pex/logging/ScreenLog.h"
 #include <iostream>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using lsst::pex::logging::Log;
 using lsst::pex::logging::ScreenLog;
@@ -34,7 +34,7 @@ using lsst::pex::logging::Prop;
 using lsst::pex::logging::RecordProperty;
 using lsst::daf::base::Citizen;
 using lsst::daf::base::PropertySet;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace std;
 
 void assure(bool mustBeTrue, const string& failureMsg) {

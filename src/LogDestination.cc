@@ -27,7 +27,7 @@
 #include "lsst/pex/logging/LogDestination.h"
 #include "lsst/pex/logging/LogRecord.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/any.hpp>
 
 using namespace std;
@@ -37,7 +37,7 @@ namespace pex {
 namespace logging {
 
 //@cond
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /*
  * @brief create a destination with a threshold.  
