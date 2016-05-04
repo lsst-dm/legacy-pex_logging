@@ -36,6 +36,9 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+#include <memory>
+#include <string>
+
 namespace lsst {
 namespace pex {
 namespace logging {
