@@ -23,6 +23,7 @@
 import os
 import unittest
 
+import lsst.utils.tests as utilsTests
 from lsst.pex.logging import Log
 
 
@@ -34,6 +35,8 @@ class TestCase(unittest.TestCase):
         self.logger = Log(self.root, "test")
 
     def tearDown(self):
+        del self.root
+        del self.logger
         if os.path.exists(self.file):
             os.remove(self.file)
 
@@ -81,5 +84,18 @@ class TestCase(unittest.TestCase):
             fd.close()
 
 
+def suite():
+    utilsTests.init()
+
+    suites = []
+    suites += unittest.makeSuite(TestCase)
+    suites += unittest.makeSuite(utilsTests.MemoryTestCase)
+    return unittest.TestSuite(suites)
+
+
+def run(shouldExit=False):
+    utilsTests.run(suite(), shouldExit)
+
+
 if __name__ == "__main__":
-    unittest.main()
+    run(True)
