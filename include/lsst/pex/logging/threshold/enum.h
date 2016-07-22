@@ -45,7 +45,7 @@ enum { INHERIT = -9999 };
  * A lowest, most permissive possible threshold value, allowing all 
  * messages to pass through.  This is equivalent to the INHERIT value.
  */
-enum { PASS_ALL = INHERIT };
+enum Threshold { PASS_ALL = INHERIT };
 
 }}}} // end lsst::pex::logging::threshold
 
