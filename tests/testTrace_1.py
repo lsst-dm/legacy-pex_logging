@@ -30,7 +30,6 @@ import lsst.utils.tests
 
 import lsst.pex.logging as pexLog
 
-
 class TestTrace(unittest.TestCase):
 
     def testTraceFromPython(self):

@@ -1,3 +1,10 @@
 # -*- python -*-
 from lsst.sconsUtils import scripts
-scripts.BasicSConscript.python(['loggingLib'])
+scripts.BasicSConscript.pybind11(['blockTimingLog'])
+scripts.BasicSConscript.pybind11(['common'])
+scripts.BasicSConscript.pybind11(['debug'])
+scripts.BasicSConscript.pybind11(['log'])
+scripts.BasicSConscript.pybind11(['logRecord'])
+scripts.BasicSConscript.pybind11(['screenLog'])
+scripts.BasicSConscript.pybind11(['threshold'])
+scripts.BasicSConscript.pybind11(['trace'])
