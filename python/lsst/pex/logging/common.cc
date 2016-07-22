@@ -1,8 +1,6 @@
-// -*- lsst-c++ -*-
-
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016  AURA/LSST.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -19,34 +17,35 @@
  * 
  * You should have received a copy of the LSST License Statement and 
  * the GNU General Public License along with this program.  If not, 
- * see <http://www.lsstcorp.org/LegalNotices/>.
+ * see <https://www.lsstcorp.org/LegalNotices/>.
  */
- 
-/**
- * @file enum.h
- * @brief definitions of reusable enumerations
- * @author Ray Plante
- */
-#ifndef LSST_PEX_LOGGING_THRESHOLD_ENUM_H
-#define LSST_PEX_LOGGING_THRESHOLD_ENUM_H
+
+#include "pybind11/pybind11.h"
+
+#include "lsst/pex/logging/ScreenLog.h"
 
 namespace lsst {
 namespace pex {
 namespace logging {
-namespace threshold {
 
-/**
- * A threshold value that means use the value associated with a parent 
- * Log. 
- */
-enum { INHERIT = -9999 };
+const ScreenLog& _getDefaultAsScreenLog() {
+    return dynamic_cast<const ScreenLog&>(Log::getDefaultLog());
+}
+bool _DefaultLogIsScreenLog() {
+    return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0); 
+}
 
-/**
- * A lowest, most permissive possible threshold value, allowing all 
- * messages to pass through.  This is equivalent to the INHERIT value.
- */
-enum Threshold { PASS_ALL = INHERIT };
+}}}
 
-}}}} // end lsst::pex::logging::threshold
+using namespace lsst::pex::logging;
 
-#endif // end LSST_PEX_LOG_THRESHOLD_ENUM_H
+namespace py = pybind11;
+
+PYBIND11_PLUGIN(_common) {
+    py::module mod("_common", "Access to some common things for pex logging");
+
+    mod.def("_getDefaultAsScreenLog", _getDefaultAsScreenLog);
+    mod.def("_DefaultLogIsScreenLog", _DefaultLogIsScreenLog);
+
+    return mod.ptr();
+}
