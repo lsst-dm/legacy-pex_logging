@@ -28,7 +28,7 @@ import lsst.utils.tests as tests
 import lsst.pex.logging as pexLog
 
 def main():
-    pexLog.Trace_setVerbosity("lsst.afw", 3)
+    pexLog.Trace.setVerbosity("lsst.afw", 3)
     pexLog.Trace("lsst.afw", 2, "Hello")
     pexLog.Trace("lsst.afw", 5, "world")
 

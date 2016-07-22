@@ -44,7 +44,7 @@ if __name__ == "__main__":
     tlog = log.Log(logger, "test")
     tlog.log(log.Log.INFO, "I like your hat")
 
-    # test that "format", "infof", etc are ignored by swig.
+    # test that "format", "infof", etc are not exposed to Python
     assert(not hasattr(tlog, 'format'))
     assert(not hasattr(tlog, 'debugf'))
     assert(not hasattr(tlog, 'infof'))

@@ -19,6 +19,7 @@
 # the GNU General Public License along with this program.  If not, 
 # see <http://www.lsstcorp.org/LegalNotices/>.
 #
+from __future__ import absolute_import
 
-from loggingLib import *
+from .loggingLib import *
 from .version import *

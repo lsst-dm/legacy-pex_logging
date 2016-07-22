@@ -1,8 +1,6 @@
-// -*- lsst-c++ -*-
-
 /* 
  * LSST Data Management System
- * Copyright 2008, 2009, 2010 LSST Corporation.
+ * Copyright 2008-2016  AURA/LSST.
  * 
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
@@ -19,34 +17,29 @@
  * 
  * You should have received a copy of the LSST License Statement and 
  * the GNU General Public License along with this program.  If not, 
- * see <http://www.lsstcorp.org/LegalNotices/>.
+ * see <https://www.lsstcorp.org/LegalNotices/>.
  */
- 
-/**
- * @file enum.h
- * @brief definitions of reusable enumerations
- * @author Ray Plante
- */
-#ifndef LSST_PEX_LOGGING_THRESHOLD_ENUM_H
-#define LSST_PEX_LOGGING_THRESHOLD_ENUM_H
 
-namespace lsst {
-namespace pex {
-namespace logging {
-namespace threshold {
+#include "pybind11/pybind11.h"
 
-/**
- * A threshold value that means use the value associated with a parent 
- * Log. 
- */
-enum { INHERIT = -9999 };
+#include "lsst/pex/logging/Debug.h"
 
-/**
- * A lowest, most permissive possible threshold value, allowing all 
- * messages to pass through.  This is equivalent to the INHERIT value.
- */
-enum Threshold { PASS_ALL = INHERIT };
+using namespace lsst::pex::logging;
 
-}}}} // end lsst::pex::logging::threshold
+namespace py = pybind11;
 
-#endif // end LSST_PEX_LOG_THRESHOLD_ENUM_H
+PYBIND11_PLUGIN(_debug) {
+    py::module mod("_debug", "Access to the classes from the pex logging Debug library");
+
+    py::class_<Debug> cls(mod, "Debug", py::base<Log>());
+
+    cls.def(py::init<const std::string&, int>(),
+        py::arg("name"), py::arg("verbosity")=-1*Log::INHERIT_THRESHOLD);
+
+    cls.def(py::init<const Log&, const std::string&, int>(),
+        py::arg("parent"), py::arg("name"), py::arg("verbosity")=-1*Log::INHERIT_THRESHOLD);
+
+    cls.def("debug", (void (Debug::*)(int, const std::string&)) &Debug::debug);
+
+    return mod.ptr();
+}
