@@ -18,15 +18,15 @@ class BlockTimingLogTestCase(unittest.TestCase):
         pass
 
     def testINSTRUMValue(self):
-        self.assertEquals(BlockTimingLog.INSTRUM, -3)
+        self.assertEqual(BlockTimingLog.INSTRUM, -3)
 
     def testCreate(self):
         btl = self.log.createForBlock("api")
-        self.assertEquals(btl.getInstrumentationLevel(), BlockTimingLog.INSTRUM)
-        self.assertEquals(btl.getFunctionName(), "api")
+        self.assertEqual(btl.getInstrumentationLevel(), BlockTimingLog.INSTRUM)
+        self.assertEqual(btl.getFunctionName(), "api")
 
         btl = self.log.createForBlock("api", BlockTimingLog.INSTRUM+1)
-        self.assertEquals(btl.getInstrumentationLevel(), -2)
+        self.assertEqual(btl.getInstrumentationLevel(), -2)
 
     def testBlock(self):
         log = BlockTimingLog(self.log, "test")
@@ -47,20 +47,20 @@ class BlockTimingLogTestCase(unittest.TestCase):
         self.log.setUsageFlags(self.log.SUTIME)
         self.log.addUsageProps(lr)
         ps = lr.getProperties()
-        self.assert_(ps.exists("usertime"))
-        self.assert_(ps.exists("systemtime"))
-        self.assert_(not ps.exists("nswap"))
+        self.assertTrue(ps.exists("usertime"))
+        self.assertTrue(ps.exists("systemtime"))
+        self.assertFalse(ps.exists("nswap"))
 
         lr = LogRecord(0, 0, True)
         self.log.setUsageFlags(self.log.ALLUDATA)
         self.log.addUsageProps(lr)
         ps = lr.getProperties()
-        self.assert_(ps.exists("usertime"))
-        self.assert_(ps.exists("systemtime"))
-        self.assert_(ps.exists("maxrss"))
-        self.assert_(ps.exists("nswap"))
-        self.assert_(ps.exists("blocksin"))
-        self.assert_(ps.exists("blocksout"))
+        self.assertTrue(ps.exists("usertime"))
+        self.assertTrue(ps.exists("systemtime"))
+        self.assertTrue(ps.exists("maxrss"))
+        self.assertTrue(ps.exists("nswap"))
+        self.assertTrue(ps.exists("blocksin"))
+        self.assertTrue(ps.exists("blocksout"))
 
 __all__ = "BlockTimingLogTestCase".split()
 

@@ -49,8 +49,8 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 1)
-            self.assertEquals(len(filter(lambda l: l.find("bucket") >= 0, lines)), 0)
+            self.assertEqual(len(filter(lambda l: l.find("in file") >= 0, lines)), 1)
+            self.assertEqual(len(filter(lambda l: l.find("bucket") >= 0, lines)), 0)
         finally:
             fd.close()
 
@@ -63,8 +63,8 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
-            self.assertEquals(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
+            self.assertEqual(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
+            self.assertEqual(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
         finally:
             fd.close()
 
@@ -77,9 +77,9 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
-            self.assertEquals(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
-            self.assertEquals(len(filter(lambda l: l.find("LEVEL") >= 0, lines)), 1)
+            self.assertEqual(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
+            self.assertEqual(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
+            self.assertEqual(len(filter(lambda l: l.find("LEVEL") >= 0, lines)), 1)
         finally:
             fd.close()
 
