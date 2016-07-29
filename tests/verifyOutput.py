@@ -61,8 +61,8 @@ def compareOutput(test, canon, showdiff=True):
     @param canon      a file containing the "correct" results
     @param showdiff   if True (the default), print differences to stdout
     """
-    corr = file(canon)
-    act = file(test)
+    corr = open(canon, "r")
+    act = open(test, "r")
 
     fields = {}
     list = []
