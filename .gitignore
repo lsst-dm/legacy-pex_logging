@@ -16,6 +16,7 @@ doc/*.tag
 doc/*.inc
 doc/doxygen.conf
 tests/.tests
+tests/.cache
 version.py
 examples/debug
 examples/log

@@ -5,6 +5,7 @@ Tests of the BlockTestingLog
 from __future__ import with_statement
 
 import unittest
+import lsst.utils.tests
 
 from lsst.pex.logging import Log, BlockTimingLog, LogRecord
 
@@ -15,7 +16,7 @@ class BlockTimingLogTestCase(unittest.TestCase):
         self.log = BlockTimingLog(Log.getDefaultLog(), "test")
 
     def tearDown(self):
-        pass
+        del self.log
 
     def testINSTRUMValue(self):
         self.assertEqual(BlockTimingLog.INSTRUM, -3)
@@ -64,5 +65,14 @@ class BlockTimingLogTestCase(unittest.TestCase):
 
 __all__ = "BlockTimingLogTestCase".split()
 
+
+class TestMemory(lsst.utils.tests.MemoryTestCase):
+    pass
+
+
+def setup_module(module):
+    lsst.utils.tests.init()
+
 if __name__ == "__main__":
+    lsst.utils.tests.init()
     unittest.main()
