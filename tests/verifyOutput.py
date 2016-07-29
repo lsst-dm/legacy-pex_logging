@@ -30,6 +30,7 @@
 # results.  Note that when the underlying test program is changed, the file
 # containing the canonical results usually must change as well.  
 
+from __future__ import print_function
 import sys, os, re
 import subprocess 
 
@@ -47,7 +48,7 @@ def captureOutput(prog, outfile):
     out.close()
 
     if excode:
-        print >> sys.stdout, prog, "exited with status", excode
+        print(prog, "exited with status", excode, file=sys.stdout)
     return excode == 0
 
 def compareOutput(test, canon, showdiff=True):
@@ -81,17 +82,17 @@ def compareOutput(test, canon, showdiff=True):
             fields[match.group(1)] = match.group(2)
         else:
             if len(list) == 0:
-                print >> sys.stderr, "Actual longer than correct"
+                print("Actual longer than correct", file=sys.stderr)
                 return False
             check = list.pop(0)
             if line != check[0]:
-                print >> sys.stderr, "Mismatched lines:"
-                print >> sys.stderr, "Actual: " + line + "Correct: " + check[0]
+                print("Mismatched lines:", file=sys.stderr)
+                print("Actual: " + line + "Correct: " + check[0], file=sys.stderr)
                 return False
             if fields != check[1]:
-                print >> sys.stderr, "Mismatched fields:"
-                print >> sys.stderr, "Actual: " + line + repr(fields)
-                print >> sys.stderr, "Correct: " + check[0] + repr(check[1])
+                print("Mismatched fields:", file=sys.stderr)
+                print("Actual: " + line + repr(fields), file=sys.stderr)
+                print("Correct: " + check[0] + repr(check[1]), file=sys.stderr)
                 return False
                          
             fields = {}
@@ -99,22 +100,22 @@ def compareOutput(test, canon, showdiff=True):
 
     if len(fields) != 0:
         if len(list) == 0:
-            print >> sys.stderr, "Actual longer than correct"
+            print("Actual longer than correct", file=sys.stderr)
             return False
         check = list.pop(0)
         if check[0] is not None:
-            print >> sys.stderr, "Correct longer than actual"
+            print("Correct longer than actual", file=sys.stderr)
             return False
         if fields != check[1]:
-            print >> sys.stderr, "Mismatched fields:"
-            print >> sys.stderr, "Actual:"
-            print >> sys.stderr, repr(fields)
-            print >> sys.stderr, "Correct:"
-            print >> sys.stderr, repr(check[1])
+            print("Mismatched fields:", file=sys.stderr)
+            print("Actual:", file=sys.stderr)
+            print(repr(fields), file=sys.stderr)
+            print("Correct:", file=sys.stderr)
+            print(repr(check[1]), file=sys.stderr)
             return False
 
     if len(list) != 0:
-        print >> sys.stderr, "Correct longer than actual"
+        print("Correct longer than actual", file=sys.stderr)
         return False
 
     return True
