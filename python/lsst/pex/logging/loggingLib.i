@@ -148,6 +148,8 @@ bool _DefaultLogIsScreenLog() {
 %}
 
 %pythoncode %{
+from builtins import object
+import numbers
 import lsst.utils
 
 def getDefaultLog():
@@ -157,7 +159,7 @@ def getDefaultLog():
         return Log_getDefaultLog();
 
 
-class Prop:
+class Prop(object):
     """package a property to send it to a LogRecord"""
     def __init__(self, name, value):
         self.name = name
@@ -189,15 +191,15 @@ def _LogRecord_addProperty(self, name, val):
     @param val     that value to set for the property
     @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
-    if isinstance(val, (int, long)):
+    if isinstance(val, bool):
+        return self.addPropertyBool(name, val)
+    elif isinstance(val, numbers.Integral):
         if val > 2147483648 or val <= -2147483648:
             return self.addPropertyLongLong(name, val)
         else:
             return self.addPropertyInt(name, val)
     elif isinstance(val, float):
         return self.addPropertyDouble(name, val)
-    elif isinstance(val, bool):
-        return self.addPropertyBool(name, val)
     elif isinstance(val, str):
         return self.addPropertyString(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
@@ -207,7 +209,7 @@ def _LogRecord_addProperty(self, name, val):
         for v in val:
             self.addProperty(name, v)
     elif isinstance(val, dict):
-        for k in val.keys():
+        for k in val:
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
         raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
@@ -226,15 +228,15 @@ def _LogRecord_setProperty(self, name, val):
     @param val     that value to set for the property
     @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
-    if isinstance(val, (int, long)):
+    if isinstance(val, bool):
+        return self.setPropertyBool(name, val)
+    elif isinstance(val, numbers.Integral):
         if val > 2147483648 or val <= -2147483648:
             return self.setPropertyLongLong(name, val)
         else:
             return self.setPropertyInt(name, val)
     elif isinstance(val, float):
         return self.setPropertyDouble(name, val)
-    elif isinstance(val, bool):
-        return self.setPropertyBool(name, val)
     elif isinstance(val, string):
         return self.setPropertyBool(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
@@ -247,7 +249,7 @@ def _LogRecord_setProperty(self, name, val):
             self.addProperty(name, v)
     elif isinstance(val, dict):
         self.data().remove(name)
-        for k in val.keys():
+        for k in val:
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
         raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
@@ -281,7 +283,7 @@ def _Log_unregisterLogRec(self, logrec):
     if not hasattr(self.__dict__, '_logrecs'):
         self.__dict__['_logrecs'] = {}
     rep = repr(logrec)
-    if self.__dict__['_logrecs'].has_key(rep):
+    if rep in self.__dict__['_logrecs']:
         del (self.__dict__['_logrecs'])[rep]
 
 Log._registerLogRec = _Log_registerLogRec
@@ -335,7 +337,7 @@ def _LogRec_extended__lshift__(self, *args):
     elif isinstance(args[0], lsst.daf.base.PropertySet):
         self.addProperties(args[0])
     elif isinstance(args[0], dict):
-        for k in args[0].keys():
+        for k in args[0]:
             self.addProperty(k, args[0][k])
     else:
         # all other types, handle with the default behavior
