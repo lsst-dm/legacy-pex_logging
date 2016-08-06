@@ -24,13 +24,28 @@
 
 """test use of Trace from python"""
 
+import unittest
+
+import lsst.utils.tests
+
 import lsst.pex.logging as pexLog
 
 
-def main():
-    pexLog.Trace_setVerbosity("lsst.afw", 3)
-    pexLog.Trace("lsst.afw", 2, "Hello")
-    pexLog.Trace("lsst.afw", 5, "world")
+class TestTrace(unittest.TestCase):
+
+    def testTraceFromPython(self):
+        pexLog.Trace_setVerbosity("lsst.afw", 3)
+        pexLog.Trace("lsst.afw", 2, "Hello")
+        pexLog.Trace("lsst.afw", 5, "world")
+
+
+class TestMemory(lsst.utils.tests.MemoryTestCase):
+    pass
+
+
+def setup_module(module):
+    lsst.utils.tests.init()
 
 if __name__ == "__main__":
-    main()
+    lsst.utils.tests.init()
+    unittest.main()
