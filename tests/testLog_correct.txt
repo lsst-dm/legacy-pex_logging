@@ -57,11 +57,11 @@ Non-default Thresholds:
 
 test.grand.child FATAL: help: I've fallen
 test.grand.child FATAL: & I can't get up
-  RUNID: testRun
   LEVEL: 20
   NODE: 5
+  RUNID: testRun
 
 test.grand.child FATAL: never mind
-  RUNID: testRun
   LEVEL: 20
+  RUNID: testRun
 

@@ -32,14 +32,30 @@
 
 import sys
 import os
+import unittest
 
-testdir = os.path.dirname(sys.argv[0])
-if len(testdir) > 0:
-    sys.path.insert(0, testdir)
+import lsst.utils.tests
+
+testdir = os.path.dirname(__file__)
+origpath = list(sys.path)
+sys.path.insert(0, testdir)
 import verifyOutput  # noqa E402 module level import not at top of file
+sys.path = origpath
 
-okay = verifyOutput.test("testLogDestination")
-excode = 1
-if okay:
-    excode = 0
-sys.exit(excode)
+
+class TestLogDestination(lsst.utils.tests.TestCase):
+
+    def testLogDestination(self):
+        self.assertLogs("testLogDestination", workdir=os.path.dirname(__file__))
+
+
+class TestMemory(lsst.utils.tests.MemoryTestCase):
+    pass
+
+
+def setup_module(module):
+    lsst.utils.tests.init()
+
+if __name__ == "__main__":
+    lsst.utils.tests.init()
+    unittest.main()
