@@ -23,7 +23,7 @@
 import os
 import unittest
 
-import lsst.utils.tests as utilsTests
+import lsst.utils.tests
 from lsst.pex.logging import Log
 
 
@@ -49,8 +49,8 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 1)
-            self.assertEquals(len(filter(lambda l: l.find("bucket") >= 0, lines)), 0)
+            self.assertEqual(len([l for l in lines if l.find("in file") >= 0]), 1)
+            self.assertEqual(len([l for l in lines if l.find("bucket") >= 0]), 0)
         finally:
             fd.close()
 
@@ -63,8 +63,8 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
-            self.assertEquals(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
+            self.assertEqual(len([l for l in lines if l.find("in file") >= 0]), 0)
+            self.assertEqual(len([l for l in lines if l.find("debugging") >= 0]), 1)
         finally:
             fd.close()
 
@@ -77,25 +77,20 @@ class TestCase(unittest.TestCase):
         fd = open(self.file)
         try:
             lines = fd.readlines()
-            self.assertEquals(len(filter(lambda l: l.find("in file") >= 0, lines)), 0)
-            self.assertEquals(len(filter(lambda l: l.find("debugging") >= 0, lines)), 1)
-            self.assertEquals(len(filter(lambda l: l.find("LEVEL") >= 0, lines)), 1)
+            self.assertEqual(len([l for l in lines if l.find("in file") >= 0]), 0)
+            self.assertEqual(len([l for l in lines if l.find("debugging") >= 0]), 1)
+            self.assertEqual(len([l for l in lines if l.find("LEVEL") >= 0]), 1)
         finally:
             fd.close()
 
 
-def suite():
-    utilsTests.init()
-
-    suites = []
-    suites += unittest.makeSuite(TestCase)
-    suites += unittest.makeSuite(utilsTests.MemoryTestCase)
-    return unittest.TestSuite(suites)
+class TestMemory(lsst.utils.tests.MemoryTestCase):
+    pass
 
 
-def run(shouldExit=False):
-    utilsTests.run(suite(), shouldExit)
-
+def setup_module(module):
+    lsst.utils.tests.init()
 
 if __name__ == "__main__":
-    run(True)
+    lsst.utils.tests.init()
+    unittest.main()

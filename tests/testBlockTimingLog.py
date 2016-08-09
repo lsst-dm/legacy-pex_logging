@@ -4,33 +4,30 @@ Tests of the BlockTestingLog
 """
 from __future__ import with_statement
 
-import pdb                              # we may want to say pdb.set_trace()
-import os
-import sys
 import unittest
-import time
-import copy
-import random
+import lsst.utils.tests
 
 from lsst.pex.logging import Log, BlockTimingLog, LogRecord
+
 
 class BlockTimingLogTestCase(unittest.TestCase):
 
     def setUp(self):
         self.log = BlockTimingLog(Log.getDefaultLog(), "test")
+
     def tearDown(self):
-        pass
+        del self.log
 
     def testINSTRUMValue(self):
-        self.assertEquals(BlockTimingLog.INSTRUM, -3)
+        self.assertEqual(BlockTimingLog.INSTRUM, -3)
 
     def testCreate(self):
         btl = self.log.createForBlock("api")
-        self.assertEquals(btl.getInstrumentationLevel(), BlockTimingLog.INSTRUM)
-        self.assertEquals(btl.getFunctionName(), "api")
+        self.assertEqual(btl.getInstrumentationLevel(), BlockTimingLog.INSTRUM)
+        self.assertEqual(btl.getFunctionName(), "api")
 
         btl = self.log.createForBlock("api", BlockTimingLog.INSTRUM+1)
-        self.assertEquals(btl.getInstrumentationLevel(), -2)
+        self.assertEqual(btl.getInstrumentationLevel(), -2)
 
     def testBlock(self):
         log = BlockTimingLog(self.log, "test")
@@ -50,25 +47,32 @@ class BlockTimingLogTestCase(unittest.TestCase):
         lr = LogRecord(0, 0, True)
         self.log.setUsageFlags(self.log.SUTIME)
         self.log.addUsageProps(lr)
-        ps = lr.getProperties();
-        self.assert_(ps.exists("usertime"))
-        self.assert_(ps.exists("systemtime"))
-        self.assert_(not ps.exists("nswap"))
+        ps = lr.getProperties()
+        self.assertTrue(ps.exists("usertime"))
+        self.assertTrue(ps.exists("systemtime"))
+        self.assertFalse(ps.exists("nswap"))
 
         lr = LogRecord(0, 0, True)
         self.log.setUsageFlags(self.log.ALLUDATA)
         self.log.addUsageProps(lr)
-        ps = lr.getProperties();
-        self.assert_(ps.exists("usertime"))
-        self.assert_(ps.exists("systemtime"))
-        self.assert_(ps.exists("maxrss"))
-        self.assert_(ps.exists("nswap"))
-        self.assert_(ps.exists("blocksin"))
-        self.assert_(ps.exists("blocksout"))
+        ps = lr.getProperties()
+        self.assertTrue(ps.exists("usertime"))
+        self.assertTrue(ps.exists("systemtime"))
+        self.assertTrue(ps.exists("maxrss"))
+        self.assertTrue(ps.exists("nswap"))
+        self.assertTrue(ps.exists("blocksin"))
+        self.assertTrue(ps.exists("blocksout"))
 
 __all__ = "BlockTimingLogTestCase".split()
 
-if __name__ == "__main__":
-    unittest.main()
 
-        
+class TestMemory(lsst.utils.tests.MemoryTestCase):
+    pass
+
+
+def setup_module(module):
+    lsst.utils.tests.init()
+
+if __name__ == "__main__":
+    lsst.utils.tests.init()
+    unittest.main()

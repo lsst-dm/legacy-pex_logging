@@ -1,9 +1,9 @@
 // -*- lsst-c++ -*-
 
-/* 
+/*
  * LSST Data Management System
  * Copyright 2008-2016 LSST Corporation.
- * 
+ *
  * This product includes software developed by the
  * LSST Project (http://www.lsst.org/).
  *
@@ -11,17 +11,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the LSST License Statement and 
- * the GNU General Public License along with this program.  If not, 
+ *
+ * You should have received a copy of the LSST License Statement and
+ * the GNU General Public License along with this program.  If not,
  * see <http://www.lsstcorp.org/LegalNotices/>.
  */
- 
+
 %define logging_DOCSTRING
 "
 Access to the logging classes from the pex library
@@ -120,11 +120,11 @@ LoggingAddType(std::string, String)
 // LoggingAddType(lsst::daf::base::PropertySet::Ptr, PropertySetPtr)
 
 %extend lsst::pex::logging::Log {
-    void addDestination(const std::string& filepath, bool verbose=false, 
-                        int threshold=lsst::pex::logging::threshold::PASS_ALL) 
+    void addDestination(const std::string& filepath, bool verbose=false,
+                        int threshold=lsst::pex::logging::threshold::PASS_ALL)
     {
-        std::shared_ptr<lsst::pex::logging::LogDestination> 
-            fdest(new lsst::pex::logging::FileDestination(filepath, verbose, 
+        std::shared_ptr<lsst::pex::logging::LogDestination>
+            fdest(new lsst::pex::logging::FileDestination(filepath, verbose,
                                                           threshold));
         $self->addDestination(fdest);
     }
@@ -148,6 +148,8 @@ bool _DefaultLogIsScreenLog() {
 %}
 
 %pythoncode %{
+from builtins import object
+import numbers
 import lsst.utils
 
 def getDefaultLog():
@@ -157,7 +159,7 @@ def getDefaultLog():
         return Log_getDefaultLog();
 
 
-class Prop:
+class Prop(object):
     """package a property to send it to a LogRecord"""
     def __init__(self, name, value):
         self.name = name
@@ -169,17 +171,17 @@ class Prop:
 def _LogRecord_addProperty(self, name, val):
     """add a property with a default type.
 
-    Users can explicitly set the C++ type of a property that gets added by 
-    using the proper type-specific addProperty method (addPropertyBool(), 
+    Users can explicitly set the C++ type of a property that gets added by
+    using the proper type-specific addProperty method (addPropertyBool(),
     addPropertyLongLong(), etc.); the methods that are supported this way
-    are int, long, long long, float, double, bool, string, and PropertySet.  
-    This method will choose a type for the property based on the value.  
+    are int, long, long long, float, double, bool, string, and PropertySet.
+    This method will choose a type for the property based on the value.
 
-    If the value is a Python integer, then the value will be set based on 
-    its value:  if the value is out of range of a 32-bit integer, 
-    [-2147483648, 2147483648), it will be stored as a C++ int; out of that 
+    If the value is a Python integer, then the value will be set based on
+    its value:  if the value is out of range of a 32-bit integer,
+    [-2147483648, 2147483648), it will be stored as a C++ int; out of that
     range, the type will be long long.  All floating point numbers are stored
-    as C++ doubles.  Booleans and strings are stored as C++ bools and 
+    as C++ doubles.  Booleans and strings are stored as C++ bools and
     std::strings, respectively.  Lists are stored as arrays with the same
     mappings for the elements (but note that all values in the list must be
     of the same type).  Dictionaries are stored as PropertySets with similar
@@ -189,15 +191,15 @@ def _LogRecord_addProperty(self, name, val):
     @param val     that value to set for the property
     @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
-    if isinstance(val, (int, long)):
+    if isinstance(val, bool):
+        return self.addPropertyBool(name, val)
+    elif isinstance(val, numbers.Integral):
         if val > 2147483648 or val <= -2147483648:
             return self.addPropertyLongLong(name, val)
         else:
             return self.addPropertyInt(name, val)
     elif isinstance(val, float):
         return self.addPropertyDouble(name, val)
-    elif isinstance(val, bool):
-        return self.addPropertyBool(name, val)
     elif isinstance(val, str):
         return self.addPropertyString(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
@@ -207,7 +209,7 @@ def _LogRecord_addProperty(self, name, val):
         for v in val:
             self.addProperty(name, v)
     elif isinstance(val, dict):
-        for k in val.keys():
+        for k in val:
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
         raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
@@ -215,26 +217,26 @@ def _LogRecord_addProperty(self, name, val):
 def _LogRecord_setProperty(self, name, val):
     """add a property with a default type.
 
-    Users can explicitly set the C++ type of a property that gets added by 
-    using the proper type-specific addProperty method (addPropertyBool(), 
+    Users can explicitly set the C++ type of a property that gets added by
+    using the proper type-specific addProperty method (addPropertyBool(),
     addPropertyLongLong(), etc.); the methods that are supported this way
-    are int, long, long long, float, double, bool, string, and PropertySet.  
+    are int, long, long long, float, double, bool, string, and PropertySet.
     This method will choose a type for the property based on the value.
-    See addProperty() for an explanation of the default mappings. 
+    See addProperty() for an explanation of the default mappings.
 
     @param name    the name of the property
     @param val     that value to set for the property
     @exception pex.exceptions.TypeError   if the value is of an unsupported type.
     """
-    if isinstance(val, (int, long)):
+    if isinstance(val, bool):
+        return self.setPropertyBool(name, val)
+    elif isinstance(val, numbers.Integral):
         if val > 2147483648 or val <= -2147483648:
             return self.setPropertyLongLong(name, val)
         else:
             return self.setPropertyInt(name, val)
     elif isinstance(val, float):
         return self.setPropertyDouble(name, val)
-    elif isinstance(val, bool):
-        return self.setPropertyBool(name, val)
     elif isinstance(val, string):
         return self.setPropertyBool(name, val)
     elif isinstance(val, lsst.daf.base.PropertySet):
@@ -247,7 +249,7 @@ def _LogRecord_setProperty(self, name, val):
             self.addProperty(name, v)
     elif isinstance(val, dict):
         self.data().remove(name)
-        for k in val.keys():
+        for k in val:
             self.addProperty("%s.%s" % (name, k), val[k])
     else:
         raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
@@ -258,8 +260,8 @@ LogRecord.setProperty = _LogRecord_setProperty
 Log._swiglog_str = Log.log
 
 def _Log_log(self, verb, *args):
-    """send any number of strings, PropertySets, or other properties 
-    in a message to the Log.  
+    """send any number of strings, PropertySets, or other properties
+    in a message to the Log.
     """
     rec = LogRec(self, verb)
     for prop in args:
@@ -281,7 +283,7 @@ def _Log_unregisterLogRec(self, logrec):
     if not hasattr(self.__dict__, '_logrecs'):
         self.__dict__['_logrecs'] = {}
     rep = repr(logrec)
-    if self.__dict__['_logrecs'].has_key(rep):
+    if rep in self.__dict__['_logrecs']:
         del (self.__dict__['_logrecs'])[rep]
 
 Log._registerLogRec = _Log_registerLogRec
@@ -297,14 +299,14 @@ LogRec.__swiginit__ = LogRec.__init__
 def _LogRec_extended__init__(self, *args):
     """an extension to the swig-generated constructor that will register
     this instance with the parent logger.  It will be unregistered the
-    first time the endr manipulator is <<-ed on.  This will prevent this 
-    instance from being prematurely deleted by python's garbage collector. 
+    first time the endr manipulator is <<-ed on.  This will prevent this
+    instance from being prematurely deleted by python's garbage collector.
     """
 
     # call the original SWIG-generated constructor first
     LogRec.__swiginit__(self, *args)
 
-    # find the attached log 
+    # find the attached log
     if len(args) > 0:
         if isinstance(args[0], Log):
             self.__dict__['_theLog'] = args[0]
@@ -335,7 +337,7 @@ def _LogRec_extended__lshift__(self, *args):
     elif isinstance(args[0], lsst.daf.base.PropertySet):
         self.addProperties(args[0])
     elif isinstance(args[0], dict):
-        for k in args[0].keys():
+        for k in args[0]:
             self.addProperty(k, args[0][k])
     else:
         # all other types, handle with the default behavior
@@ -348,7 +350,7 @@ def _LogRec_extended__lshift__(self, *args):
         self._theLog._unregisterLogRec(self)
 
     return out
-        
+
 LogRec.__lshift__ = _LogRec_extended__lshift__
 
 # finally put an instance of endr at the module level for convenience
