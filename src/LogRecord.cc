@@ -101,9 +101,7 @@ long long LogRecord::utcnow() {
 }
 
 void LogRecord::setTimestamp() {
-    _data->set(LSST_LP_TIMESTAMP,
-               lsst::daf::base::DateTime(utcnow(),
-                                         lsst::daf::base::DateTime::UTC));
+    _data->set(LSST_LP_TIMESTAMP, DateTime(utcnow(), DateTime::UTC));
 }
 
 void LogRecord::setDate() {
@@ -111,7 +109,7 @@ void LogRecord::setDate() {
     if (! data().exists(LSST_LP_TIMESTAMP)) setTimestamp();
 
     char datestr[40];
-    struct timeval tv = _data->get<DateTime>(LSST_LP_TIMESTAMP).timeval();
+    struct timeval tv = _data->get<DateTime>(LSST_LP_TIMESTAMP).timeval(DateTime::UTC);
 
     struct tm timeinfo;
     time_t secs = (time_t) tv.tv_sec;
