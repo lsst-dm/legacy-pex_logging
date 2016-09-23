@@ -83,16 +83,16 @@ PYBIND11_PLUGIN(_log) {
 
     clsLogRec.def(py::init<Log&, int>());
 
-    clsLogRec.def("__lshift__", [](LogRec &l, const std::string& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, LogRec::Manip r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<int>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<long>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<long long>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<float>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<double>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<bool>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const RecordProperty<std::string>& r) {return l << r;}); 
-    clsLogRec.def("__lshift__", [](LogRec &l, const lsst::daf::base::PropertySet& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const std::string& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, LogRec::Manip r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<int>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<long>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<long long>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<float>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<double>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<bool>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const RecordProperty<std::string>& r) {return l << r;}); 
+    clsLogRec.def("__cpplshift__", [](LogRec &l, const lsst::daf::base::PropertySet& r) {return l << r;}); 
 
     py::enum_<LogRec::Manip>(clsLogRec, "Manip")
         .value("endr", LogRec::Manip::endr)
