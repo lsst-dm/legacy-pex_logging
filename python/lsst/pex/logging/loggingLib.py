@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import lsst.daf.base
 import lsst.utils
 
+from past.builtins import long
 from ._common import _DefaultLogIsScreenLog, _getDefaultAsScreenLog
 from ._trace import *
 from ._threshold import *
@@ -182,7 +183,6 @@ LogRecord.setProperty = _LogRecord_setProperty
 #LogRec.__init__ = _LogRec_extended__init__
 
 # now extend LogRec's << operator
-LogRec.__cpplshift__ = LogRec.__lshift__
 
 def _LogRec_extended__lshift__(self, *args):
     """an extension to the << operator to support C++-like interface.
