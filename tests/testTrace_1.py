@@ -30,11 +30,10 @@ import lsst.utils.tests
 
 import lsst.pex.logging as pexLog
 
-
 class TestTrace(unittest.TestCase):
 
     def testTraceFromPython(self):
-        pexLog.Trace_setVerbosity("lsst.afw", 3)
+        pexLog.Trace.setVerbosity("lsst.afw", 3)
         pexLog.Trace("lsst.afw", 2, "Hello")
         pexLog.Trace("lsst.afw", 5, "world")
 
