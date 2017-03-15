@@ -21,19 +21,21 @@
  */
 
 #include "pybind11/pybind11.h"
-#include "pybind11/operators.h"
 
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/FileDestination.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_log) {
-    py::module mod("_log", "Access to the classes from the pex logging Log library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<Log> cls(mod, "Log");
+PYBIND11_PLUGIN(log) {
+    py::module mod("log");
+
+    py::class_<Log, std::shared_ptr<Log>> cls(mod, "Log");
 
     cls.def_readonly_static("DEBUG", &Log::DEBUG);
     cls.def_readonly_static("INFO", &Log::INFO);
@@ -41,10 +43,10 @@ PYBIND11_PLUGIN(_log) {
     cls.def_readonly_static("INHERIT_THRESHOLD", &Log::INHERIT_THRESHOLD);
     cls.def_readonly_static("FATAL", &Log::FATAL);
 
-    cls.def(py::init<const int, const std::string &>(), py::arg("threshold") = Log::INFO,
-            py::arg("name") = "");
-    cls.def(py::init<const Log &, const std::string &, int>(), py::arg("parent"), py::arg("childName"),
-            py::arg("threshold") = Log::INHERIT_THRESHOLD);
+    cls.def(py::init<const int, const std::string &>(),
+            "threshold"_a = Log::INFO, "name"_a = "");
+    cls.def(py::init<const Log &, const std::string &, int>(),
+            "parent"_a, "childName"_a, "threshold"_a = Log::INHERIT_THRESHOLD);
 
     cls.def("getName", &Log::getName);
     cls.def("getThreshold", &Log::getThreshold);
@@ -68,8 +70,8 @@ PYBIND11_PLUGIN(_log) {
                         new lsst::pex::logging::FileDestination(filepath, verbose, threshold));
                 l.addDestination(fdest);
             },
-            py::arg("filepath"), py::arg("verbose") = false,
-            py::arg("threshold") = lsst::pex::logging::threshold::PASS_ALL);
+            "filepath"_a, "verbose"_a = false,
+            "threshold"_a = lsst::pex::logging::threshold::PASS_ALL);
     cls.def("markPersistent", &Log::markPersistent);
     cls.def_static("getDefaultLog", &Log::getDefaultLog);
     cls.def_static("closeDefaultLog", &Log::closeDefaultLog);
@@ -85,7 +87,7 @@ PYBIND11_PLUGIN(_log) {
     cls.def("fatal", (void (Log::*)(const std::string &)) & Log::fatal);
 
     /* LogRec */
-    py::class_<LogRec> clsLogRec(mod, "LogRec", py::base<LogRecord>());
+    py::class_<LogRec, std::shared_ptr<LogRec>, LogRecord> clsLogRec(mod, "LogRec");
 
     clsLogRec.def(py::init<Log &, int>());
 
@@ -104,3 +106,7 @@ PYBIND11_PLUGIN(_log) {
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

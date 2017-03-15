@@ -24,14 +24,17 @@
 
 #include "lsst/pex/logging/Trace.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_trace) {
-    py::module mod("_trace", "Access to the classes from the pex logging Trace library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<Trace> cls(mod, "Trace");
+PYBIND11_PLUGIN(trace) {
+    py::module mod("trace");
+
+    py::class_<Trace, std::shared_ptr<Trace>> cls(mod, "Trace");
 
 #if !LSST_NO_TRACE
     cls.def(py::init<const std::string &, const int, const char *>());
@@ -43,3 +46,7 @@ PYBIND11_PLUGIN(_trace) {
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

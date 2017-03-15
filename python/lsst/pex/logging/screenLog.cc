@@ -24,27 +24,34 @@
 
 #include "lsst/pex/logging/ScreenLog.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_screenLog) {
-    py::module mod("_screenLog", "Access to the classes from the pex logging ScreenLog library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<ScreenLog> cls(mod, "ScreenLog", py::base<Log>());
+PYBIND11_PLUGIN(screenLog) {
+    py::module mod("screenLog");
 
-    cls.def(py::init<bool, int>(), py::arg("verbose") = false, py::arg("threshold") = Log::INFO);
-    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), py::arg("preamble"),
-            py::arg("verbose") = false, py::arg("threshold") = Log::INFO);
+    py::class_<ScreenLog, std::shared_ptr<ScreenLog>, Log> cls(mod, "ScreenLog");
+
+    cls.def(py::init<bool, int>(), "verbose"_a = false, "threshold"_a = Log::INFO);
+    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), "preamble"_a,
+            "verbose"_a = false, "threshold"_a = Log::INFO);
     cls.def("getScreenThreshold", &ScreenLog::getScreenThreshold);
     cls.def("setScreenThreshold", &ScreenLog::setScreenThreshold);
     cls.def("setScreenVerbose", &ScreenLog::setScreenVerbose);
     cls.def("isScreenVerbose", &ScreenLog::isScreenVerbose);
     cls.def_static("createDefaultLog", (void (*)(bool, int)) & ScreenLog::createDefaultLog,
-                   py::arg("verbose") = false, py::arg("threshold") = Log::INFO);
+                   "verbose"_a = false, "threshold"_a = Log::INFO);
     cls.def_static("createDefaultLog",
                    (void (*)(const lsst::daf::base::PropertySet&, bool, int)) & ScreenLog::createDefaultLog,
-                   py::arg("preamble"), py::arg("verbose") = false, py::arg("threshold") = Log::INFO);
+                   "preamble"_a, "verbose"_a = false, "threshold"_a = Log::INFO);
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

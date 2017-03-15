@@ -24,25 +24,24 @@
 
 #include "lsst/pex/logging/ScreenLog.h"
 
+namespace py = pybind11;
+
 namespace lsst {
 namespace pex {
 namespace logging {
 
 const ScreenLog& _getDefaultAsScreenLog() { return dynamic_cast<const ScreenLog&>(Log::getDefaultLog()); }
 bool _DefaultLogIsScreenLog() { return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0); }
-}
-}
-}
 
-using namespace lsst::pex::logging;
-
-namespace py = pybind11;
-
-PYBIND11_PLUGIN(_common) {
-    py::module mod("_common", "Access to some common things for pex logging");
+PYBIND11_PLUGIN(common) {
+    py::module mod("common");
 
     mod.def("_getDefaultAsScreenLog", _getDefaultAsScreenLog);
     mod.def("_DefaultLogIsScreenLog", _DefaultLogIsScreenLog);
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

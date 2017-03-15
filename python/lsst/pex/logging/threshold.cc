@@ -21,18 +21,25 @@
  */
 
 #include "pybind11/pybind11.h"
-#include "pybind11/operators.h"
 
 #include "lsst/pex/logging/threshold/enum.h"
 
-using namespace lsst::pex::logging::threshold;
-
 namespace py = pybind11;
 
-PYBIND11_PLUGIN(_threshold) {
-    py::module mod("_threshold", "Access to the classes from the pex logging threshold library");
+namespace lsst {
+namespace pex {
+namespace logging {
+namespace threshold {
+
+PYBIND11_PLUGIN(threshold) {
+    py::module mod("threshold");
 
     py::enum_<Threshold>(mod, "Threshold").value("PASS_ALL", Threshold::PASS_ALL).export_values();
 
     return mod.ptr();
 }
+
+}  // threshold
+}  // logging
+}  // pex
+}  // lsst
