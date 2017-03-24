@@ -22,6 +22,8 @@
 
 #include "pybind11/pybind11.h"
 
+#include "_loggingLib.h"
+
 #include "lsst/pex/logging/ScreenLog.h"
 
 namespace py = pybind11;
@@ -31,8 +33,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(screenLog) {
-    py::module mod("screenLog");
+void defineScreenLog(py::module & mod) {
 
     py::class_<ScreenLog, std::shared_ptr<ScreenLog>, Log> cls(mod, "ScreenLog");
 
@@ -49,7 +50,6 @@ PYBIND11_PLUGIN(screenLog) {
                    (void (*)(const lsst::daf::base::PropertySet&, bool, int)) & ScreenLog::createDefaultLog,
                    "preamble"_a, "verbose"_a = false, "threshold"_a = Log::INFO);
 
-    return mod.ptr();
 }
 
 }  // logging

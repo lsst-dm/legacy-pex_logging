@@ -5,7 +5,7 @@ from past.builtins import long
 import lsst.pex.exceptions
 from lsst.utils import continueClass
 
-from .logRecord import LogRecord
+from ._loggingLib import LogRecord
 
 __all__ = []
 

@@ -22,6 +22,8 @@
 
 #include "pybind11/pybind11.h"
 
+#include "_loggingLib.h"
+
 #include "lsst/pex/logging/Log.h"
 #include "lsst/pex/logging/FileDestination.h"
 
@@ -32,8 +34,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(log) {
-    py::module mod("log");
+void defineLog(py::module & mod) {
 
     py::class_<Log, std::shared_ptr<Log>> cls(mod, "Log");
 
@@ -104,7 +105,6 @@ PYBIND11_PLUGIN(log) {
 
     py::enum_<LogRec::Manip>(clsLogRec, "Manip").value("endr", LogRec::Manip::endr).export_values();
 
-    return mod.ptr();
 }
 
 }  // logging

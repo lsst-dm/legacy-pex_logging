@@ -5,7 +5,7 @@ __all__ = ['Prop', 'endr', 'Rec']
 import lsst.daf.base
 from lsst.utils import continueClass
 
-from .log import LogRec
+from ._loggingLib import LogRec
 
 class Prop:
     """package a property to send it to a LogRecord"""

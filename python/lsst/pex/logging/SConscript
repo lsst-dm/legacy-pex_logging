@@ -1,10 +1,11 @@
 # -*- python -*-
 from lsst.sconsUtils import scripts
-scripts.BasicSConscript.pybind11(['blockTimingLog',
-                                  'common/common',
-                                  'debug',
-                                  'log/log',
-                                  'logRecord/logRecord',
-                                  'screenLog',
-                                  'threshold',
-                                  'trace'], addUnderscore=False)
+scripts.BasicSConscript.pybind11(['loggingLib/_loggingLib', ],
+	extraSrc = {'loggingLib/_loggingLib' : ['loggingLib/blockTimingLog.cc',
+                                     'loggingLib/common.cc',
+                                     'loggingLib/debug.cc',
+                                     'loggingLib/log.cc',
+                                     'loggingLib/logRecord.cc',
+                                     'loggingLib/screenLog.cc',
+                                     'loggingLib/threshold.cc',
+                                     'loggingLib/trace.cc']}, addUnderscore=False)

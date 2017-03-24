@@ -22,6 +22,8 @@
 
 #include "pybind11/pybind11.h"
 
+#include "_loggingLib.h"
+
 #include "lsst/pex/logging/Debug.h"
 
 namespace py = pybind11;
@@ -31,8 +33,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(debug) {
-    py::module mod("debug");
+void defineDebug(py::module & mod) {
 
     py::class_<Debug, std::shared_ptr<Debug>, Log> cls(mod, "Debug");
 
@@ -50,7 +51,6 @@ PYBIND11_PLUGIN(debug) {
 
     cls.def("debug", (void (Debug::*)(int, const std::string&)) & Debug::debug);
 
-    return mod.ptr();
 }
 
 }  // logging

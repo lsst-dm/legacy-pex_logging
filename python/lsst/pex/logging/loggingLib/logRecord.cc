@@ -22,6 +22,8 @@
 
 #include "pybind11/pybind11.h"
 
+#include "_loggingLib.h"
+
 #include "lsst/pex/logging/LogRecord.h"
 
 namespace py = pybind11;
@@ -31,8 +33,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(logRecord) {
-    py::module mod("logRecord");
+void defineLogRecord(py::module & mod) {
 
     py::class_<LogRecord, std::shared_ptr<LogRecord>> cls(mod, "LogRecord");
 
@@ -60,7 +61,6 @@ PYBIND11_PLUGIN(logRecord) {
     cls.def("getProperties", (lsst::daf::base::PropertySet & (LogRecord::*)()) & LogRecord::getProperties,
             py::return_value_policy::reference_internal);
 
-    return mod.ptr();
 }
 
 }  // logging

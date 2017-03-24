@@ -19,30 +19,28 @@
  * the GNU General Public License along with this program.  If not,
  * see <https://www.lsstcorp.org/LegalNotices/>.
  */
-
 #include "pybind11/pybind11.h"
 
-#include "lsst/pex/logging/Trace.h"
+#include "_loggingLib.h"
 
 namespace py = pybind11;
-using namespace pybind11::literals;
 
 namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(trace) {
-    py::module mod("trace");
+PYBIND11_PLUGIN(_loggingLib) {
+    py::module mod("_loggingLib");
 
-    py::class_<Trace, std::shared_ptr<Trace>> cls(mod, "Trace");
-
-#if !LSST_NO_TRACE
-    cls.def(py::init<const std::string &, const int, const char *>());
-#endif
-
-    cls.def_static("setVerbosity", (void (*)(const std::string &)) & Trace::setVerbosity);
-    cls.def_static("setVerbosity", (void (*)(const std::string &, const int)) & Trace::setVerbosity);
-    cls.def_static("getVerbosity", &Trace::getVerbosity);
+    // define functions should be called in dependency order
+    threshold::defineThreshold(mod);
+    defineCommon(mod);
+    defineLogRecord(mod);
+    defineLog(mod);
+    defineDebug(mod);
+    defineBlockTimingLog(mod);
+    defineScreenLog(mod);
+    defineTrace(mod);
 
     return mod.ptr();
 }
@@ -50,3 +48,4 @@ PYBIND11_PLUGIN(trace) {
 }  // logging
 }  // pex
 }  // lsst
+

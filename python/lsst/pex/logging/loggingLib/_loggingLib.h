@@ -20,9 +20,10 @@
  * see <https://www.lsstcorp.org/LegalNotices/>.
  */
 
-#include "pybind11/pybind11.h"
+#ifndef LSST__loggingLib_PYTHON_H
+#define LSST__loggingLib_PYTHON_H
 
-#include "lsst/pex/logging/ScreenLog.h"
+#include "pybind11/pybind11.h"
 
 namespace py = pybind11;
 
@@ -30,18 +31,22 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-const ScreenLog& _getDefaultAsScreenLog() { return dynamic_cast<const ScreenLog&>(Log::getDefaultLog()); }
-bool _DefaultLogIsScreenLog() { return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0); }
+void defineBlockTimingLog(py::module & mod);
+void defineCommon(py::module & mod);
+void defineDebug(py::module & mod);
+void defineLog(py::module & mod);
+void defineLogRecord(py::module & mod);
+void defineScreenLog(py::module & mod);
+void defineTrace(py::module & mod);
 
-PYBIND11_PLUGIN(common) {
-    py::module mod("common");
+namespace threshold {
 
-    mod.def("_getDefaultAsScreenLog", _getDefaultAsScreenLog);
-    mod.def("_DefaultLogIsScreenLog", _DefaultLogIsScreenLog);
+void defineThreshold(py::module & mod);
 
-    return mod.ptr();
-}
+}  // threshold
 
 }  // logging
 }  // pex
 }  // lsst
+
+#endif  // end LSST__loggingLib_PYTHON_H

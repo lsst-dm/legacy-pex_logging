@@ -21,7 +21,9 @@ from __future__ import absolute_import
 # see <http://www.lsstcorp.org/LegalNotices/>.
 #
 
-from .version import *
+from ._loggingLib import *
 
-from .loggingLib import *
+from .common import *
+from .log import *
+from .logRecord import *
 

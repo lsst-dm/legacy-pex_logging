@@ -22,6 +22,8 @@
 
 #include "pybind11/pybind11.h"
 
+#include "_loggingLib.h"
+
 #include "lsst/pex/logging/BlockTimingLog.h"
 
 namespace py = pybind11;
@@ -31,8 +33,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(blockTimingLog) {
-    py::module mod("blockTimingLog");
+void defineBlockTimingLog(py::module & mod) {
 
     py::class_<BlockTimingLog, std::shared_ptr<BlockTimingLog>, Log> cls(mod, "BlockTimingLog");
 
@@ -74,7 +75,6 @@ PYBIND11_PLUGIN(blockTimingLog) {
     cls.def("getFunctionName", &BlockTimingLog::getFunctionName);
     cls.def("addUsageProps", &BlockTimingLog::addUsageProps);
 
-    return mod.ptr();
 }
 
 }  // logging

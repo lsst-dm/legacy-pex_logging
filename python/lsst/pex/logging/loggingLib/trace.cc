@@ -22,24 +22,31 @@
 
 #include "pybind11/pybind11.h"
 
-#include "lsst/pex/logging/threshold/enum.h"
+#include "_loggingLib.h"
+
+#include "lsst/pex/logging/Trace.h"
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 namespace lsst {
 namespace pex {
 namespace logging {
-namespace threshold {
 
-PYBIND11_PLUGIN(threshold) {
-    py::module mod("threshold");
+void defineTrace(py::module & mod) {
 
-    py::enum_<Threshold>(mod, "Threshold").value("PASS_ALL", Threshold::PASS_ALL).export_values();
+    py::class_<Trace, std::shared_ptr<Trace>> cls(mod, "Trace");
 
-    return mod.ptr();
+#if !LSST_NO_TRACE
+    cls.def(py::init<const std::string &, const int, const char *>());
+#endif
+
+    cls.def_static("setVerbosity", (void (*)(const std::string &)) & Trace::setVerbosity);
+    cls.def_static("setVerbosity", (void (*)(const std::string &, const int)) & Trace::setVerbosity);
+    cls.def_static("getVerbosity", &Trace::getVerbosity);
+
 }
 
-}  // threshold
 }  // logging
 }  // pex
 }  // lsst
