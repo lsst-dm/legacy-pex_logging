@@ -2,7 +2,7 @@
 """
 Tests of the BlockTestingLog
 """
-from __future__ import with_statement
+from __future__ import absolute_import, division, print_function
 
 import unittest
 import lsst.utils.tests

@@ -30,7 +30,7 @@
 # results.  Note that when the underlying test program is changed, the file
 # containing the canonical results usually must change as well.
 
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 import os
 import re
 import subprocess

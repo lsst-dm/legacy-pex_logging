@@ -33,6 +33,8 @@ namespace pex {
 namespace logging {
 
 PYBIND11_PLUGIN(log) {
+    py::module::import("lsst.daf.base");
+
     py::module mod("log");
 
     py::class_<Log, std::shared_ptr<Log>> cls(mod, "Log");
