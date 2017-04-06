@@ -24,14 +24,17 @@
 
 #include "lsst/pex/logging/BlockTimingLog.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_blockTimingLog) {
-    py::module mod("_blockTimingLog", "Access to the classes from the pex logging BlockTimingLog library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<BlockTimingLog> cls(mod, "BlockTimingLog", py::base<Log>());
+PYBIND11_PLUGIN(blockTimingLog) {
+    py::module mod("blockTimingLog");
+
+    py::class_<BlockTimingLog, std::shared_ptr<BlockTimingLog>, Log> cls(mod, "BlockTimingLog");
 
     py::enum_<BlockTimingLog::usageData>(cls, "usageData")
             .value("NOUDATA", BlockTimingLog::usageData::NOUDATA)
@@ -50,9 +53,9 @@ PYBIND11_PLUGIN(_blockTimingLog) {
             .value("PARENTUDATA", BlockTimingLog::usageData::PARENTUDATA)
             .export_values();
 
-    cls.def(py::init<const Log&, const std::string&, int, int, const std::string&>(), py::arg("parent"),
-            py::arg("name"), py::arg("tracelev") = BlockTimingLog::INSTRUM,
-            py::arg("usageFlags") = BlockTimingLog::PARENTUDATA, py::arg("funcName") = "");
+    cls.def(py::init<const Log&, const std::string&, int, int, const std::string&>(),
+            "parent"_a, "name"_a, "tracelev"_a = BlockTimingLog::INSTRUM,
+            "usageFlags"_a = BlockTimingLog::PARENTUDATA, "funcName"_a = "");
 
     cls.def_readonly_static("INSTRUM", &BlockTimingLog::INSTRUM);
     cls.def_readonly_static("STATUS", &BlockTimingLog::STATUS);
@@ -62,8 +65,8 @@ PYBIND11_PLUGIN(_blockTimingLog) {
     cls.def("getUsageFlags", &BlockTimingLog::getUsageFlags);
     cls.def("setUsageFlags", &BlockTimingLog::setUsageFlags);
     cls.def("addUsageFlags", &BlockTimingLog::addUsageFlags);
-    cls.def("createForBlock", &BlockTimingLog::createForBlock, py::arg("name"),
-            py::arg("tracelev") = Log::INHERIT_THRESHOLD, py::arg("funcName") = "");
+    cls.def("createForBlock", &BlockTimingLog::createForBlock, "name"_a,
+            "tracelev"_a = Log::INHERIT_THRESHOLD, "funcName"_a = "");
     cls.def("start", (void (BlockTimingLog::*)(void)) & BlockTimingLog::start);
     cls.def("start", (void (BlockTimingLog::*)(const std::string&)) & BlockTimingLog::start);
     cls.def("done", &BlockTimingLog::done);
@@ -73,3 +76,7 @@ PYBIND11_PLUGIN(_blockTimingLog) {
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

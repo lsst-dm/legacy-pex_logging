@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 #
 # LSST Data Management System
 # Copyright 2008, 2009, 2010 LSST Corporation.
@@ -20,7 +20,15 @@ from __future__ import absolute_import
 # the GNU General Public License along with this program.  If not,
 # see <http://www.lsstcorp.org/LegalNotices/>.
 #
-from __future__ import absolute_import
 
-from .loggingLib import *
 from .version import *
+
+from .common import *
+from .trace import *
+from .threshold import *
+from .logRecord import *
+from .log import *
+from .debug import *
+from .blockTimingLog import *
+from .screenLog import *
+

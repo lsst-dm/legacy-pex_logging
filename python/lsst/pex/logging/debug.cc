@@ -24,22 +24,35 @@
 
 #include "lsst/pex/logging/Debug.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_debug) {
-    py::module mod("_debug", "Access to the classes from the pex logging Debug library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<Debug> cls(mod, "Debug", py::base<Log>());
+PYBIND11_PLUGIN(debug) {
+    py::module mod("debug");
 
-    cls.def(py::init<const std::string&, int>(), py::arg("name"),
-            py::arg("verbosity") = -1 * Log::INHERIT_THRESHOLD);
+    py::class_<Debug, std::shared_ptr<Debug>, Log> cls(mod, "Debug");
 
-    cls.def(py::init<const Log&, const std::string&, int>(), py::arg("parent"), py::arg("name"),
-            py::arg("verbosity") = -1 * Log::INHERIT_THRESHOLD);
+    cls.attr("default_max_debug") = py::none();
+
+    cls.def("__init__", [&cls](Debug & instance, const std::string & name, py::object verbosity) {
+            verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
+            new (&instance) Debug(name, verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
+    }, "name"_a, "verbosity"_a = py::none());
+
+    cls.def("__init__", [&cls](Debug & instance, const Log & parent, const std::string & name, py::object verbosity) {
+            verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
+            new (&instance) Debug(parent, name, verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
+    }, "parent"_a, "name"_a, "verbosity"_a = py::none());
 
     cls.def("debug", (void (Debug::*)(int, const std::string&)) & Debug::debug);
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst

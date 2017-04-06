@@ -24,19 +24,24 @@
 
 #include "lsst/pex/logging/LogRecord.h"
 
-using namespace lsst::pex::logging;
-
 namespace py = pybind11;
+using namespace pybind11::literals;
 
-PYBIND11_PLUGIN(_logRecord) {
-    py::module mod("_logRecord", "Access to the classes from the pex logRecordging LogRecord library");
+namespace lsst {
+namespace pex {
+namespace logging {
 
-    py::class_<LogRecord> cls(mod, "LogRecord");
+PYBIND11_PLUGIN(logRecord) {
+    py::module::import("lsst.daf.base");
 
-    cls.def(py::init<int, int, bool>(), py::arg("threshold"), py::arg("importance"),
-            py::arg("showAll") = false);
-    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), py::arg("threshold"),
-            py::arg("importance"), py::arg("preamble"), py::arg("showAll") = false);
+    py::module mod("logRecord");
+
+    py::class_<LogRecord, std::shared_ptr<LogRecord>> cls(mod, "LogRecord");
+
+    cls.def(py::init<int, int, bool>(), "threshold"_a, "importance"_a,
+            "showAll"_a = false);
+    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), "threshold"_a,
+            "importance"_a, "preamble"_a, "showAll"_a = false);
 
     cls.def("addComment", (void (LogRecord::*)(const std::string&)) & LogRecord::addComment);
     cls.def("addPropertyInt", (void (LogRecord::*)(const std::string&, const int&)) & LogRecord::addProperty);
@@ -59,3 +64,7 @@ PYBIND11_PLUGIN(_logRecord) {
 
     return mod.ptr();
 }
+
+}  // logging
+}  // pex
+}  // lsst
