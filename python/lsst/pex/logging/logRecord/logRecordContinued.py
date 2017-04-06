@@ -55,43 +55,4 @@ class LogRecord:
                 self.addProperty("%s.%s" % (name, k), val[k])
         else:
             raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
-    
-    def setProperty(self, name, val):
-        """add a property with a default type.
-    
-        Users can explicitly set the C++ type of a property that gets added by 
-        using the proper type-specific addProperty method (addPropertyBool(), 
-        addPropertyLongLong(), etc.); the methods that are supported this way
-        are int, long, long long, float, double, bool, string, and PropertySet.  
-        This method will choose a type for the property based on the value.
-        See addProperty() for an explanation of the default mappings. 
-    
-        @param name    the name of the property
-        @param val     that value to set for the property
-        @exception pex.exceptions.TypeError   if the value is of an unsupported type.
-        """
-        if isinstance(val, (int, long)):
-            if val > 2147483648 or val <= -2147483648:
-                return self.setPropertyLongLong(name, val)
-            else:
-                return self.setPropertyInt(name, val)
-        elif isinstance(val, float):
-            return self.setPropertyDouble(name, val)
-        elif isinstance(val, bool):
-            return self.setPropertyBool(name, val)
-        elif isinstance(val, string):
-            return self.setPropertyBool(name, val)
-        elif isinstance(val, lsst.daf.base.PropertySet):
-            raise lsst.pex.exceptions.TypeError("PropertySet type temporarily unsupported")
-        elif isinstance(val, list):
-            v = val.pop(0)
-            self.setProperty(name, v)
-            for v in val:
-                self.addProperty(name, v)
-        elif isinstance(val, dict):
-            self.data().remove(name)
-            for k in val.keys():
-                self.addProperty("%s.%s" % (name, k), val[k])
-        else:
-            raise lsst.pex.exceptions.TypeError("unsupported property type for logging: %s(%s)" % (name, type(val)))
-    
+
