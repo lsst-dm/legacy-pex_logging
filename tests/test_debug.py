@@ -44,7 +44,7 @@ sys.path = origpath
 class TestDebug(lsst.utils.tests.TestCase):
 
     def testDebug(self):
-        self.assertLogs("testDebug", workdir=os.path.dirname(__file__))
+        self.assertLogs("test_debug", workdir=os.path.dirname(__file__))
 
 
 class TestMemory(lsst.utils.tests.MemoryTestCase):

@@ -22,4 +22,4 @@
  
 #define LSST_NO_DEBUG
 
-#include "testTrace.cc"
+#include "test_debug.cc"

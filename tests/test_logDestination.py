@@ -21,7 +21,7 @@
 #
 
 #
-# A wrapper test script around testNoDebug
+# A wrapper test script around testLogDestination
 #
 # The wrapped test program writes output to the screen.  This script tests
 # the output by redirecting it to a file and comparing with canonical
@@ -41,10 +41,10 @@ import verifyOutput  # noqa E402 module level import not at top of file
 sys.path = origpath
 
 
-class TestNoDebug(lsst.utils.tests.TestCase):
+class TestLogDestination(lsst.utils.tests.TestCase):
 
-    def testNoDebug(self):
-        self.assertLogs("testNoDebug", workdir=os.path.dirname(__file__))
+    def testLogDestination(self):
+        self.assertLogs("test_logDestination", workdir=os.path.dirname(__file__))
 
 
 class TestMemory(lsst.utils.tests.MemoryTestCase):
