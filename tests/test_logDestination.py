@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 #
 # LSST Data Management System
 # Copyright 2008, 2009, 2010 LSST Corporation.
@@ -22,20 +20,31 @@
 # see <http://www.lsstcorp.org/LegalNotices/>.
 #
 
-"""test use of Trace from python"""
+#
+# A wrapper test script around testLogDestination
+#
+# The wrapped test program writes output to the screen.  This script tests
+# the output by redirecting it to a file and comparing with canonical
+# results.  Note that when the underlying test program is changed, the file
+# containing the canonical results usually must change as well.
 
+import sys
+import os
 import unittest
 
 import lsst.utils.tests
 
-import lsst.pex.logging as pexLog
+testdir = os.path.dirname(__file__)
+origpath = list(sys.path)
+sys.path.insert(0, testdir)
+import verifyOutput  # noqa E402 module level import not at top of file
+sys.path = origpath
 
-class TestTrace(unittest.TestCase):
 
-    def testTraceFromPython(self):
-        pexLog.Trace.setVerbosity("lsst.afw", 3)
-        pexLog.Trace("lsst.afw", 2, "Hello")
-        pexLog.Trace("lsst.afw", 5, "world")
+class TestLogDestination(lsst.utils.tests.TestCase):
+
+    def testLogDestination(self):
+        self.assertLogs("test_logDestination", workdir=os.path.dirname(__file__))
 
 
 class TestMemory(lsst.utils.tests.MemoryTestCase):

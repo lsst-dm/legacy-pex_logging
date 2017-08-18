@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 #
 # LSST Data Management System
 # Copyright 2008, 2009, 2010 LSST Corporation.
@@ -23,7 +21,7 @@
 #
 
 #
-# A wrapper test script around testNoDebug
+# A wrapper test script around testLog
 #
 # The wrapped test program writes output to the screen.  This script tests
 # the output by redirecting it to a file and comparing with canonical
@@ -43,10 +41,10 @@ import verifyOutput  # noqa E402 module level import not at top of file
 sys.path = origpath
 
 
-class TestNoDebug(lsst.utils.tests.TestCase):
+class TestLog(lsst.utils.tests.TestCase):
 
-    def testNoDebug(self):
-        self.assertLogs("testNoDebug", workdir=os.path.dirname(__file__))
+    def testLog(self):
+        self.assertLogs("test_log", workdir=os.path.dirname(__file__))
 
 
 class TestMemory(lsst.utils.tests.MemoryTestCase):
