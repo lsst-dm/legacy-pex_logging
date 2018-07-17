@@ -31,12 +31,8 @@ namespace pex {
 namespace logging {
 namespace threshold {
 
-PYBIND11_PLUGIN(threshold) {
-    py::module mod("threshold");
-
+PYBIND11_MODULE(threshold, mod) {
     py::enum_<Threshold>(mod, "Threshold").value("PASS_ALL", Threshold::PASS_ALL).export_values();
-
-    return mod.ptr();
 }
 
 }  // threshold

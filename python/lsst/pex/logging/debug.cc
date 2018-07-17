@@ -31,9 +31,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(debug) {
-    py::module mod("debug");
-
+PYBIND11_MODULE(debug, mod) {
     py::class_<Debug, std::shared_ptr<Debug>, Log> cls(mod, "Debug");
 
     cls.attr("default_max_debug") = py::none();
@@ -49,8 +47,6 @@ PYBIND11_PLUGIN(debug) {
     }, "parent"_a, "name"_a, "verbosity"_a = py::none());
 
     cls.def("debug", (void (Debug::*)(int, const std::string&)) & Debug::debug);
-
-    return mod.ptr();
 }
 
 }  // logging

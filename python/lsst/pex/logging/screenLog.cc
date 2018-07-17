@@ -31,10 +31,8 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(screenLog) {
+PYBIND11_MODULE(screenLog, mod) {
     py::module::import("lsst.daf.base");
-
-    py::module mod("screenLog");
 
     py::class_<ScreenLog, std::shared_ptr<ScreenLog>, Log> cls(mod, "ScreenLog");
 
@@ -50,8 +48,6 @@ PYBIND11_PLUGIN(screenLog) {
     cls.def_static("createDefaultLog",
                    (void (*)(const lsst::daf::base::PropertySet&, bool, int)) & ScreenLog::createDefaultLog,
                    "preamble"_a, "verbose"_a = false, "threshold"_a = Log::INFO);
-
-    return mod.ptr();
 }
 
 }  // logging

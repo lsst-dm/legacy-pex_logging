@@ -32,10 +32,8 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(log) {
+PYBIND11_MODULE(log, mod) {
     py::module::import("lsst.daf.base");
-
-    py::module mod("log");
 
     py::class_<Log, std::shared_ptr<Log>> cls(mod, "Log");
 
@@ -105,8 +103,6 @@ PYBIND11_PLUGIN(log) {
     clsLogRec.def("__cpplshift__", [](LogRec &l, const lsst::daf::base::PropertySet &r) { return l << r; });
 
     py::enum_<LogRec::Manip>(clsLogRec, "Manip").value("endr", LogRec::Manip::endr).export_values();
-
-    return mod.ptr();
 }
 
 }  // logging

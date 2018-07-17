@@ -33,13 +33,9 @@ namespace logging {
 const ScreenLog& _getDefaultAsScreenLog() { return dynamic_cast<const ScreenLog&>(Log::getDefaultLog()); }
 bool _DefaultLogIsScreenLog() { return (dynamic_cast<const ScreenLog*>(&(Log::getDefaultLog())) != 0); }
 
-PYBIND11_PLUGIN(common) {
-    py::module mod("common");
-
+PYBIND11_MODULE(common, mod) {
     mod.def("_getDefaultAsScreenLog", _getDefaultAsScreenLog);
     mod.def("_DefaultLogIsScreenLog", _DefaultLogIsScreenLog);
-
-    return mod.ptr();
 }
 
 }  // logging

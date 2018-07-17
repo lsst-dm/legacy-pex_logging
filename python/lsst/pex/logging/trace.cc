@@ -31,9 +31,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(trace) {
-    py::module mod("trace");
-
+PYBIND11_MODULE(trace, mod) {
     py::class_<Trace, std::shared_ptr<Trace>> cls(mod, "Trace");
 
 #if !LSST_NO_TRACE
@@ -43,8 +41,6 @@ PYBIND11_PLUGIN(trace) {
     cls.def_static("setVerbosity", (void (*)(const std::string &)) & Trace::setVerbosity);
     cls.def_static("setVerbosity", (void (*)(const std::string &, const int)) & Trace::setVerbosity);
     cls.def_static("getVerbosity", &Trace::getVerbosity);
-
-    return mod.ptr();
 }
 
 }  // logging

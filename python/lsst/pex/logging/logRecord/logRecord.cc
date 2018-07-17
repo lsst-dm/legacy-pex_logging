@@ -31,10 +31,8 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(logRecord) {
+PYBIND11_MODULE(logRecord, mod) {
     py::module::import("lsst.daf.base");
-
-    py::module mod("logRecord");
 
     py::class_<LogRecord, std::shared_ptr<LogRecord>> cls(mod, "LogRecord");
 
@@ -61,8 +59,6 @@ PYBIND11_PLUGIN(logRecord) {
             (void (LogRecord::*)(const lsst::daf::base::PropertySet::Ptr&)) & LogRecord::addProperties);
     cls.def("getProperties", (lsst::daf::base::PropertySet & (LogRecord::*)()) & LogRecord::getProperties,
             py::return_value_policy::reference_internal);
-
-    return mod.ptr();
 }
 
 }  // logging

@@ -31,9 +31,7 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(blockTimingLog) {
-    py::module mod("blockTimingLog");
-
+PYBIND11_MODULE(blockTimingLog, mod) {
     py::class_<BlockTimingLog, std::shared_ptr<BlockTimingLog>, Log> cls(mod, "BlockTimingLog");
 
     py::enum_<BlockTimingLog::usageData>(cls, "usageData")
@@ -73,8 +71,6 @@ PYBIND11_PLUGIN(blockTimingLog) {
     cls.def("getInstrumentationLevel", &BlockTimingLog::getInstrumentationLevel);
     cls.def("getFunctionName", &BlockTimingLog::getFunctionName);
     cls.def("addUsageProps", &BlockTimingLog::addUsageProps);
-
-    return mod.ptr();
 }
 
 }  // logging
