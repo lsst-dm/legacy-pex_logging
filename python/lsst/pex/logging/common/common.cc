@@ -38,6 +38,6 @@ PYBIND11_MODULE(common, mod) {
     mod.def("_DefaultLogIsScreenLog", _DefaultLogIsScreenLog);
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

@@ -36,19 +36,24 @@ PYBIND11_MODULE(debug, mod) {
 
     cls.attr("default_max_debug") = py::none();
 
-    cls.def(py::init([&cls](const std::string & name, py::object verbosity) {
-            verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
-            return new Debug(name, verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
-    }), "name"_a, "verbosity"_a = py::none());
+    cls.def(py::init([&cls](const std::string& name, py::object verbosity) {
+                verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
+                return new Debug(
+                        name, verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
+            }),
+            "name"_a, "verbosity"_a = py::none());
 
-    cls.def(py::init([&cls](const Log & parent, const std::string & name, py::object verbosity) {
-            verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
-            return new Debug(parent, name, verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
-    }), "parent"_a, "name"_a, "verbosity"_a = py::none());
+    cls.def(py::init([&cls](const Log& parent, const std::string& name, py::object verbosity) {
+                verbosity = verbosity.is_none() ? cls.attr("default_max_debug") : verbosity;
+                return new Debug(
+                        parent, name,
+                        verbosity.is_none() ? -1 * Log::INHERIT_THRESHOLD : py::cast<int>(verbosity));
+            }),
+            "parent"_a, "name"_a, "verbosity"_a = py::none());
 
     cls.def("debug", (void (Debug::*)(int, const std::string&)) & Debug::debug);
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

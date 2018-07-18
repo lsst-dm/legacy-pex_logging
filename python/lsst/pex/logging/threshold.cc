@@ -35,7 +35,7 @@ PYBIND11_MODULE(threshold, mod) {
     py::enum_<Threshold>(mod, "Threshold").value("PASS_ALL", Threshold::PASS_ALL).export_values();
 }
 
-}  // threshold
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace threshold
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

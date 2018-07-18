@@ -43,10 +43,9 @@ PYBIND11_MODULE(log, mod) {
     cls.def_readonly_static("INHERIT_THRESHOLD", &Log::INHERIT_THRESHOLD);
     cls.def_readonly_static("FATAL", &Log::FATAL);
 
-    cls.def(py::init<const int, const std::string &>(),
-            "threshold"_a = Log::INFO, "name"_a = "");
-    cls.def(py::init<const Log &, const std::string &, int>(),
-            "parent"_a, "childName"_a, "threshold"_a = Log::INHERIT_THRESHOLD);
+    cls.def(py::init<const int, const std::string &>(), "threshold"_a = Log::INFO, "name"_a = "");
+    cls.def(py::init<const Log &, const std::string &, int>(), "parent"_a, "childName"_a,
+            "threshold"_a = Log::INHERIT_THRESHOLD);
 
     cls.def("getName", &Log::getName);
     cls.def("getThreshold", &Log::getThreshold);
@@ -70,8 +69,7 @@ PYBIND11_MODULE(log, mod) {
                         new lsst::pex::logging::FileDestination(filepath, verbose, threshold));
                 l.addDestination(fdest);
             },
-            "filepath"_a, "verbose"_a = false,
-            "threshold"_a = lsst::pex::logging::threshold::PASS_ALL);
+            "filepath"_a, "verbose"_a = false, "threshold"_a = lsst::pex::logging::threshold::PASS_ALL);
     cls.def("markPersistent", &Log::markPersistent);
     cls.def_static("getDefaultLog", &Log::getDefaultLog);
     cls.def_static("closeDefaultLog", &Log::closeDefaultLog);
@@ -105,6 +103,6 @@ PYBIND11_MODULE(log, mod) {
     py::enum_<LogRec::Manip>(clsLogRec, "Manip").value("endr", LogRec::Manip::endr).export_values();
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

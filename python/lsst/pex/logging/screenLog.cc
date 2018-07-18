@@ -37,8 +37,8 @@ PYBIND11_MODULE(screenLog, mod) {
     py::class_<ScreenLog, std::shared_ptr<ScreenLog>, Log> cls(mod, "ScreenLog");
 
     cls.def(py::init<bool, int>(), "verbose"_a = false, "threshold"_a = Log::INFO);
-    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), "preamble"_a,
-            "verbose"_a = false, "threshold"_a = Log::INFO);
+    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), "preamble"_a, "verbose"_a = false,
+            "threshold"_a = Log::INFO);
     cls.def("getScreenThreshold", &ScreenLog::getScreenThreshold);
     cls.def("setScreenThreshold", &ScreenLog::setScreenThreshold);
     cls.def("setScreenVerbose", &ScreenLog::setScreenVerbose);
@@ -50,6 +50,6 @@ PYBIND11_MODULE(screenLog, mod) {
                    "preamble"_a, "verbose"_a = false, "threshold"_a = Log::INFO);
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

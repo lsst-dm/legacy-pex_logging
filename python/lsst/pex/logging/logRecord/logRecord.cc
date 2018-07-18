@@ -36,10 +36,9 @@ PYBIND11_MODULE(logRecord, mod) {
 
     py::class_<LogRecord, std::shared_ptr<LogRecord>> cls(mod, "LogRecord");
 
-    cls.def(py::init<int, int, bool>(), "threshold"_a, "importance"_a,
-            "showAll"_a = false);
-    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), "threshold"_a,
-            "importance"_a, "preamble"_a, "showAll"_a = false);
+    cls.def(py::init<int, int, bool>(), "threshold"_a, "importance"_a, "showAll"_a = false);
+    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), "threshold"_a, "importance"_a,
+            "preamble"_a, "showAll"_a = false);
 
     cls.def("addComment", (void (LogRecord::*)(const std::string&)) & LogRecord::addComment);
     cls.def("addPropertyInt", (void (LogRecord::*)(const std::string&, const int&)) & LogRecord::addProperty);
@@ -61,6 +60,6 @@ PYBIND11_MODULE(logRecord, mod) {
             py::return_value_policy::reference_internal);
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

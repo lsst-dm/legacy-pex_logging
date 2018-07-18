@@ -43,6 +43,6 @@ PYBIND11_MODULE(trace, mod) {
     cls.def_static("getVerbosity", &Trace::getVerbosity);
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst
