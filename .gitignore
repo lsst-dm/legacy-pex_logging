@@ -8,6 +8,8 @@ config.log
 *.cfgc
 *.pyc
 *_wrap.cc
+.coverage
+pytest_session.txt
 doc/html
 doc/xml
 doc/*.tag

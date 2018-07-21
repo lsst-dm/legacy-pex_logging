@@ -31,17 +31,14 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(logRecord) {
+PYBIND11_MODULE(logRecord, mod) {
     py::module::import("lsst.daf.base");
-
-    py::module mod("logRecord");
 
     py::class_<LogRecord, std::shared_ptr<LogRecord>> cls(mod, "LogRecord");
 
-    cls.def(py::init<int, int, bool>(), "threshold"_a, "importance"_a,
-            "showAll"_a = false);
-    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), "threshold"_a,
-            "importance"_a, "preamble"_a, "showAll"_a = false);
+    cls.def(py::init<int, int, bool>(), "threshold"_a, "importance"_a, "showAll"_a = false);
+    cls.def(py::init<int, int, const lsst::daf::base::PropertySet&, bool>(), "threshold"_a, "importance"_a,
+            "preamble"_a, "showAll"_a = false);
 
     cls.def("addComment", (void (LogRecord::*)(const std::string&)) & LogRecord::addComment);
     cls.def("addPropertyInt", (void (LogRecord::*)(const std::string&, const int&)) & LogRecord::addProperty);
@@ -61,10 +58,8 @@ PYBIND11_PLUGIN(logRecord) {
             (void (LogRecord::*)(const lsst::daf::base::PropertySet::Ptr&)) & LogRecord::addProperties);
     cls.def("getProperties", (lsst::daf::base::PropertySet & (LogRecord::*)()) & LogRecord::getProperties,
             py::return_value_policy::reference_internal);
-
-    return mod.ptr();
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst

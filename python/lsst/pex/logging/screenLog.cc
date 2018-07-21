@@ -31,16 +31,14 @@ namespace lsst {
 namespace pex {
 namespace logging {
 
-PYBIND11_PLUGIN(screenLog) {
+PYBIND11_MODULE(screenLog, mod) {
     py::module::import("lsst.daf.base");
-
-    py::module mod("screenLog");
 
     py::class_<ScreenLog, std::shared_ptr<ScreenLog>, Log> cls(mod, "ScreenLog");
 
     cls.def(py::init<bool, int>(), "verbose"_a = false, "threshold"_a = Log::INFO);
-    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), "preamble"_a,
-            "verbose"_a = false, "threshold"_a = Log::INFO);
+    cls.def(py::init<const lsst::daf::base::PropertySet&, bool, int>(), "preamble"_a, "verbose"_a = false,
+            "threshold"_a = Log::INFO);
     cls.def("getScreenThreshold", &ScreenLog::getScreenThreshold);
     cls.def("setScreenThreshold", &ScreenLog::setScreenThreshold);
     cls.def("setScreenVerbose", &ScreenLog::setScreenVerbose);
@@ -50,10 +48,8 @@ PYBIND11_PLUGIN(screenLog) {
     cls.def_static("createDefaultLog",
                    (void (*)(const lsst::daf::base::PropertySet&, bool, int)) & ScreenLog::createDefaultLog,
                    "preamble"_a, "verbose"_a = false, "threshold"_a = Log::INFO);
-
-    return mod.ptr();
 }
 
-}  // logging
-}  // pex
-}  // lsst
+}  // namespace logging
+}  // namespace pex
+}  // namespace lsst
